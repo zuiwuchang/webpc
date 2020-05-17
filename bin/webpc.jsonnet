@@ -5,10 +5,10 @@ local Hour = 60 * Minute;
 local Day = 24 * Hour;
 {
 	HTTP: {
-		Addr: "127.0.0.1:6000",
+		Addr: "127.0.0.1:9000",
 		// x509 if empty use h2c
-		CertFile: "test.pem",
-		KeyFile: "test.key",
+		// CertFile: "test.pem",
+		// KeyFile: "test.key",
 	},
 	Database:{
 		Source:"webpc.db",

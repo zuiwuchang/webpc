@@ -1,0 +1,65 @@
+<mat-toolbar class="header" color="primary">
+    <a routerLink="/">
+        <button mat-icon-button i18n-matTooltip matTooltip="Home Tooltip">
+            <mat-icon>home</mat-icon>
+        </button>
+    </a>
+    <a routerLink="/terminal">
+        <button mat-icon-button i18n-matTooltip matTooltip="Terminal Tooltip">
+            <mat-icon class="myfont" fontSet="fontawesome-fas" fontIcon="fa-terminal"></mat-icon>
+        </button>
+    </a>
+    <a routerLink="/cloud">
+        <button mat-icon-button i18n-matTooltip matTooltip="Upload Tooltip">
+            <mat-icon>cloud</mat-icon>
+        </button>
+    </a>
+    <a href="https://gitlab.com/king011/webpc" target="_blank">
+        <button mat-icon-button i18n-matTooltip matTooltip="Source Tooltip">
+            <mat-icon class="myfont" fontSet="fontawesome-fab" fontIcon="fa-gitlab"></mat-icon>
+        </button>
+    </a>
+    <a routerLink="/content/license">
+        <button mat-icon-button i18n-matTooltip matTooltip="License Tooltip">
+            <mat-icon>import_contacts</mat-icon>
+        </button>
+    </a>
+    <a routerLink="/content/about">
+        <button mat-icon-button i18n-matTooltip matTooltip="About Tooltip">
+            <mat-icon>info</mat-icon>
+        </button>
+    </a>
+    <span style="flex: 1 1 auto;"></span>
+    <ng-container *ngIf="ready; then readyView; else loadingView">
+    </ng-container>
+    <ng-template #readyView>
+        <ng-container *ngIf="session; then sessionView; else loginView">
+        </ng-container>
+    </ng-template>
+    <ng-template #loadingView>
+        <mat-spinner color="accent" diameter='32'></mat-spinner>
+    </ng-template>
+    <ng-template #sessionView>
+        <button mat-icon-button i18n-matTooltip matTooltip="Menu Tooltip" [matMenuTriggerFor]="menu">
+            <mat-icon>apps</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <a routerLink="/user">
+                <button mat-menu-item>
+                    <mat-icon>supervised_user_circle</mat-icon>
+                    <ng-container i18n>User Management</ng-container>
+                </button>
+            </a>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="onClickLogout()">
+                <mat-icon>exit_to_app</mat-icon>
+                <ng-container i18n>sign out</ng-container>
+            </button>
+        </mat-menu>
+    </ng-template>
+    <ng-template #loginView>
+        <button mat-icon-button i18n-matTooltip matTooltip="sign in" (click)="onClickLogin()">
+            <mat-icon class="myfont" fontSet="fontawesome-fas" fontIcon="fa-sign-in-alt"></mat-icon>
+        </button>
+    </ng-template>
+</mat-toolbar>
