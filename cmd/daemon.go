@@ -6,7 +6,9 @@ import (
 	"gitlab.com/king011/webpc/cmd/daemon"
 	"gitlab.com/king011/webpc/configure"
 	"gitlab.com/king011/webpc/cookie"
+	"gitlab.com/king011/webpc/db/manipulator"
 	"gitlab.com/king011/webpc/logger"
+	"gitlab.com/king011/webpc/mount"
 	"gitlab.com/king011/webpc/utils"
 
 	"github.com/spf13/cobra"
@@ -14,6 +16,7 @@ import (
 
 func init() {
 	var filename string
+	var release bool
 	basePaht := utils.BasePath()
 	cmd := &cobra.Command{
 		Use:   "daemon",
@@ -41,9 +44,18 @@ func init() {
 			if e != nil {
 				log.Fatalln(e)
 			}
-
+			// init db
+			e = manipulator.Init(cnf.System.DB)
+			if e != nil {
+				log.Fatalln(e)
+			}
+			// init mount
+			e = mount.Init(cnf.System.Mount)
+			if e != nil {
+				log.Fatalln(e)
+			}
 			// run
-			daemon.Run()
+			daemon.Run(release)
 		},
 	}
 	flags := cmd.Flags()
@@ -52,5 +64,11 @@ func init() {
 		utils.Abs(basePaht, "webpc.jsonnet"),
 		"configure file",
 	)
+	flags.BoolVarP(&release, "release",
+		"r",
+		false,
+		"run as release",
+	)
+
 	rootCmd.AddCommand(cmd)
 }

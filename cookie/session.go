@@ -18,8 +18,15 @@ func init() {
 
 // Session user session info
 type Session struct {
-	Name          string
-	Authorization []int64
+	Name string `json:"name,omitempty"`
+	// 是否可獲取shell
+	Shell bool `json:"shell,omitempty"`
+	// 是否可讀取 檔案
+	Read bool `json:"read,omitempty"`
+	// 是否可寫入 檔案
+	Write bool `json:"write,omitempty"`
+	// 是否是 root
+	Root bool `json:"root,omitempty"`
 }
 
 // Cookie encode to cookie
@@ -29,12 +36,7 @@ func (s *Session) Cookie() (string, error) {
 
 // IsRoot if user is root return true
 func (s *Session) IsRoot() (yes bool) {
-	count := len(s.Authorization)
-	for i := 0; i < count; i++ {
-		if s.Authorization[i] == 960316 {
-			return true
-		}
-	}
+	yes = s.Root
 	return
 }
 

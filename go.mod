@@ -3,6 +3,7 @@ module gitlab.com/king011/webpc
 go 1.13
 
 require (
+	github.com/boltdb/bolt v1.3.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/google/go-jsonnet v0.15.0
 	github.com/gorilla/securecookie v1.1.1

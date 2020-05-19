@@ -10,8 +10,27 @@ local Day = 24 * Hour;
 		// CertFile: "test.pem",
 		// KeyFile: "test.key",
 	},
-	Database:{
-		Source:"webpc.db",
+	System:{
+		// 用戶數據庫
+		DB : "webpc.db",
+		// 用戶shell
+		Shell : ["/bin/bash"],
+		// 映射到web的目錄
+		Mount : [
+			{
+				// 網頁上 顯示的 目錄名稱
+				Name: "home",
+				// 要映射的本地路徑
+				Root: "/home/king",
+				// 目錄是否可寫
+				Write: true,
+			},
+			{
+				Name: "root",
+				Root: "/",
+				Write: false,
+			},
+		],
 	},
 	Cookie: {
 		// Filename:"securecookie.json"

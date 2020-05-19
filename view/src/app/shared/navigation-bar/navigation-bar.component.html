@@ -4,16 +4,19 @@
             <mat-icon>home</mat-icon>
         </button>
     </a>
-    <a routerLink="/terminal">
-        <button mat-icon-button i18n-matTooltip matTooltip="Terminal Tooltip">
-            <mat-icon class="myfont" fontSet="fontawesome-fas" fontIcon="fa-terminal"></mat-icon>
-        </button>
-    </a>
     <a routerLink="/cloud">
         <button mat-icon-button i18n-matTooltip matTooltip="Upload Tooltip">
             <mat-icon>cloud</mat-icon>
         </button>
     </a>
+    <a routerLink="/terminal">
+        <button mat-icon-button i18n-matTooltip matTooltip="Terminal Tooltip">
+            <mat-icon class="myfont" fontSet="fontawesome-fas" fontIcon="fa-terminal"></mat-icon>
+        </button>
+    </a>
+
+
+    <span style="flex: 1 1 auto;"></span>
     <a href="https://gitlab.com/king011/webpc" target="_blank">
         <button mat-icon-button i18n-matTooltip matTooltip="Source Tooltip">
             <mat-icon class="myfont" fontSet="fontawesome-fab" fontIcon="fa-gitlab"></mat-icon>
@@ -29,7 +32,6 @@
             <mat-icon>info</mat-icon>
         </button>
     </a>
-    <span style="flex: 1 1 auto;"></span>
     <ng-container *ngIf="ready; then readyView; else loadingView">
     </ng-container>
     <ng-template #readyView>

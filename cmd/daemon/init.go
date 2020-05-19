@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gin-gonic/gin"
+
 	"go.uber.org/zap"
 
 	"gitlab.com/king011/webpc/configure"
@@ -13,7 +15,10 @@ import (
 )
 
 // Run run as deamon
-func Run() {
+func Run(release bool) {
+	if release {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	cnf := configure.Single().HTTP
 	l, e := net.Listen(`tcp`, cnf.Addr)
 	if e != nil {

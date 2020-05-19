@@ -10,10 +10,10 @@ import (
 
 // Configure global configure
 type Configure struct {
-	Logger logger.Options
-	HTTP   HTTP
-	Cookie Cookie
-
+	HTTP     HTTP
+	System   System
+	Cookie   Cookie
+	Logger   logger.Options
 	basePath string
 	filename string
 }
@@ -21,6 +21,9 @@ type Configure struct {
 // Format format global configure
 func (c *Configure) Format() (e error) {
 	if e = c.HTTP.Format(c.basePath); e != nil {
+		return
+	}
+	if e = c.System.Format(c.basePath); e != nil {
 		return
 	}
 	if e = c.Cookie.Format(c.basePath); e != nil {
