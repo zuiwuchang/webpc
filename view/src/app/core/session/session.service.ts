@@ -8,6 +8,10 @@ import { Exception } from '../core/exception';
 
 export class Session {
   name: string
+  shell: boolean
+  read: boolean
+  write: boolean
+  root: boolean
 }
 @Injectable({
   providedIn: 'root'
@@ -30,7 +34,7 @@ export class SessionService {
     console.log('start session restore')
     await this._mutex.lock()
     try {
-      const response = await this.httpClient.get<Session>(ServerAPI.restore).toPromise()
+      const response = await this.httpClient.get<Session>(ServerAPI.app.restore).toPromise()
       if (response && isString(response.name)) {
         console.info(`session restore`, response)
         this._subject.next(response)
@@ -52,7 +56,7 @@ export class SessionService {
     await this._mutex.lock()
     let result: Session
     try {
-      const response = await this.httpClient.post<Session>(ServerAPI.login, {
+      const response = await this.httpClient.post<Session>(ServerAPI.app.login, {
         name: name,
         password: password,
         remember: remember,
@@ -79,7 +83,7 @@ export class SessionService {
       if (this._subject.value == null) {
         return
       }
-      await this.httpClient.get(ServerAPI.logout).toPromise()
+      await this.httpClient.get(ServerAPI.app.logout).toPromise()
       this._subject.next(null)
     } finally {
       this._mutex.unlock()

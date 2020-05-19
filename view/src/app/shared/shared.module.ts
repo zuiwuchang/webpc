@@ -33,6 +33,9 @@ import { LoginComponent } from './login/login.component';
   ],
   exports: [
     NavigationBarComponent,
-  ]
+  ],
+  entryComponents: [
+    LoginComponent,
+  ],
 })
 export class SharedModule { }

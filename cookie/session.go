@@ -1,15 +1,12 @@
 package cookie
 
 import (
-	"context"
 	"encoding/gob"
-
-	"google.golang.org/grpc/metadata"
 )
 
 const (
 	// CookieName cookie key name
-	CookieName = "grpc_session_webpc"
+	CookieName = "golang-webpc-session"
 )
 
 func init() {
@@ -37,25 +34,6 @@ func (s *Session) Cookie() (string, error) {
 // IsRoot if user is root return true
 func (s *Session) IsRoot() (yes bool) {
 	yes = s.Root
-	return
-}
-
-// FromContext restore session from context
-func FromContext(ctx context.Context) (session *Session, e error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if ok {
-		session, e = FromMD(md)
-	}
-	return
-}
-
-// FromMD restore session from MD
-func FromMD(md metadata.MD) (session *Session, e error) {
-	strs := md.Get(CookieName)
-	if len(strs) > 0 {
-		session, e = FromCookie(strs[0])
-		return
-	}
 	return
 }
 
