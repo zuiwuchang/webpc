@@ -209,8 +209,8 @@ func (m User) Password(name, password string) (e error) {
 	return
 }
 
-// Update 修改權限
-func (m User) Update(name string, shell, read, write, root bool) (e error) {
+// Change 更改權限
+func (m User) Change(name string, shell, read, write, root bool) (e error) {
 	if name == "" {
 		e = errors.New("name not support empty")
 		return

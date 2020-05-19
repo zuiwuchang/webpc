@@ -11,6 +11,7 @@ export const ServerAPI = {
         add: `${root}/user/add`,
         remove: `${root}/user/remove`,
         password: `${root}/user/password`,
+        change: `${root}/user/change`,
     },
 }
 export function getWebSocketAddr(path: string): string {

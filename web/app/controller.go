@@ -38,6 +38,8 @@ func (h Helper) version(c *gin.Context) {
 		`date`:   version.Date,
 	})
 }
+
+// restore 恢復session
 func (h Helper) restore(c *gin.Context) {
 	session, e := h.GetSession(c)
 	if e != nil {
@@ -50,6 +52,7 @@ func (h Helper) restore(c *gin.Context) {
 	c.JSON(http.StatusOK, session)
 }
 
+// login 登入
 func (h Helper) login(c *gin.Context) {
 	var params struct {
 		Name     string `form:"name" json:"name" xml:"name" yaml:"name" binding:"required"`
@@ -83,6 +86,8 @@ func (h Helper) login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, &session)
 }
+
+// logout 登出
 func (h Helper) logout(c *gin.Context) {
 	c.SetCookie(cookie.CookieName, `expired`, -1, `/`, ``, false, true)
 }

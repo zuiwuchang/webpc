@@ -6,11 +6,13 @@ type FileSystem struct {
 }
 
 // Push .
-func (f *FileSystem) Push(name, root string, write bool) {
+func (f *FileSystem) Push(name, root string, read, write, shared bool) {
 	f.ms = append(f.ms, Mount{
-		name:  name,
-		root:  root,
-		write: write,
+		name:   name,
+		root:   root,
+		read:   read,
+		write:  write,
+		shared: shared,
 	})
 }
 
@@ -21,7 +23,7 @@ func Single() *FileSystem {
 
 // Mount .
 type Mount struct {
-	name  string
-	root  string
-	write bool
+	name                string
+	root                string
+	read, write, shared bool
 }
