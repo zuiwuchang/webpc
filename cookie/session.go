@@ -2,6 +2,7 @@ package cookie
 
 import (
 	"encoding/gob"
+	"fmt"
 )
 
 const (
@@ -24,6 +25,11 @@ type Session struct {
 	Write bool `json:"write,omitempty"`
 	// 是否是 root
 	Root bool `json:"root,omitempty"`
+}
+
+// Cookie encode to cookie
+func (s *Session) String() string {
+	return fmt.Sprintf(`%s shell=%v read=%v write=%v root=%v`, s.Name, s.Shell, s.Read, s.Write, s.Root)
 }
 
 // Cookie encode to cookie

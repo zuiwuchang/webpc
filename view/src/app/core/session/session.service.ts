@@ -34,7 +34,7 @@ export class SessionService {
     console.log('start session restore')
     await this._mutex.lock()
     try {
-      const response = await this.httpClient.get<Session>(ServerAPI.app.restore).toPromise()
+      const response = await ServerAPI.v1.session.get<Session>(this.httpClient)
       if (response && isString(response.name)) {
         console.info(`session restore`, response)
         this._subject.next(response)
@@ -56,11 +56,11 @@ export class SessionService {
     await this._mutex.lock()
     let result: Session
     try {
-      const response = await this.httpClient.post<Session>(ServerAPI.app.login, {
+      const response = await ServerAPI.v1.session.post<Session>(this.httpClient, {
         name: name,
         password: password,
         remember: remember,
-      }).toPromise()
+      })
       if (response) {
         console.info(`login success`, response)
         this._subject.next(response)
@@ -83,7 +83,7 @@ export class SessionService {
       if (this._subject.value == null) {
         return
       }
-      await this.httpClient.get(ServerAPI.app.logout).toPromise()
+      await ServerAPI.v1.session.delete(this.httpClient)
       this._subject.next(null)
     } finally {
       this._mutex.unlock()

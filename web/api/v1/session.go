@@ -3,9 +3,12 @@ package v1
 import (
 	"net/http"
 
+	"go.uber.org/zap"
+
 	"github.com/gin-gonic/gin"
 	"gitlab.com/king011/webpc/cookie"
 	"gitlab.com/king011/webpc/db/manipulator"
+	"gitlab.com/king011/webpc/logger"
 	"gitlab.com/king011/webpc/web"
 )
 
@@ -16,9 +19,11 @@ type Session struct {
 
 // Register impl IHelper
 func (h Session) Register(router *gin.RouterGroup) {
-	router.PUT(`/session`, h.login)
-	router.GET(`/session`, h.restore)
-	router.DELETE(`/session`, h.logout)
+	r := router.Group(`/session`)
+	r.POST(``, h.login)
+	r.GET(``, h.restore)
+	r.DELETE(``, h.logout)
+	r.PATCH(`/password`, h.password)
 }
 func (h Session) login(c *gin.Context) {
 	// 解析參數
@@ -56,9 +61,18 @@ func (h Session) login(c *gin.Context) {
 	// 響應 數據
 	c.SetCookie(cookie.CookieName, val, maxage, `/`, ``, false, true)
 	h.NegotiateData(c, http.StatusCreated, session)
+
+	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
+			zap.Int(`maxage`, maxage),
+			zap.String(`client ip`, c.ClientIP()),
+		)
+	}
 }
 func (h Session) restore(c *gin.Context) {
-	session, e := h.GetSession(c)
+	session, e := h.ShouldBindSession(c)
 	if e != nil {
 		h.NegotiateError(c, http.StatusUnauthorized, e)
 		return
@@ -67,8 +81,50 @@ func (h Session) restore(c *gin.Context) {
 		return
 	}
 	h.NegotiateData(c, http.StatusOK, session)
+
+	if ce := logger.Logger.Check(zap.InfoLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
+			zap.String(`client ip`, c.ClientIP()),
+		)
+	}
 }
 func (h Session) logout(c *gin.Context) {
 	c.SetCookie(cookie.CookieName, `expired`, -1, `/`, ``, false, true)
 	c.Status(http.StatusNoContent)
+}
+func (h Session) password(c *gin.Context) {
+	session := h.BindSession(c)
+	if session == nil {
+		return
+	}
+	// 解析參數
+	var obj struct {
+		Old string `form:"old" json:"old" xml:"old" yaml:"old" binding:"required"`
+		Val string `form:"val" json:"val" xml:"val" yaml:"val" binding:"required"`
+	}
+	e := h.Bind(c, &obj)
+	if e != nil {
+		return
+	}
+	if obj.Old == obj.Val {
+		h.NegotiateErrorString(c, http.StatusBadGateway, `password not changed`)
+		return
+	}
+	var mUser manipulator.User
+	e = mUser.Password3(session.Name, obj.Old, obj.Val)
+	if e != nil {
+		h.NegotiateError(c, http.StatusInternalServerError, e)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+	if ce := logger.Logger.Check(zap.InfoLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
+			zap.String(`client ip`, c.ClientIP()),
+		)
+	}
 }

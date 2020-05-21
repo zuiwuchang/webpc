@@ -1,17 +1,11 @@
-const root = ''
+import { RESTful } from './restful';
+const root = '/api'
+
 export const ServerAPI = {
-    app: {
-        version: `${root}/app/version`,
-        login: `${root}/app/login`,
-        restore: `${root}/app/restore`,
-        logout: `${root}/app/logout`,
-    },
-    user: {
-        list: `${root}/user/list`,
-        add: `${root}/user/add`,
-        remove: `${root}/user/remove`,
-        password: `${root}/user/password`,
-        change: `${root}/user/change`,
+    v1: {
+        session: new RESTful(`${root}/v1/session`),
+        version: new RESTful(`${root}/v1/version`),
+        users: new RESTful(`${root}/v1/users`),
     },
 }
 export function getWebSocketAddr(path: string): string {

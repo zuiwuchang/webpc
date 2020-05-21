@@ -99,7 +99,7 @@ func (m User) List() (result []*data.User, e error) {
 		bucket.ForEach(func(k, v []byte) error {
 			var u data.User
 			e = u.Decode(v)
-			if e != nil {
+			if e == nil {
 				result = append(result, &u)
 			}
 			return nil
@@ -163,6 +163,55 @@ func (m User) Remove(name string) (e error) {
 		}
 		key := utils.StringToBytes(name)
 		e = bucket.Delete(key)
+		return
+	})
+	return
+}
+
+// Password3 修改密碼
+func (m User) Password3(name, old, val string) (e error) {
+	if name == "" {
+		e = errors.New("name not support empty")
+		return
+	}
+	if old == "" {
+		e = errors.New("old password not support empty")
+		return
+	}
+	if val == "" {
+		e = errors.New("new password not support empty")
+		return
+	}
+	e = _db.Update(func(t *bolt.Tx) (e error) {
+		bucket := t.Bucket([]byte(data.UserBucket))
+		if bucket == nil {
+			e = fmt.Errorf("bucket not exist : %s", data.UserBucket)
+			return
+		}
+		key := utils.StringToBytes(name)
+		v := bucket.Get(key)
+		if v == nil {
+			e = fmt.Errorf("user not exists : %s", name)
+			return
+		}
+		var u data.User
+		e = u.Decode(v)
+		if e != nil {
+			return
+		}
+		if u.Password != old {
+			e = errors.New("old password not match")
+			return
+		}
+		if u.Password == val {
+			return
+		}
+		u.Password = val
+		b, e := u.Encoder()
+		if e != nil {
+			return
+		}
+		e = bucket.Put(key, b)
 		return
 	})
 	return

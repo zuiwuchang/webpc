@@ -43,11 +43,22 @@
         <mat-menu #menu="matMenu">
             <a routerLink="/user">
                 <button mat-menu-item>
-                    <mat-icon>supervised_user_circle</mat-icon>
-                    <ng-container i18n>User Management</ng-container>
+                    <mat-icon>lock</mat-icon>
+                    <ng-container i18n>Password</ng-container>
                 </button>
             </a>
             <mat-divider></mat-divider>
+            
+            <ng-container *ngIf="session && session.root;then rootView;"></ng-container>
+            <ng-template #rootView>
+                <a routerLink="/user" *ngIf="session">
+                    <button mat-menu-item>
+                        <mat-icon>supervised_user_circle</mat-icon>
+                        <ng-container i18n>User Management</ng-container>
+                    </button>
+                </a>
+                <mat-divider></mat-divider>
+            </ng-template>
             <button mat-menu-item (click)="onClickLogout()">
                 <mat-icon>exit_to_app</mat-icon>
                 <ng-container i18n>sign out</ng-container>
