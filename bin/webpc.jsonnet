@@ -14,7 +14,7 @@ local Day = 24 * Hour;
 		// 用戶數據庫
 		DB : "webpc.db",
 		// 用戶shell
-		Shell : ["/bin/bash"],
+		Shell : ["/bin/bash","-l"],
 		// 映射到web的目錄
 		Mount : [
 			{
