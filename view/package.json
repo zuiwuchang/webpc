@@ -27,6 +27,10 @@
     "js-sha512": "^0.8.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
+    "xterm": "^4.6.0",
+    "xterm-addon-fit": "^0.4.0",
+    "xterm-addon-web-links": "^0.4.0",
+    "xterm-addon-webgl": "^0.7.0",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {

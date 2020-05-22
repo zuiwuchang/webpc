@@ -21,6 +21,7 @@ func (h Helper) Register(router *gin.RouterGroup) {
 		Session{},
 		Other{},
 		Users{},
+		Shells{},
 	}
 	for _, m := range ms {
 		m.Register(r)

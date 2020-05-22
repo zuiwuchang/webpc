@@ -1,0 +1,11 @@
+<mat-card>
+    <mat-card-title>
+        <ng-container i18n>Terminal</ng-container>
+        <mat-spinner color="accent" diameter='32' *ngIf="disabled"></mat-spinner>
+    </mat-card-title>
+    <mat-card-content>
+        <div (window:resize)="onResize()" class="view">
+            <div #xterm style="height: 100%;"></div>
+        </div>
+    </mat-card-content>
+</mat-card>

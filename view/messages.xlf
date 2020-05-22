@@ -82,6 +82,10 @@
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
           <context context-type="linenumber">35</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="d854df62b419d808aabec38b7394d792591f45c3" datatype="html">
         <source>Default Password : 19890604</source>
@@ -331,12 +335,20 @@
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="a568d6cc7b8a3f14399663426bb1b4fc137b1a8d" datatype="html">
         <source>edit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
           <context context-type="linenumber">31</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
       <trans-unit id="70ef158c584bafe788e319a0bffa11b02ee9abf1" datatype="html">
@@ -345,12 +357,30 @@
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="a11ec4e640f241329943237d2a3cceaa4823658e" datatype="html">
         <source>add</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
           <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7a890188d24cc8449764f72befdb37458adced07" datatype="html">
+        <source>Terminal List</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="da6aa9950c74cadd85a3bf26272f34f28d8338c8" datatype="html">
+        <source>Connect</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
     </body>

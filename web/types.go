@@ -123,6 +123,19 @@ func (h Helper) CheckRoot(c *gin.Context) {
 	}
 }
 
+// CheckShell 檢查是否具有 shell 權限
+func (h Helper) CheckShell(c *gin.Context) {
+	session := h.BindSession(c)
+	if session == nil {
+		c.Abort()
+		return
+	}
+	if !session.Root && !session.Shell {
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+}
+
 // NegotiateError .
 func (h Helper) NegotiateError(c *gin.Context, code int, e error) {
 	c.Negotiate(code, gin.Negotiate{
