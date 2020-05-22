@@ -8,6 +8,8 @@ import { User } from '../user';
 import { ServerAPI } from 'src/app/core/core/api';
 import { ConfirmComponent } from 'src/app/shared/dialog/confirm/confirm.component';
 import { AddComponent } from '../add/add.component';
+import { PasswordComponent } from '../password/password.component';
+import { ChangeComponent } from '../change/change.component';
 
 @Component({
   selector: 'app-list',
@@ -66,8 +68,18 @@ export class ListComponent implements OnInit, OnDestroy {
       this._ready = true
     })
   }
-  onClickEdit(node: User) { }
-  onClickPassword(node: User) { }
+  onClickEdit(node: User) {
+    this.matDialog.open(ChangeComponent, {
+      data: node,
+      disableClose: true,
+    })
+  }
+  onClickPassword(node: User) {
+    this.matDialog.open(PasswordComponent, {
+      data: node.name,
+      disableClose: true,
+    })
+  }
 
   onClickDelete(node: User) {
     this.matDialog.open(ConfirmComponent, {

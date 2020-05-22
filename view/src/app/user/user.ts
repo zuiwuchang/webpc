@@ -1,6 +1,5 @@
 export class User {
     name: string
-    password: string
     shell: boolean
     read: boolean
     write: boolean
