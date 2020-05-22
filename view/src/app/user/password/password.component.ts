@@ -5,7 +5,6 @@ import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { sha512 } from 'js-sha512';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { User } from '../user';
 
 @Component({
   selector: 'app-password',
@@ -42,10 +41,8 @@ export class PasswordComponent implements OnInit, OnDestroy {
       }
       this.toasterService.pop('success',
         this.i18nService.get('success'),
-        this.i18nService.get('password reset complete'),
+        this.i18nService.get('change password completed'),
       )
-      const data = new User()
-      data.name = this.name
       this.matDialogRef.close()
     }, (e) => {
       if (this._closed) {

@@ -3,6 +3,7 @@ import { Session, SessionService } from 'src/app/core/session/session.service';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginComponent } from '../login/login.component';
+import { PasswordComponent } from '../password/password.component';
 @Component({
   selector: 'shared-navigation-bar',
   templateUrl: './navigation-bar.component.html',
@@ -33,9 +34,13 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
   }
-
+  onClickPassword() {
+    this.matDialog.open(PasswordComponent, {
+      disableClose: true,
+    })
+  }
   onClickLogin() {
-    this.matDialog.open(LoginComponent);
+    this.matDialog.open(LoginComponent)
   }
   onClickLogout() {
     this.sessionService.logout();

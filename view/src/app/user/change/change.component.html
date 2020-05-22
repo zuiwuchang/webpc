@@ -1,1 +1,26 @@
-<p>change works!</p>
+<h1 mat-dialog-title>
+    <ng-container i18n>Change authorization</ng-container>
+    <mat-icon *ngIf="disabled">
+        <mat-spinner color="accent" diameter='32'></mat-spinner>
+    </mat-icon>
+</h1>
+
+<form #viewForm="ngForm">
+
+    <div mat-dialog-content class="dialog-form-view">
+        <div>
+            {{data.name}}
+        </div>
+        <div>
+            <mat-checkbox [disabled]="disabled" [(ngModel)]="read" name="read">Read</mat-checkbox>
+            <mat-checkbox [disabled]="disabled" [(ngModel)]="write" name="write">Write</mat-checkbox>
+            <mat-checkbox [disabled]="disabled" [(ngModel)]="shell" name="shell">Shell</mat-checkbox>
+            <mat-checkbox [disabled]="disabled" [(ngModel)]="root" name="root">Root</mat-checkbox>
+        </div>
+    </div>
+    <div mat-dialog-actions>
+        <button type="button" mat-stroked-button i18n [disabled]="disabled || viewForm.invalid || isNotChanged"
+            (click)="onSave()">Submit</button>
+        <button type="button" mat-stroked-button i18n [disabled]="disabled" (click)="onClose()">Close</button>
+    </div>
+</form>
