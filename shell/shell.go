@@ -49,6 +49,9 @@ func (s *Shell) Run(ws *websocket.Conn, username, shellid string, cols, rows uin
 	}
 
 	s.conn = ws
+	if ws != nil {
+		ws.WriteMessage(websocket.BinaryMessage, []byte("\r\nwelcome guys, more info at https://gitlab.com/king011/webpc\r\n\r\n"))
+	}
 
 	// 等待進程結束
 	go s.wait()
@@ -69,7 +72,7 @@ func (s *Shell) wait() {
 
 	s.mutex.Unlock()
 	// 更新數據庫 進程 結束
-	Single().unattach(s.username, s.shellid)
+	Single().Unattach(s.username, s.shellid)
 }
 
 // Attack .

@@ -31,7 +31,16 @@ type Manager struct {
 	keys  map[string]*Element
 }
 
-func (m *Manager) unattach(username, shellid string) (e error) {
+// Unattach 進程結束 釋放資源
+func (m *Manager) Unattach(username, shellid string) (e error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	element, ok := m.keys[username]
+	if !ok {
+		return
+	}
+	element.Unattach(username, shellid)
 	return
 }
 
@@ -93,6 +102,7 @@ func (element *Element) Attach(ws *websocket.Conn, username, shellid string, col
 			return
 		}
 		s = shell
+		element.keys[shellid] = s
 		// 更新數據庫
 		element.add(username, shellid, shellid)
 	} else {
@@ -110,6 +120,19 @@ func (element *Element) Attach(ws *websocket.Conn, username, shellid string, col
 	return
 }
 
+// Unattach .
+func (element *Element) Unattach(username, shellid string) (ok bool) {
+	_, ok = element.keys[shellid]
+	if !ok {
+		return
+	}
+	delete(element.keys, shellid)
+	element.remove(username, shellid)
+	return
+}
 func (element *Element) add(username, shellid, name string) {
-
+	// 更新數據庫
+}
+func (element *Element) remove(username, shellid string) {
+	// 更新數據庫
 }

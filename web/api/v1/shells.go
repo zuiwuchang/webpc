@@ -46,12 +46,19 @@ func (h Shells) connect(c *gin.Context) {
 		h.NegotiateError(c, http.StatusBadRequest, e)
 		return
 	}
-	u, e := uuid.NewUUID()
-	if e != nil {
-		h.NegotiateError(c, http.StatusBadRequest, e)
-		return
+	var newshell bool
+	var shellid string
+	if obj.ID == `new` {
+		newshell = true
+		u, e := uuid.NewUUID()
+		if e != nil {
+			h.NegotiateError(c, http.StatusBadRequest, e)
+			return
+		}
+		shellid = u.String()
+	} else {
+		shellid = obj.ID
 	}
-	shellid := u.String()
 
 	ws, e := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if e != nil {
@@ -59,14 +66,8 @@ func (h Shells) connect(c *gin.Context) {
 	}
 	defer ws.Close()
 
-	s, e := shell.New(`/bin/bash`, `-l`)
-	if e != nil {
-		shell.WriteMessage(ws, shell.DataTypeError, e.Error())
-		return
-	}
-
-	// 運行 shell
-	e = s.Run(ws, session.Name, shellid, obj.Cols, obj.Rows)
+	manager := shell.Single()
+	s, e := manager.Attach(ws, session.Name, shellid, obj.Cols, obj.Rows, newshell)
 	if e != nil {
 		shell.WriteMessage(ws, shell.DataTypeError, e.Error())
 		return

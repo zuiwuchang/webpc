@@ -102,7 +102,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
         if (evt.data instanceof ArrayBuffer) {
           if (first) {
             first = false
-            this._xterm.writeln('')
+            this._xterm.focus()
           }
           this._xterm.write(new Uint8Array(evt.data))
         } else {
