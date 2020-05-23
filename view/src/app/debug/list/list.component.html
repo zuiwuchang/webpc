@@ -1,0 +1,19 @@
+<mat-card>
+    <mat-card-title>
+        <ng-container i18n>Debug</ng-container>
+
+        <mat-spinner color="accent" diameter='32' *ngIf="disabled"></mat-spinner>
+    </mat-card-title>
+    <mat-card-content>
+        <mat-list>
+            <mat-list-item>{{source.platform}}</mat-list-item>
+            <mat-list-item>maxprocs {{source.maxprocs}}</mat-list-item>
+            <mat-list-item>cpus {{source.cpus}}</mat-list-item>
+            <mat-list-item>cgos {{source.cgos}}</mat-list-item>
+            <mat-list-item>goroutines {{source.goroutines}}</mat-list-item>
+        </mat-list>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-stroked-button color="primary" [disabled]="disabled" i18n (click)="load()">Refresh</button>
+    </mat-card-actions>
+</mat-card>

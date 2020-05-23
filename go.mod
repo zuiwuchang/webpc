@@ -7,8 +7,10 @@ require (
 	github.com/creack/pty v1.1.11
 	github.com/gin-gonic/gin v1.6.3
 	github.com/google/go-jsonnet v0.15.0
+	github.com/google/uuid v1.1.1
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/websocket v1.4.2
+	github.com/json-iterator/go v1.1.9
 	github.com/spf13/cobra v1.0.0
 	gitlab.com/king011/king-go v0.0.10
 	gitlab.com/king011/v2ray-web v1.1.0 // indirect

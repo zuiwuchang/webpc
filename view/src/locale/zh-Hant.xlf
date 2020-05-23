@@ -11,7 +11,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
-          <context context-type="linenumber">69</context>
+          <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="62029286ca62531f2dbe4708f6d3509c5cde0438" datatype="html">
@@ -75,7 +75,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">46</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/add/add.component.html</context>
@@ -267,11 +267,23 @@
         <target>用戶管理</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">55</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
           <context context-type="linenumber">25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dcfc990a822e11feb00eb91d9cf4d6ec0ed37dd0" datatype="html">
+        <source>Debug</source>
+        <target>調試</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/debug/list/list.component.html</context>
+          <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
       <trans-unit id="be394178ed48540a1665330866853faecea24c55" datatype="html">
@@ -279,7 +291,7 @@
         <target>登出</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
-          <context context-type="linenumber">64</context>
+          <context context-type="linenumber">69</context>
         </context-group>
       </trans-unit>
       <trans-unit id="f0dc0497ad16adbd386a3b2f2c55d81c51a1f029" datatype="html">
@@ -346,6 +358,22 @@
           <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
+        <source>Refresh</source>
+        <target>刷新</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/debug/list/list.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="94be6ae6ec1f87bedc67020629343b27fdbece0a" datatype="html">
         <source>Add User</source>
         <target>添加用戶</target>
@@ -360,18 +388,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/change/change.component.html</context>
           <context context-type="linenumber">2</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
-        <source>Refresh</source>
-        <target>刷新</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
-          <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="a568d6cc7b8a3f14399663426bb1b4fc137b1a8d" datatype="html">
@@ -419,7 +435,15 @@
         <target>連接</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
-          <context context-type="linenumber">25</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="11f4334bbb40a09c78f16d8e11e68cfd01badd4d" datatype="html">
+        <source>Terminal</source>
+        <target>終端</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
+          <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
     </body>

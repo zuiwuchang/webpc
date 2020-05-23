@@ -18,6 +18,7 @@ func (h Helper) Register(router *gin.RouterGroup) {
 	r := router.Group(BaseURL)
 
 	ms := []web.IHelper{
+		Debug{},
 		Session{},
 		Other{},
 		Users{},

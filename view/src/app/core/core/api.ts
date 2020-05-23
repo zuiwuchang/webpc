@@ -3,8 +3,10 @@ const root = '/api'
 
 export const ServerAPI = {
     v1: {
-        session: new RESTful(`${root}/v1/session`),
         version: new RESTful(`${root}/v1/version`),
+        debug: new RESTful(`${root}/v1/debug`),
+
+        session: new RESTful(`${root}/v1/session`),
         users: new RESTful(`${root}/v1/users`),
         shells: new RESTful(`${root}/v1/shells`),
     },
