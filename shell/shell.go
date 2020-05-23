@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	// DataTypeTTY tty 消息
-	DataTypeTTY = iota + 1
-	// DataTypeError 錯誤
-	DataTypeError
-	// DataTypeResize 更改大小
-	DataTypeResize
+	// CmdError 錯誤
+	CmdError = iota + 1
+	// CmdResize 更改大小
+	CmdResize
+	// CmdInfo 返回终端信息
+	CmdInfo
 )
 
 // ErrAlreadyAttach .
@@ -34,16 +34,8 @@ type Shell struct {
 	mutex sync.Mutex
 }
 
-// New 创建 shell
-func New(name string, args ...string) (shell *Shell, e error) {
-	shell = &Shell{
-		term: term.New(name, args...),
-	}
-	return
-}
-
 // Run 运行 shell
-func (s *Shell) Run(ws *websocket.Conn, username string, shellid int64, cols, rows uint16) (e error) {
+func (s *Shell) Run(ws *websocket.Conn, cols, rows uint16) (e error) {
 	// 運行 命令
 	e = s.term.Start(cols, rows)
 	if e != nil {
@@ -55,6 +47,8 @@ func (s *Shell) Run(ws *websocket.Conn, username string, shellid int64, cols, ro
 	s.conn = ws
 	if ws != nil {
 		ws.WriteMessage(websocket.BinaryMessage, []byte("\r\nwelcome guys, more info at https://gitlab.com/king011/webpc\r\n\r\n"))
+
+		WriteInfo(ws, s.shellid, s.name)
 	}
 
 	// 等待進程結束
@@ -101,6 +95,9 @@ func (s *Shell) Attack(ws *websocket.Conn, cols, rows uint16) (e error) {
 			e = s.term.SetSize(cols, rows)
 			s.cols = cols
 			s.rows = rows
+		}
+		if e == nil {
+			WriteInfo(ws, s.shellid, s.name)
 		}
 	} else {
 		e = ErrAlreadyAttach

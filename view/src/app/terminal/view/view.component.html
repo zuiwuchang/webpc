@@ -4,6 +4,14 @@
         <mat-spinner color="accent" diameter='32' *ngIf="disabled"></mat-spinner>
     </mat-card-title>
     <mat-card-content>
+        <ng-container *ngIf="info;then infoView"></ng-container>
+        <ng-template #infoView>
+            <p>
+                {{info.id}}
+                {{info.name}}
+            </p>
+        </ng-template>
+
         <div (window:resize)="onResize()" class="view">
             <div #xterm style="height: 100%;"></div>
         </div>

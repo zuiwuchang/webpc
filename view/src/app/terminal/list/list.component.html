@@ -10,15 +10,14 @@
                 <mat-icon matListIcon fontSet="fontawesome-fas" fontIcon="fa-terminal"></mat-icon>
                 <h3 matLine>{{node.name}}</h3>
                 <h3 matLine>{{node.id}}</h3>
-                <button mat-icon-button [disabled]="disabled">
-                    <mat-icon>{{node.attached? 'done':'close'}}</mat-icon>
+                <button mat-icon-button [disabled]="true">
+                    <mat-icon color="accent">{{node.attached? 'done':'close'}}</mat-icon>
                 </button>
-                <a routerLink="view/{{node.id}}">
-                    <button mat-icon-button i18n-matTooltip matTooltip="Connect">
-                        <mat-icon>settings_ethernet</mat-icon>
-                    </button>
+                <a mat-icon-button routerLink="view/{{node.id}}" i18n-matTooltip matTooltip="Connect">
+                    <mat-icon>settings_ethernet</mat-icon>
                 </a>
-                <button mat-icon-button i18n-matTooltip matTooltip="edit" [disabled]="disabled">
+                <button mat-icon-button i18n-matTooltip matTooltip="edit" [disabled]="disabled"
+                    (click)="onClickEdit(node)">
                     <mat-icon>edit</mat-icon>
                 </button>
                 <button mat-icon-button i18n-matTooltip matTooltip="delete" [disabled]="disabled">

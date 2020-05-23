@@ -59,7 +59,7 @@ export class ListComponent implements OnInit {
         this._disabled = false
       })
   }
-  onClickAdd() {
+  onClickEdit(node: Shell) {
 
   }
 }

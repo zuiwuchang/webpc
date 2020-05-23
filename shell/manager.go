@@ -6,9 +6,15 @@ import (
 	"sync"
 	"time"
 
+	"github.com/boltdb/bolt"
 	"github.com/gorilla/websocket"
 	"gitlab.com/king011/webpc/configure"
+	"gitlab.com/king011/webpc/db/data"
+	"gitlab.com/king011/webpc/db/manipulator"
+	"gitlab.com/king011/webpc/logger"
 	"gitlab.com/king011/webpc/shell/internal/term"
+	"gitlab.com/king011/webpc/utils"
+	"go.uber.org/zap"
 )
 
 // ErrShellidDuplicate .
@@ -95,6 +101,93 @@ func (m *Manager) List(username string) (arrs []ListInfo) {
 	return
 }
 
+// Restore 恢复 shell
+func (m *Manager) Restore() {
+	manipulator.DB().View(func(t *bolt.Tx) (e error) {
+		bucket := t.Bucket(utils.StringToBytes(data.ShellBucket))
+		if bucket == nil {
+			return
+		}
+		cursor := bucket.Cursor()
+		for k, _ := cursor.First(); k != nil; k, _ = cursor.Next() {
+			shell := bucket.Bucket(k)
+			if shell == nil {
+				return
+			}
+			m.restore(string(k), shell)
+		}
+		return
+	})
+	return
+}
+func newTerm() *term.Term {
+	cnf := configure.Single()
+	var name string
+	var args []string
+	count := len(cnf.System.Shell)
+	if count == 0 {
+		name = os.Getenv(`SHELL`)
+	} else {
+		name = cnf.System.Shell[0]
+	}
+	if count > 1 {
+		args = cnf.System.Shell[1:]
+	}
+	return term.New(name, args...)
+}
+func (m *Manager) restore(username string, bucket *bolt.Bucket) {
+	cursor := bucket.Cursor()
+	for k, v := cursor.First(); k != nil; k, v = cursor.Next() {
+		var shell data.Shell
+		e := shell.Decode(v)
+		if e != nil {
+			if ce := logger.Logger.Check(zap.ErrorLevel, `restore shell error`); ce != nil {
+				ce.Write(
+					zap.Error(e),
+					zap.String(`username`, username),
+					zap.Int64(`key`, int64(data.DecodeID(k))),
+				)
+			}
+			continue
+		}
+		s := &Shell{
+			term:     newTerm(),
+			username: username,
+			shellid:  shell.ID,
+			name:     shell.Name,
+		}
+		e = s.Run(nil, 24, 10)
+		if e != nil {
+			if ce := logger.Logger.Check(zap.ErrorLevel, `restore shell error`); ce != nil {
+				ce.Write(
+					zap.Error(e),
+					zap.String(`username`, username),
+					zap.Int64(`key`, shell.ID),
+					zap.String(`name`, shell.Name),
+				)
+			}
+			continue
+		}
+
+		if ce := logger.Logger.Check(zap.InfoLevel, `restore shell`); ce != nil {
+			ce.Write(
+				zap.String(`username`, username),
+				zap.Int64(`key`, shell.ID),
+				zap.String(`name`, shell.Name),
+			)
+		}
+
+		element := m.keys[username]
+		if element == nil {
+			element = &Element{
+				keys: make(map[int64]*Shell),
+			}
+			m.keys[username] = element
+		}
+		element.keys[s.shellid] = s
+	}
+}
+
 // Element .
 type Element struct {
 	keys map[int64]*Shell
@@ -107,26 +200,13 @@ func (element *Element) Attach(ws *websocket.Conn, username string, shellid int6
 			e = ErrShellidDuplicate
 			return
 		}
-		cnf := configure.Single()
-		var name string
-		var args []string
-		count := len(cnf.System.Shell)
-		if count == 0 {
-			name = os.Getenv(`SHELL`)
-		} else {
-			name = cnf.System.Shell[0]
-		}
-		if count > 1 {
-			args = cnf.System.Shell[1:]
-		}
-
 		shell := &Shell{
-			term:     term.New(name, args...),
+			term:     newTerm(),
 			username: username,
 			shellid:  shellid,
 			name:     time.Unix(shellid, 0).Local().Format(`2006/01/02 15:04:05`),
 		}
-		e = shell.Run(ws, username, shellid, cols, rows)
+		e = shell.Run(ws, cols, rows)
 		if e != nil {
 			return
 		}
@@ -161,7 +241,14 @@ func (element *Element) Unattach(username string, shellid int64) (ok bool) {
 }
 func (element *Element) add(username string, shellid int64, name string) {
 	// 更新數據庫
+	var mShell manipulator.Shell
+	mShell.Add(username, &data.Shell{
+		ID:   shellid,
+		Name: name,
+	})
 }
 func (element *Element) remove(username string, shellid int64) {
 	// 更新數據庫
+	var mShell manipulator.Shell
+	mShell.Remove(username, shellid)
 }

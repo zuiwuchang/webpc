@@ -6,14 +6,20 @@ import { WebLinksAddon } from 'xterm-addon-web-links';
 import { Subject, Subscription } from 'rxjs'
 import { debounceTime } from 'rxjs/operators';
 import { ServerAPI, getWebSocketAddr } from 'src/app/core/core/api';
+import { isString } from 'util';
 
-// DataTypeTTY tty 消息
-const DataTypeTTY = 1
-// DataTypeError 錯誤
-const DataTypeError = 2
-// DataTypeResize 更改大小
-const DataTypeResize = 3
+// CmdError 錯誤
+const CmdError = 1
+// CmdResize 更改大小
+const CmdResize = 2
+// CmdInfo 返回终端信息
+const CmdInfo = 3
 
+interface Info {
+  cmd: number
+  id: number
+  name: string
+}
 @Component({
   selector: 'app-view',
   templateUrl: './view.component.html',
@@ -31,6 +37,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   private _xterm: Terminal
   private _websocket: WebSocket
+  info: Info
   ngOnInit(): void {
   }
   ngOnDestroy() {
@@ -74,9 +81,6 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       fitAddon.fit()
     })
-    xterm.onResize((evt) => {
-      console.log(evt)
-    })
 
     let id = 0;
     try {
@@ -105,7 +109,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
       })
       this._xterm.onResize(function (evt) {
         websocket.send(JSON.stringify({
-          what: DataTypeResize,
+          cmd: CmdResize,
           cols: evt.cols,
           rows: evt.rows,
         }))
@@ -118,17 +122,35 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
             this._xterm.focus()
           }
           this._xterm.write(new Uint8Array(evt.data))
+        } else if (isString(evt.data)) {
+          try {
+            this.onMessage(JSON.parse(evt.data))
+          } catch (e) {
+            console.warn(e)
+          }
         } else {
-          console.log(evt.data)
+          console.warn(`unknow type`, evt.data)
         }
       }
       websocket.onclose = (evt) => {
-        this._xterm.writeln("\nSession terminated")
+        this._xterm.writeln("\r\nSession terminated")
         this._xterm.setOption("cursorBlink", false)
       }
     }
   }
   onResize() {
     this._subject.next(new Date())
+  }
+  private onMessage(obj: any) {
+    switch (obj.cmd) {
+      case CmdInfo:
+        this.info = obj
+        break
+      case CmdError:
+        this._xterm.writeln("\n" + obj.error)
+        break
+      default:
+        console.warn(`unknow command : `, obj)
+    }
   }
 }

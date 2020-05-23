@@ -144,6 +144,16 @@ func (m User) Add(name, password string, shell, read, write, root bool) (e error
 			return
 		}
 		e = bucket.Put(key, b)
+		if e != nil {
+			return
+		}
+		// 新建 shell
+		bucket = t.Bucket([]byte(data.ShellBucket))
+		if bucket == nil {
+			e = fmt.Errorf("bucket not exist : %s", data.ShellBucket)
+			return
+		}
+		_, e = bucket.CreateBucket(key)
 		return
 	})
 	return
@@ -156,6 +166,7 @@ func (m User) Remove(name string) (e error) {
 		return
 	}
 	e = _db.Update(func(t *bolt.Tx) (e error) {
+		// 删除用户
 		bucket := t.Bucket([]byte(data.UserBucket))
 		if bucket == nil {
 			e = fmt.Errorf("bucket not exist : %s", data.UserBucket)
@@ -163,6 +174,21 @@ func (m User) Remove(name string) (e error) {
 		}
 		key := utils.StringToBytes(name)
 		e = bucket.Delete(key)
+		if e != nil {
+			return
+		}
+
+		// 删除 shell
+		bucket = t.Bucket([]byte(data.ShellBucket))
+		if bucket == nil {
+			e = fmt.Errorf("bucket not exist : %s", data.ShellBucket)
+			return
+		}
+		e = bucket.DeleteBucket(key)
+		if e == bolt.ErrBucketNotFound {
+			e = nil
+			return
+		}
 		return
 	})
 	return

@@ -17,10 +17,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
+import { EditComponent } from './edit/edit.component';
 
 
 @NgModule({
-  declarations: [ListComponent, ViewComponent],
+  declarations: [ListComponent, ViewComponent, EditComponent],
   imports: [
     CommonModule,
 

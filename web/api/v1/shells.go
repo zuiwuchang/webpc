@@ -70,7 +70,7 @@ func (h Shells) connect(c *gin.Context) {
 	manager := shell.Single()
 	s, e := manager.Attach(ws, session.Name, shellid, obj.Cols, obj.Rows, newshell)
 	if e != nil {
-		ws.Close()
+
 		if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 			ce.Write(
 				zap.Error(e),
@@ -81,7 +81,11 @@ func (h Shells) connect(c *gin.Context) {
 				zap.Int64(`id`, shellid),
 			)
 		}
-		shell.WriteMessage(ws, shell.DataTypeError, e.Error())
+		shell.WriteJSON(ws, gin.H{
+			`cmd`:   shell.CmdError,
+			`error`: e.Error(),
+		})
+		ws.Close()
 		return
 	}
 	if ce := logger.Logger.Check(zap.InfoLevel, c.FullPath()); ce != nil {
@@ -123,8 +127,8 @@ func (h Shells) connect(c *gin.Context) {
 				}
 				continue
 			}
-			if msg.What == shell.DataTypeResize {
-				e = s.SetSize(msg.Cols, msg.Rows)
+			if msg.Cmd == shell.CmdResize {
+				s.SetSize(msg.Cols, msg.Rows)
 			}
 		}
 	}

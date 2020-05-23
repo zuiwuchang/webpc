@@ -12,6 +12,7 @@ import (
 
 	"gitlab.com/king011/webpc/configure"
 	"gitlab.com/king011/webpc/logger"
+	"gitlab.com/king011/webpc/shell"
 )
 
 // Run run as deamon
@@ -48,6 +49,7 @@ func Run(release bool) {
 			log.Println(`http work`, cnf.Addr)
 		}
 	}
+	shell.Single().Restore()
 
 	router := newGIN()
 

@@ -35,6 +35,7 @@ func Init(source string) (e error) {
 	e = db.Update(func(tx *bolt.Tx) (e error) {
 		buckets := []manipulator{
 			User{},
+			Shell{},
 		}
 		for i := 0; i < len(buckets); i++ {
 			e = buckets[i].Init(tx)
