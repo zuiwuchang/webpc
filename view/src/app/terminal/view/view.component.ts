@@ -64,7 +64,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     xterm.open(this.xterm.nativeElement)
     fitAddon.fit()
 
-    xterm.write('wait connect server $ ')
+    xterm.writeln('wait connect server')
     // 訂閱 窗口大小 改變
     this._subscription = this._subject.pipe(
       debounceTime(100)
@@ -78,14 +78,27 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log(evt)
     })
 
-    const id = this.route.snapshot.paramMap.get(`id`)
+    let id = 0;
+    try {
+      id = parseInt(this.route.snapshot.paramMap.get(`id`))
+      if (isNaN(id)) {
+        id = 0
+      }
+    } catch (e) {
+      console.warn(e)
+    }
     this._connect(id)
   }
-  private _connect(id: string) {
+  private _connect(id: number) {
     const url = getWebSocketAddr(`/ws${ServerAPI.v1.shells.baseURL}/${id}/${this._xterm.cols}/${this._xterm.rows}`)
+    console.log(url)
     const websocket = new WebSocket(url)
     this._websocket = websocket
     websocket.binaryType = "arraybuffer"
+    websocket.onerror = (evt) => {
+      this._xterm.writeln("websocket error")
+      console.log(evt)
+    }
     websocket.onopen = (evt) => {
       this._xterm.onData(function (data) {
         websocket.send(new TextEncoder().encode(data))
@@ -110,12 +123,8 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
       websocket.onclose = (evt) => {
-        this._xterm.writeln("Session terminated")
+        this._xterm.writeln("\nSession terminated")
         this._xterm.setOption("cursorBlink", false)
-      }
-      websocket.onerror = (evt) => {
-        this._xterm.writeln("websocket error")
-        console.log(evt)
       }
     }
   }

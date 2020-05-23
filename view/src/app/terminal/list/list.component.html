@@ -7,13 +7,19 @@
     <mat-card-content>
         <mat-list>
             <mat-list-item *ngFor="let node of source">
-                <mat-icon matListIcon>account_circle</mat-icon>
+                <mat-icon matListIcon fontSet="fontawesome-fas" fontIcon="fa-terminal"></mat-icon>
                 <h3 matLine>{{node.name}}</h3>
-                <button mat-icon-button i18n-matTooltip matTooltip="edit" [disabled]="disabled">
-                    <mat-icon>create</mat-icon>
+                <h3 matLine>{{node.id}}</h3>
+                <button mat-icon-button [disabled]="disabled">
+                    <mat-icon>{{node.attached? 'done':'close'}}</mat-icon>
                 </button>
-                <button mat-icon-button i18n-matTooltip matTooltip="Password" [disabled]="disabled">
-                    <mat-icon>lock</mat-icon>
+                <a routerLink="view/{{node.id}}">
+                    <button mat-icon-button i18n-matTooltip matTooltip="Connect">
+                        <mat-icon>settings_ethernet</mat-icon>
+                    </button>
+                </a>
+                <button mat-icon-button i18n-matTooltip matTooltip="edit" [disabled]="disabled">
+                    <mat-icon>edit</mat-icon>
                 </button>
                 <button mat-icon-button i18n-matTooltip matTooltip="delete" [disabled]="disabled">
                     <mat-icon>delete</mat-icon>
@@ -22,9 +28,11 @@
         </mat-list>
     </mat-card-content>
     <mat-card-actions>
-        <button mat-stroked-button color="primary" [disabled]="disabled" routerLink="view/new">
-            <ng-container i18n>Connect</ng-container>
-        </button>
+        <a routerLink="view/new">
+            <button mat-stroked-button color="primary">
+                <ng-container i18n>Create Connect</ng-container>
+            </button>
+        </a>
         <button mat-stroked-button color="primary" [disabled]="disabled" i18n (click)="load()">Refresh</button>
     </mat-card-actions>
 </mat-card>

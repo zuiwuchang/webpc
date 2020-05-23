@@ -2,11 +2,13 @@ package v1
 
 import (
 	"net/http"
+	"time"
 
-	"github.com/google/uuid"
+	"go.uber.org/zap"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"gitlab.com/king011/webpc/logger"
 	"gitlab.com/king011/webpc/shell"
 	"gitlab.com/king011/webpc/web"
 )
@@ -29,7 +31,13 @@ func (h Shells) Register(router *gin.RouterGroup) {
 	r.GET(`:id/:cols/:rows`, h.CheckShell, h.connect)
 }
 func (h Shells) list(c *gin.Context) {
-
+	session := h.BindSession(c)
+	if session == nil {
+		return
+	}
+	manager := shell.Single()
+	arrs := manager.List(session.Name)
+	h.NegotiateData(c, http.StatusOK, arrs)
 }
 func (h Shells) connect(c *gin.Context) {
 	session := h.BindSession(c)
@@ -37,7 +45,7 @@ func (h Shells) connect(c *gin.Context) {
 		return
 	}
 	var obj struct {
-		ID   string `uri:"id"  binding:"required"`
+		ID   int64  `uri:"id"`
 		Cols uint16 `uri:"cols"  binding:"required"`
 		Rows uint16 `uri:"rows" binding:"required"`
 	}
@@ -47,15 +55,10 @@ func (h Shells) connect(c *gin.Context) {
 		return
 	}
 	var newshell bool
-	var shellid string
-	if obj.ID == `new` {
+	var shellid int64
+	if obj.ID == 0 {
 		newshell = true
-		u, e := uuid.NewUUID()
-		if e != nil {
-			h.NegotiateError(c, http.StatusBadRequest, e)
-			return
-		}
-		shellid = u.String()
+		shellid = time.Now().UTC().Unix()
 	} else {
 		shellid = obj.ID
 	}
@@ -64,14 +67,37 @@ func (h Shells) connect(c *gin.Context) {
 	if e != nil {
 		return
 	}
-	defer ws.Close()
-
 	manager := shell.Single()
 	s, e := manager.Attach(ws, session.Name, shellid, obj.Cols, obj.Rows, newshell)
 	if e != nil {
+		ws.Close()
+		if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.Error(e),
+				zap.String(`method`, c.Request.Method),
+				zap.String(`session`, session.String()),
+				zap.String(`client ip`, c.ClientIP()),
+				zap.Bool(`new`, newshell),
+				zap.Int64(`id`, shellid),
+			)
+		}
 		shell.WriteMessage(ws, shell.DataTypeError, e.Error())
 		return
 	}
+	if ce := logger.Logger.Check(zap.InfoLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.Error(e),
+			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
+			zap.String(`client ip`, c.ClientIP()),
+			zap.Bool(`new`, newshell),
+			zap.Int64(`id`, shellid),
+		)
+	}
+	defer func() {
+		ws.Close()
+		s.Unattack(ws)
+	}()
 
 	// 讀取 websocket
 	var msg shell.Message
@@ -85,6 +111,16 @@ func (h Shells) connect(c *gin.Context) {
 		} else if t == websocket.TextMessage {
 			e = msg.Unmarshal(p)
 			if e != nil {
+				if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+					ce.Write(
+						zap.Error(e),
+						zap.String(`method`, c.Request.Method),
+						zap.String(`session`, session.String()),
+						zap.String(`client ip`, c.ClientIP()),
+						zap.Bool(`new`, newshell),
+						zap.Int64(`id`, shellid),
+					)
+				}
 				continue
 			}
 			if msg.What == shell.DataTypeResize {

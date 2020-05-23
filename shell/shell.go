@@ -26,8 +26,10 @@ type Shell struct {
 	conn *websocket.Conn
 
 	username string
-	shellid  string
+	shellid  int64
 	name     string
+	cols     uint16
+	rows     uint16
 
 	mutex sync.Mutex
 }
@@ -41,12 +43,14 @@ func New(name string, args ...string) (shell *Shell, e error) {
 }
 
 // Run 运行 shell
-func (s *Shell) Run(ws *websocket.Conn, username, shellid string, cols, rows uint16) (e error) {
+func (s *Shell) Run(ws *websocket.Conn, username string, shellid int64, cols, rows uint16) (e error) {
 	// 運行 命令
 	e = s.term.Start(cols, rows)
 	if e != nil {
 		return
 	}
+	s.cols = cols
+	s.rows = rows
 
 	s.conn = ws
 	if ws != nil {
@@ -75,27 +79,52 @@ func (s *Shell) wait() {
 	Single().Unattach(s.username, s.shellid)
 }
 
+// IsAttack .
+func (s *Shell) IsAttack() (yes bool) {
+	s.mutex.Lock()
+	yes = s.conn != nil
+	s.mutex.Unlock()
+	return
+}
+
 // Attack .
 func (s *Shell) Attack(ws *websocket.Conn, cols, rows uint16) (e error) {
 	s.mutex.Lock()
 	if s.conn == nil {
 		s.conn = ws
-		e = s.term.SetSize(cols, rows)
+		if s.cols == cols && s.rows == rows {
+			e0 := s.term.SetSize(cols+1, rows)
+			if e0 == nil {
+				e = s.term.SetSize(cols, rows)
+			}
+		} else {
+			e = s.term.SetSize(cols, rows)
+			s.cols = cols
+			s.rows = rows
+		}
 	} else {
 		e = ErrAlreadyAttach
 	}
 	s.mutex.Unlock()
 	return
 }
+
+// Unattack .
+func (s *Shell) Unattack(ws *websocket.Conn) {
+	s.mutex.Lock()
+	if s.conn == ws {
+		s.conn = nil
+	}
+	s.mutex.Unlock()
+}
 func (s *Shell) readTTY() {
 	b := make([]byte, 1024)
 	for {
-		n, e := s.term.Read(b[1:])
+		n, e := s.term.Read(b)
 		if n != 0 {
 			s.mutex.Lock()
 			if s.conn != nil {
-				b[0] = DataTypeTTY
-				e = s.conn.WriteMessage(websocket.BinaryMessage, b[:1+n])
+				e = s.conn.WriteMessage(websocket.BinaryMessage, b[:n])
 				if e != nil {
 					s.closeWebsocket()
 				}

@@ -3,6 +3,8 @@ export class Shell {
     id: string
     // shell 顯示名稱
     name: string
+    // 是否 附加 websocket
+    attached: boolean
 
     static compare(l: Shell, r: Shell): number {
         if (l.name != r.name) {

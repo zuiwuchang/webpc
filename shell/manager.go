@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"gitlab.com/king011/webpc/configure"
@@ -25,6 +26,16 @@ func Single() *Manager {
 	return &manager
 }
 
+// ListInfo .
+type ListInfo struct {
+	// shell id
+	ID int64 `json:"id,omitempty"`
+	// shell 顯示名稱
+	Name string `json:"name,omitempty"`
+	// 是否 附加 websocket
+	Attached bool `json:"attached,omitempty"`
+}
+
 // Manager .
 type Manager struct {
 	mutex sync.Mutex
@@ -32,7 +43,7 @@ type Manager struct {
 }
 
 // Unattach 進程結束 釋放資源
-func (m *Manager) Unattach(username, shellid string) (e error) {
+func (m *Manager) Unattach(username string, shellid int64) (e error) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -45,14 +56,14 @@ func (m *Manager) Unattach(username, shellid string) (e error) {
 }
 
 // Attach .
-func (m *Manager) Attach(ws *websocket.Conn, username, shellid string, cols, rows uint16, newshell bool) (s *Shell, e error) {
+func (m *Manager) Attach(ws *websocket.Conn, username string, shellid int64, cols, rows uint16, newshell bool) (s *Shell, e error) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
 	element, ok := m.keys[username]
 	if !ok {
 		element = &Element{
-			keys: make(map[string]*Shell),
+			keys: make(map[int64]*Shell),
 		}
 	}
 
@@ -67,13 +78,30 @@ func (m *Manager) Attach(ws *websocket.Conn, username, shellid string, cols, row
 	return
 }
 
+// List 列举 shell 状态
+func (m *Manager) List(username string) (arrs []ListInfo) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	if element, ok := m.keys[username]; ok {
+		for _, s := range element.keys {
+			arrs = append(arrs, ListInfo{
+				ID:       s.shellid,
+				Name:     s.name,
+				Attached: s.IsAttack(),
+			})
+		}
+	}
+	return
+}
+
 // Element .
 type Element struct {
-	keys map[string]*Shell
+	keys map[int64]*Shell
 }
 
 // Attach .
-func (element *Element) Attach(ws *websocket.Conn, username, shellid string, cols, rows uint16, newshell bool) (s *Shell, e error) {
+func (element *Element) Attach(ws *websocket.Conn, username string, shellid int64, cols, rows uint16, newshell bool) (s *Shell, e error) {
 	if newshell {
 		if _, ok := element.keys[shellid]; ok {
 			e = ErrShellidDuplicate
@@ -91,11 +119,12 @@ func (element *Element) Attach(ws *websocket.Conn, username, shellid string, col
 		if count > 1 {
 			args = cnf.System.Shell[1:]
 		}
+
 		shell := &Shell{
 			term:     term.New(name, args...),
 			username: username,
 			shellid:  shellid,
-			name:     shellid,
+			name:     time.Unix(shellid, 0).Local().Format(`2006/01/02 15:04:05`),
 		}
 		e = shell.Run(ws, username, shellid, cols, rows)
 		if e != nil {
@@ -104,7 +133,7 @@ func (element *Element) Attach(ws *websocket.Conn, username, shellid string, col
 		s = shell
 		element.keys[shellid] = s
 		// 更新數據庫
-		element.add(username, shellid, shellid)
+		element.add(username, shellid, shell.name)
 	} else {
 		shell, ok := element.keys[shellid]
 		if !ok {
@@ -121,7 +150,7 @@ func (element *Element) Attach(ws *websocket.Conn, username, shellid string, col
 }
 
 // Unattach .
-func (element *Element) Unattach(username, shellid string) (ok bool) {
+func (element *Element) Unattach(username string, shellid int64) (ok bool) {
 	_, ok = element.keys[shellid]
 	if !ok {
 		return
@@ -130,9 +159,9 @@ func (element *Element) Unattach(username, shellid string) (ok bool) {
 	element.remove(username, shellid)
 	return
 }
-func (element *Element) add(username, shellid, name string) {
+func (element *Element) add(username string, shellid int64, name string) {
 	// 更新數據庫
 }
-func (element *Element) remove(username, shellid string) {
+func (element *Element) remove(username string, shellid int64) {
 	// 更新數據庫
 }

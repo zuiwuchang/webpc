@@ -40,6 +40,7 @@ export class ListComponent implements OnInit {
   }
   load() {
     this._disabled = true
+    this._source.splice(0, this._source.length)
     ServerAPI.v1.shells.get<Array<Shell>>(this.httpClient)
       .then((data) => {
         if (this._closed) {
