@@ -1,1 +1,19 @@
-home works!
+ <mat-card>
+    <mat-card-title >
+        <ng-container i18n>File Management</ng-container>
+        <mat-spinner *ngIf="!ready" color="accent" diameter='32'></mat-spinner>
+    </mat-card-title>
+    <mat-card-content>
+        <mat-nav-list>
+            
+            <a [routerLink]="['fs','list']" [queryParams]="{root:node}" mat-list-item *ngFor="let node of source">
+                <mat-icon matListIcon>folder_special</mat-icon>
+                <h3 matLine>{{node}}</h3>
+            </a>
+        </mat-nav-list>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-stroked-button color="primary" [disabled]="!ready" i18n (click)="load()">Refresh</button>
+    </mat-card-actions>
+</mat-card>
+

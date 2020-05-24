@@ -23,6 +23,7 @@ func (h Helper) Register(router *gin.RouterGroup) {
 		Other{},
 		Users{},
 		Shells{},
+		FS{},
 	}
 	for _, m := range ms {
 		m.Register(r)

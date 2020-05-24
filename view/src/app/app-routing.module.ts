@@ -23,6 +23,10 @@ const routes: Routes = [
     path: 'terminal',
     loadChildren: () => import('./terminal/terminal.module').then(m => m.TerminalModule),
   },
+  {
+    path: 'fs',
+    loadChildren: () => import('./fs/fs.module').then(m => m.FsModule),
+  },
 ];
 
 @NgModule({

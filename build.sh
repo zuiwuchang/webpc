@@ -71,11 +71,11 @@ case $1 in
 		createGoVersion
 		if [[ $2 == d ]]; then
 			Target="$Target"d
-			echo go build -o "$DirRoot/bin/$Target"
-			cd "$DirRoot" && go build -o "$DirRoot/bin/$Target"
+			echo go build -tags=jsoniter -o "$DirRoot/bin/$Target"
+			cd "$DirRoot" && go build -tags=jsoniter -o "$DirRoot/bin/$Target"
 		else
-			echo go build -ldflags "-s -w" -o "$DirRoot/bin/$Target"
-			cd "$DirRoot" && go build -ldflags "-s -w" -o "$DirRoot/bin/$Target"
+			echo go build -ldflags "-s -w" -tags=jsoniter -o "$DirRoot/bin/$Target"
+			cd "$DirRoot" && go build -ldflags "-s -w" -tags=jsoniter -o "$DirRoot/bin/$Target"
 		fi
 		check $?
 
@@ -94,11 +94,11 @@ case $1 in
 		createGoVersion
 		if [[ $2 == d ]]; then
 			Target="$Target"d
-			echo go build -o "$DirRoot/bin/$Target"
-			cd "$DirRoot" && go build -o "$DirRoot/bin/$Target"
+			echo go build -tags=jsoniter -o "$DirRoot/bin/$Target"
+			cd "$DirRoot" && go build -tags=jsoniter -o "$DirRoot/bin/$Target"
 		else
-			echo go build -ldflags "-s -w" -o "$DirRoot/bin/$Target"
-			cd "$DirRoot" && go build -ldflags "-s -w" -o "$DirRoot/bin/$Target"
+			echo go build -ldflags "-s -w" -tags=jsoniter -o "$DirRoot/bin/$Target"
+			cd "$DirRoot" && go build -ldflags "-s -w" -tags=jsoniter -o "$DirRoot/bin/$Target"
 		fi
 		check $?
 
@@ -117,11 +117,11 @@ case $1 in
 		createGoVersion
 		if [[ $2 == d ]]; then
 			Target="$Target"d
-			echo go build -o "$DirRoot/bin/$Target.exe"
-			cd "$DirRoot" && go build -o "$DirRoot/bin/$Target.exe"
+			echo go build -tags=jsoniter -o "$DirRoot/bin/$Target.exe"
+			cd "$DirRoot" && go build -tags=jsoniter -o "$DirRoot/bin/$Target.exe"
 		else
-			echo go build -ldflags "-s -w" -o "$DirRoot/bin/$Target.exe"
-			cd "$DirRoot" && go build -ldflags "-s -w" -o "$DirRoot/bin/$Target.exe"
+			echo go build -ldflags "-s -w" -tags=jsoniter -o "$DirRoot/bin/$Target.exe"
+			cd "$DirRoot" && go build -ldflags "-s -w" -tags=jsoniter -o "$DirRoot/bin/$Target.exe"
 		fi
 		check $?
 
