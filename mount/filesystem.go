@@ -1,5 +1,18 @@
 package mount
 
+import (
+	"errors"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"gitlab.com/king011/webpc/logger"
+	"go.uber.org/zap"
+)
+
+// Separator .
+var Separator = string(filepath.Separator)
+
 // FileSystem .
 type FileSystem struct {
 	ms []Mount
@@ -62,4 +75,50 @@ func (m *Mount) Write() bool {
 // Shared .
 func (m *Mount) Shared() bool {
 	return m.shared
+}
+
+// LS .
+func (m *Mount) LS(path string) (dir string, results []FileInfo, e error) {
+	dst := filepath.Clean(m.root + path)
+	if path != dst {
+		root := m.root + Separator
+		if !strings.HasPrefix(path, root) {
+			e = errors.New(`Illegal path`)
+		}
+	}
+	f, e := os.Open(dst)
+	if e != nil {
+		return
+	}
+	infos, e := f.Readdir(0)
+	f.Close()
+	count := len(infos)
+	if e != nil {
+		if count == 0 {
+			return
+		}
+		if ce := logger.Logger.Check(zap.WarnLevel, "readdir error"); ce != nil {
+			ce.Write(
+				zap.Error(e),
+			)
+		}
+		e = nil
+	}
+
+	dir = dst[len(m.root):]
+	if dir == `` {
+		dir = `/`
+	} else {
+		if Separator != `/` {
+			dir = strings.ReplaceAll(path, Separator, `/`)
+		}
+	}
+	results = make([]FileInfo, count)
+	for i := 0; i < count; i++ {
+		results[i].Name = infos[i].Name()
+		results[i].Mode = uint32(infos[i].Mode())
+		results[i].Size = infos[i].Size()
+		results[i].IsDir = infos[i].IsDir()
+	}
+	return
 }

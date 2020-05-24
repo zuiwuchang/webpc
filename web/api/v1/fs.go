@@ -17,15 +17,14 @@ type FS struct {
 func (h FS) Register(router *gin.RouterGroup) {
 	r := router.Group(`fs`)
 
-	r.GET(`ls`, h.ls)
-	r.POST(`ls`, h.ls)
+	r.GET(``, h.ls)
 }
 func (h FS) ls(c *gin.Context) {
 	var obj struct {
 		Root string `form:"root" json:"root" xml:"root" yaml:"root" binding:"required"`
 		Path string `form:"path" json:"path" xml:"path" yaml:"path" binding:"required"`
 	}
-	e := h.Bind(c, &obj)
+	e := h.BindQuery(c, &obj)
 	if e != nil {
 		return
 	}
@@ -38,6 +37,22 @@ func (h FS) ls(c *gin.Context) {
 	if !h.checkRead(c, m) {
 		return
 	}
+	dir, items, e := m.LS(obj.Path)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+
+	h.NegotiateData(c, http.StatusOK, gin.H{
+		`dir`: gin.H{
+			`root`:   m.Name(),
+			`read`:   m.Read(),
+			`write`:  m.Write(),
+			`shared`: m.Shared(),
+			`dir`:    dir,
+		},
+		`items`: items,
+	})
 }
 func (h FS) checkRead(c *gin.Context, m *mount.Mount) (ok bool) {
 	if m.Shared() {

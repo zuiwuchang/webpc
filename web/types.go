@@ -90,6 +90,11 @@ func (h Helper) Bind(c *gin.Context, obj interface{}) error {
 	return h.BindWith(c, obj, b)
 }
 
+// BindQuery .
+func (h Helper) BindQuery(c *gin.Context, obj interface{}) error {
+	return h.BindWith(c, obj, binding.Query)
+}
+
 // BindURI .
 func (h Helper) BindURI(c *gin.Context, obj interface{}) (e error) {
 	e = c.ShouldBindUri(obj)

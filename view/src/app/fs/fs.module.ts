@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { FsRoutingModule } from './fs-routing.module';
 import { ListComponent } from './list/list.component';
@@ -12,7 +14,7 @@ import { ListComponent } from './list/list.component';
   declarations: [ListComponent],
   imports: [
     CommonModule, RouterModule,
-    MatListModule,
+    MatListModule, MatCardModule, MatProgressSpinnerModule,
     FsRoutingModule
   ]
 })

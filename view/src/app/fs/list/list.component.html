@@ -1,9 +1,15 @@
-<mat-nav-list>
-<a [routerLink]="['/fs/list']" [queryParams]="{root:123,path:456}"  mat-list-item >
-    <h3 matLine>1</h3>
-</a>
-<a [routerLink]="['/fs/list']" [queryParams]="{root:'abc',path:'def'}" mat-list-item >
+<mat-card>
+    <mat-card-title>
+        <ng-container>{{root}}</ng-container>
 
-    <h3 matLine>2</h3>
-</a>
-</mat-nav-list>
+        <mat-spinner color="accent" diameter='32' *ngIf="query"></mat-spinner>
+    </mat-card-title>
+    <mat-card-content>
+        <mat-nav-list>
+            <a [routerLink]="['/fs/list']" [queryParams]="{root:node.root,path:node.filename}"  mat-list-item *ngFor="let node of source">
+                <h3 matLine>{{node.name}}</h3>
+            </a>
+            </mat-nav-list>
+            
+    </mat-card-content>
+</mat-card>

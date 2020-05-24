@@ -10,6 +10,8 @@ export const ServerAPI = {
         session: new RESTful(`${root}/v1/session`),
         users: new RESTful(`${root}/v1/users`),
         shells: new RESTful(`${root}/v1/shells`),
+
+        fs: new RESTful(`${root}/v1/fs`),
     },
 }
 export function getWebSocketAddr(path: string): string {
