@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { SessionService } from 'src/app/core/session/session.service';
 import { Shell } from '../shell';
 import { ServerAPI } from 'src/app/core/core/api';
+import { EditComponent } from '../edit/edit.component';
+import { ConfirmComponent } from 'src/app/shared/dialog/confirm/confirm.component';
 
 @Component({
   selector: 'app-list',
@@ -19,7 +21,6 @@ export class ListComponent implements OnInit {
     private matDialog: MatDialog,
     private sessionService: SessionService,
   ) { }
-  err: any
   private _closed = false
   private _disabled = false
   get disabled(): boolean {
@@ -54,12 +55,51 @@ export class ListComponent implements OnInit {
         if (this._closed) {
           return
         }
-        this.err = e
+        this.toasterService.pop('error',
+          this.i18nService.get('error'),
+          e,
+        )
       }).finally(() => {
         this._disabled = false
       })
   }
   onClickEdit(node: Shell) {
-
+    this.matDialog.open(EditComponent, {
+      data: node,
+      disableClose: true,
+    })
+  }
+  onClickDelete(node: Shell) {
+    this.matDialog.open(ConfirmComponent, {
+      data: {
+        title: this.i18nService.get("delete terminal"),
+        content: `${this.i18nService.get("delete terminal")} : ${node.name}`,
+      },
+    }).afterClosed().toPromise().then((data) => {
+      if (this._closed || !data) {
+        return
+      }
+      this._delete(node)
+    })
+  }
+  private _delete(node: Shell) {
+    this._disabled = true
+    ServerAPI.v1.shells.deleteOne(this.httpClient, node.id)
+      .then(() => {
+        const index = this._source.indexOf(node)
+        this._source.splice(index, 1)
+        this.toasterService.pop('success',
+          this.i18nService.get('success'),
+          this.i18nService.get('terminal has been deleted'),
+        )
+      }, (e) => {
+        console.warn(e)
+        this.toasterService.pop('error',
+          this.i18nService.get('error'),
+          e,
+        )
+      }).finally(() => {
+        this._disabled = false
+      })
   }
 }

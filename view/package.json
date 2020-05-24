@@ -25,6 +25,7 @@
     "angular2-toaster": "^8.0.0",
     "hammerjs": "^2.0.8",
     "js-sha512": "^0.8.0",
+    "moment": "^2.26.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "xterm": "^4.6.0",

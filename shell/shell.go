@@ -3,6 +3,7 @@ package shell
 import (
 	"errors"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"gitlab.com/king011/webpc/shell/internal/term"
@@ -30,6 +31,7 @@ type Shell struct {
 	name     string
 	cols     uint16
 	rows     uint16
+	started  int64
 
 	mutex sync.Mutex
 }
@@ -43,12 +45,13 @@ func (s *Shell) Run(ws *websocket.Conn, cols, rows uint16) (e error) {
 	}
 	s.cols = cols
 	s.rows = rows
+	s.started = time.Now().UTC().Unix()
 
 	s.conn = ws
 	if ws != nil {
 		ws.WriteMessage(websocket.BinaryMessage, []byte("\r\nwelcome guys, more info at https://gitlab.com/king011/webpc\r\n\r\n"))
 
-		WriteInfo(ws, s.shellid, s.name)
+		WriteInfo(ws, s.shellid, s.name, s.started)
 	}
 
 	// 等待進程結束
@@ -97,7 +100,7 @@ func (s *Shell) Attack(ws *websocket.Conn, cols, rows uint16) (e error) {
 			s.rows = rows
 		}
 		if e == nil {
-			WriteInfo(ws, s.shellid, s.name)
+			WriteInfo(ws, s.shellid, s.name, s.started)
 		}
 	} else {
 		e = ErrAlreadyAttach
@@ -156,4 +159,16 @@ func (s *Shell) SetSize(cols, rows uint16) (e error) {
 // Write .
 func (s *Shell) Write(b []byte) (int, error) {
 	return s.term.Write(b)
+}
+
+// Rename .
+func (s *Shell) Rename(name string) {
+	s.mutex.Lock()
+	if s.name != name {
+		s.name = name
+		if s.conn != nil {
+			WriteInfo(s.conn, s.shellid, name, s.started)
+		}
+	}
+	s.mutex.Unlock()
 }

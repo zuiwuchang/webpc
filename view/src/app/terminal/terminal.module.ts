@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { FormsModule } from '@angular/forms';
 import { TerminalRoutingModule } from './terminal-routing.module';
 
 import { MatListModule } from '@angular/material/list';
@@ -23,7 +23,7 @@ import { EditComponent } from './edit/edit.component';
 @NgModule({
   declarations: [ListComponent, ViewComponent, EditComponent],
   imports: [
-    CommonModule,
+    CommonModule, FormsModule,
 
     MatListModule, MatButtonModule, MatIconModule,
     MatTooltipModule, MatFormFieldModule, MatInputModule,
@@ -31,6 +31,7 @@ import { EditComponent } from './edit/edit.component';
     MatProgressBarModule, MatCheckboxModule,
 
     TerminalRoutingModule,
-  ]
+  ],
+  entryComponents: [EditComponent],
 })
 export class TerminalModule { }

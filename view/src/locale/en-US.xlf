@@ -11,7 +11,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
-          <context context-type="linenumber">69</context>
+          <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="62029286ca62531f2dbe4708f6d3509c5cde0438" datatype="html">
@@ -45,6 +45,10 @@
           <context context-type="sourcefile">src/app/user/add/add.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="5314f3960d1a662e977d8f0a5a3943120824255c" datatype="html">
         <source>Default Name : killer</source>
@@ -65,6 +69,10 @@
           <context context-type="sourcefile">src/app/user/add/add.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
         <source>Password</source>
@@ -75,7 +83,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">46</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/add/add.component.html</context>
@@ -153,6 +161,10 @@
           <context context-type="sourcefile">src/app/user/change/change.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
         <source>Close</source>
@@ -180,6 +192,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/change/change.component.html</context>
           <context context-type="linenumber">24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
+          <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5edf054f14aa57bc25a28cb7db01956fee53dac8" datatype="html">
@@ -263,11 +279,23 @@
         <target>User Management</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">55</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
           <context context-type="linenumber">25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dcfc990a822e11feb00eb91d9cf4d6ec0ed37dd0" datatype="html">
+        <source>Debug</source>
+        <target>Debug</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/debug/list/list.component.html</context>
+          <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
       <trans-unit id="be394178ed48540a1665330866853faecea24c55" datatype="html">
@@ -275,7 +303,7 @@
         <target>sign out</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
-          <context context-type="linenumber">64</context>
+          <context context-type="linenumber">69</context>
         </context-group>
       </trans-unit>
       <trans-unit id="f0dc0497ad16adbd386a3b2f2c55d81c51a1f029" datatype="html">
@@ -342,6 +370,38 @@
           <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="e638d2f4ac91aa9566017b58dba7917c874ca914" datatype="html">
+        <source>terminal has been deleted</source>
+        <target>terminal has been deleted</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e9a1e99ed0b3b197b9bfaeba769afee15f8430d5" datatype="html">
+        <source>change terminal completed</source>
+        <target>change terminal completed</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
+        <source>Refresh</source>
+        <target>Refresh</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/debug/list/list.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="94be6ae6ec1f87bedc67020629343b27fdbece0a" datatype="html">
         <source>Add User</source>
         <target>Add User</target>
@@ -358,20 +418,16 @@
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
-        <source>Refresh</source>
-        <target>Refresh</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="a568d6cc7b8a3f14399663426bb1b4fc137b1a8d" datatype="html">
         <source>edit</source>
         <target>edit</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
           <context context-type="linenumber">31</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="70ef158c584bafe788e319a0bffa11b02ee9abf1" datatype="html">
@@ -381,6 +437,10 @@
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="a11ec4e640f241329943237d2a3cceaa4823658e" datatype="html">
         <source>add</source>
@@ -388,6 +448,50 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
           <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2c6ed0dfff156d0a467e56ae26bb3a81bd66b53a" datatype="html">
+        <source>Change Terminal</source>
+        <target>Change Terminal</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7a890188d24cc8449764f72befdb37458adced07" datatype="html">
+        <source>Terminal List</source>
+        <target>Terminal List</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="da6aa9950c74cadd85a3bf26272f34f28d8338c8" datatype="html">
+        <source>Connect</source>
+        <target>Connect</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2d64c5ec475afbe35d9309b8405d6654441b386b" datatype="html">
+        <source>Create Connect</source>
+        <target>Create Connect</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="11f4334bbb40a09c78f16d8e11e68cfd01badd4d" datatype="html">
+        <source>Terminal</source>
+        <target>Terminal</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
+          <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
     </body>

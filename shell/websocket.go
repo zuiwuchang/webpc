@@ -32,11 +32,12 @@ func WriteJSON(ws *websocket.Conn, obj interface{}) (e error) {
 }
 
 // WriteInfo .
-func WriteInfo(ws *websocket.Conn, id int64, name string) (e error) {
+func WriteInfo(ws *websocket.Conn, id int64, name string, started int64) (e error) {
 	b, e := json.Marshal(gin.H{
-		`cmd`:  CmdInfo,
-		`id`:   id,
-		`name`: name,
+		`cmd`:     CmdInfo,
+		`id`:      id,
+		`name`:    name,
+		`started`: started,
 	})
 	if e != nil {
 		return

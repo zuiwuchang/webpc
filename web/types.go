@@ -136,6 +136,15 @@ func (h Helper) CheckShell(c *gin.Context) {
 	}
 }
 
+// CheckSession 檢查是否具有 session
+func (h Helper) CheckSession(c *gin.Context) {
+	session := h.BindSession(c)
+	if session == nil {
+		c.Abort()
+		return
+	}
+}
+
 // NegotiateError .
 func (h Helper) NegotiateError(c *gin.Context, code int, e error) {
 	c.Negotiate(code, gin.Negotiate{

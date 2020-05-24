@@ -6,7 +6,8 @@ import { WebLinksAddon } from 'xterm-addon-web-links';
 import { Subject, Subscription } from 'rxjs'
 import { debounceTime } from 'rxjs/operators';
 import { ServerAPI, getWebSocketAddr } from 'src/app/core/core/api';
-import { isString } from 'util';
+import { isString, isNumber } from 'util';
+import { interval } from 'rxjs';
 
 // CmdError 錯誤
 const CmdError = 1
@@ -19,6 +20,27 @@ interface Info {
   cmd: number
   id: number
   name: string
+  started: number
+}
+const Second = 1
+const Minute = 60 * Second
+const Hour = 60 * Minute
+const Day = 60 * Hour
+function pushStep(arrs: Array<string>, v: number, step: number, flag: string): number {
+  if (v > step) {
+    const tmp = Math.floor(v / step)
+    arrs.push(`${tmp}${flag}`)
+    v -= tmp * step
+  }
+  return v
+}
+function durationToString(v: number): string {
+  const arrs = new Array<string>()
+  v = pushStep(arrs, v, Day, "d")
+  v = pushStep(arrs, v, Hour, "h")
+  v = pushStep(arrs, v, Minute, "m")
+  v = pushStep(arrs, v, Second, "s")
+  return arrs.join(``)
 }
 @Component({
   selector: 'app-view',
@@ -29,19 +51,33 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private route: ActivatedRoute,
   ) { }
   private _closed = false
-  private _disabled = false
   private _subject = new Subject()
   private _subscription: Subscription
-  get disabled(): boolean {
-    return this._disabled
-  }
   private _xterm: Terminal
   private _websocket: WebSocket
   info: Info
+  private _subscriptionInterval: Subscription
+  duration: string = ''
+  get ok(): boolean {
+    if (this._websocket) {
+      return true
+    }
+    return false
+  }
   ngOnInit(): void {
+    this._subscriptionInterval = interval(1000).subscribe(() => {
+      if (!this._websocket) {
+        return
+      }
+      if (this.info && isNumber(this.info.started)) {
+        const val = new Date().getTime() - this.info.started * 1000
+        this.duration = durationToString(val / 1000)
+      }
+    })
   }
   ngOnDestroy() {
     this._closed = true
+    this._subscriptionInterval.unsubscribe()
     if (this._websocket) {
       this._websocket.close()
       this._websocket = null
@@ -62,7 +98,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
       screenReaderMode: true,
     })
     this._xterm = xterm
-
+    console.log(xterm.getOption("fontSize"))
     // 加載插件
     const fitAddon = new FitAddon()
     xterm.loadAddon(fitAddon)
@@ -71,7 +107,6 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     xterm.open(this.xterm.nativeElement)
     fitAddon.fit()
 
-    xterm.writeln('wait connect server')
     // 訂閱 窗口大小 改變
     this._subscription = this._subject.pipe(
       debounceTime(100)
@@ -93,21 +128,49 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this._connect(id)
   }
+  connect = false
   private _connect(id: number) {
+    setTimeout(() => {
+      this._connectDelay(id)
+    }, 0)
+  }
+  private _connectDelay(id: number) {
+    if (this.connect) {
+      return
+    }
+    this.connect = true
     const url = getWebSocketAddr(`/ws${ServerAPI.v1.shells.baseURL}/${id}/${this._xterm.cols}/${this._xterm.rows}`)
     console.log(url)
     const websocket = new WebSocket(url)
     this._websocket = websocket
     websocket.binaryType = "arraybuffer"
     websocket.onerror = (evt) => {
-      this._xterm.writeln("websocket error")
       console.log(evt)
+      websocket.close()
+      if (this._websocket != websocket) {
+        return
+      }
+      this.connect = false
+      this._xterm.writeln("websocket error")
+      this._websocket = null
     }
     websocket.onopen = (evt) => {
-      this._xterm.onData(function (data) {
+      if (this._websocket != websocket) {
+        websocket.close()
+        return
+      }
+      this.connect = false
+
+      this._xterm.onData((data) => {
+        if (this._websocket != websocket) {
+          return
+        }
         websocket.send(new TextEncoder().encode(data))
       })
-      this._xterm.onResize(function (evt) {
+      this._xterm.onResize((evt) => {
+        if (this._websocket != websocket) {
+          return
+        }
         websocket.send(JSON.stringify({
           cmd: CmdResize,
           cols: evt.cols,
@@ -116,10 +179,17 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
       })
       let first = true
       websocket.onmessage = (evt) => {
+        if (this._websocket != websocket) {
+          websocket.close()
+          return
+        }
+        this.connect = false
+
         if (evt.data instanceof ArrayBuffer) {
           if (first) {
             first = false
             this._xterm.focus()
+            this._xterm.setOption("cursorBlink", true)
           }
           this._xterm.write(new Uint8Array(evt.data))
         } else if (isString(evt.data)) {
@@ -133,9 +203,22 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
       websocket.onclose = (evt) => {
+        websocket.close()
+
+        if (this._websocket != websocket) {
+          return
+        }
         this._xterm.writeln("\r\nSession terminated")
         this._xterm.setOption("cursorBlink", false)
+        this._websocket = null
+        this.connect = false
       }
+    }
+  }
+  onClickConnect() {
+    if (isNumber(this.info.id) && !this._websocket) {
+      this._xterm.clear()
+      this._connect(this.info.id)
     }
   }
   onResize() {

@@ -47,7 +47,6 @@ func (h Users) add(c *gin.Context) {
 		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
 			ce.Write(
 				zap.String(`method`, c.Request.Method),
-				zap.String(`method`, c.Request.Method),
 				zap.String(`error`, `session nil`),
 			)
 		}

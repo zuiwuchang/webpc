@@ -20,7 +20,8 @@
                     (click)="onClickEdit(node)">
                     <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button i18n-matTooltip matTooltip="delete" [disabled]="disabled">
+                <button mat-icon-button i18n-matTooltip matTooltip="delete" [disabled]="disabled"
+                    (click)="onClickDelete(node)">
                     <mat-icon>delete</mat-icon>
                 </button>
             </mat-list-item>

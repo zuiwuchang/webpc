@@ -27,8 +27,10 @@ type Shells struct {
 func (h Shells) Register(router *gin.RouterGroup) {
 	r := router.Group(`/shells`)
 
-	r.GET(``, h.list)
+	r.GET(``, h.CheckSession, h.list)
 	r.GET(`:id/:cols/:rows`, h.CheckShell, h.connect)
+	r.PATCH(`:id/name`, h.CheckShell, h.rename)
+	r.DELETE(`:id`, h.CheckShell, h.remove)
 }
 func (h Shells) list(c *gin.Context) {
 	session := h.BindSession(c)
@@ -42,6 +44,7 @@ func (h Shells) list(c *gin.Context) {
 func (h Shells) connect(c *gin.Context) {
 	session := h.BindSession(c)
 	if session == nil {
+		h.NegotiateErrorString(c, http.StatusInternalServerError, `session miss`)
 		return
 	}
 	var obj struct {
@@ -49,9 +52,8 @@ func (h Shells) connect(c *gin.Context) {
 		Cols uint16 `uri:"cols"  binding:"required"`
 		Rows uint16 `uri:"rows" binding:"required"`
 	}
-	e := c.ShouldBindUri(&obj)
+	e := h.BindURI(c, &obj)
 	if e != nil {
-		h.NegotiateError(c, http.StatusBadRequest, e)
 		return
 	}
 	var newshell bool
@@ -131,5 +133,66 @@ func (h Shells) connect(c *gin.Context) {
 				s.SetSize(msg.Cols, msg.Rows)
 			}
 		}
+	}
+}
+func (h Shells) rename(c *gin.Context) {
+	session := h.BindSession(c)
+	if session == nil {
+		h.NegotiateErrorString(c, http.StatusInternalServerError, `session miss`)
+		return
+	}
+	var objURI struct {
+		ID int64 `uri:"id" binding:"required"`
+	}
+	e := h.BindURI(c, &objURI)
+	if e != nil {
+		return
+	}
+	var obj struct {
+		Name string `uri:"name" binding:"required"`
+	}
+	e = h.Bind(c, &obj)
+	if e != nil {
+		return
+	}
+
+	manager := shell.Single()
+	e = manager.Rename(session.Name, objURI.ID, obj.Name)
+	if e != nil {
+		h.NegotiateError(c, http.StatusNotFound, e)
+		return
+	}
+	c.Status(http.StatusNoContent)
+	if ce := logger.Logger.Check(zap.InfoLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.String(`method`, c.Request.Method),
+			zap.Int64(`id`, objURI.ID),
+			zap.String(`val`, obj.Name),
+		)
+	}
+}
+func (h Shells) remove(c *gin.Context) {
+	session := h.BindSession(c)
+	if session == nil {
+		h.NegotiateErrorString(c, http.StatusInternalServerError, `session miss`)
+		return
+	}
+	var objURI struct {
+		ID int64 `uri:"id" binding:"required"`
+	}
+	e := h.BindURI(c, &objURI)
+	if e != nil {
+		return
+	}
+	manager := shell.Single()
+	e = manager.Kill(session.Name, objURI.ID)
+	if e != nil {
+		return
+	}
+	if ce := logger.Logger.Check(zap.InfoLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.String(`method`, c.Request.Method),
+			zap.Int64(`id`, objURI.ID),
+		)
 	}
 }

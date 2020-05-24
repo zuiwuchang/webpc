@@ -52,6 +52,7 @@ export class ChangeComponent implements OnInit, OnDestroy {
       !this.root == !this.data.root
   }
   onSave() {
+    this._disabled = true
     ServerAPI.v1.users.patchOne(this.httpClient, this.data.name, `change`, {
       shell: this.shell,
       read: this.read,

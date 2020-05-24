@@ -1,14 +1,22 @@
 <mat-card>
     <mat-card-title>
         <ng-container i18n>Terminal</ng-container>
-        <mat-spinner color="accent" diameter='32' *ngIf="disabled"></mat-spinner>
+        <mat-spinner *ngIf="connect" color="accent" diameter='32'></mat-spinner>
     </mat-card-title>
     <mat-card-content>
         <ng-container *ngIf="info;then infoView"></ng-container>
         <ng-template #infoView>
             <p>
+                <button mat-icon-button [disabled]="true">
+                    <mat-icon color="accent">{{ok ? 'done':'close'}}</mat-icon>
+                </button>
                 {{info.id}}
                 {{info.name}}
+                {{this.duration}}
+
+                <button *ngIf="!ok" (click)="onClickConnect()" mat-icon-button i18n-matTooltip matTooltip="Connect">
+                    <mat-icon>settings_ethernet</mat-icon>
+                </button>
             </p>
         </ng-template>
 
