@@ -131,6 +131,31 @@ func (h Shells) connect(c *gin.Context) {
 			}
 			if msg.Cmd == shell.CmdResize {
 				s.SetSize(msg.Cols, msg.Rows)
+			} else if msg.Cmd == shell.CmdFontsize {
+				s.SetFontsize(msg.Val)
+			} else {
+				if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+					ce.Write(
+						zap.String("error", "not support websocket msg type"),
+						zap.String(`method`, c.Request.Method),
+						zap.String(`session`, session.String()),
+						zap.String(`client ip`, c.ClientIP()),
+						zap.Bool(`new`, newshell),
+						zap.Int64(`id`, shellid),
+						zap.Int(`cmd`, msg.Cmd),
+					)
+				}
+			}
+		} else {
+			if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+				ce.Write(
+					zap.String("error", "not support websocket type"),
+					zap.String(`method`, c.Request.Method),
+					zap.String(`session`, session.String()),
+					zap.String(`client ip`, c.ClientIP()),
+					zap.Bool(`new`, newshell),
+					zap.Int64(`id`, shellid),
+				)
 			}
 		}
 	}

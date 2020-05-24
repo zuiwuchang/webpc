@@ -17,12 +17,15 @@ const CmdResize = 2
 const CmdInfo = 3
 // CmdHeart websocket 心跳防止瀏覽器 關閉不獲取 websocket
 const CmdHeart = 4
+// CmdFontsize 設置字體大小
+const CmdFontsize = 5
 
 interface Info {
   cmd: number
   id: number
   name: string
   started: number
+  fontSize: number
 }
 const Second = 1
 const Minute = 60 * Second
@@ -209,7 +212,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
           this._xterm.write(new Uint8Array(evt.data))
         } else if (isString(evt.data)) {
           try {
-            this.onMessage(JSON.parse(evt.data))
+            this._onMessage(JSON.parse(evt.data))
           } catch (e) {
             console.warn(e)
           }
@@ -239,10 +242,11 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   onResize() {
     this._subject.next(new Date())
   }
-  private onMessage(obj: any) {
+  private _onMessage(obj: any) {
     switch (obj.cmd) {
       case CmdInfo:
         this.info = obj
+        this._onFontsize(this.info.fontSize)
         break
       case CmdError:
         this._xterm.writeln("\n" + obj.error)
@@ -251,8 +255,19 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
         console.warn(`unknow command : `, obj)
     }
   }
+  private _onFontsize(fontSize: number) {
+    if (!isNumber(fontSize)) {
+      return
+    }
+    fontSize = Math.floor(fontSize)
+    if (fontSize < 5 || fontSize == this.fontSize) {
+      return
+    }
+    this.fontSize = fontSize
+    this.onClickFontSize()
+  }
   onClickFontSize() {
-    if (!this._xterm || this.fontSize < 5 || !isNumber(this.fontSize) || !this._fitAddon) {
+    if (!this._xterm || this.fontSize < 5 || !isNumber(this.fontSize) || !this._fitAddon || !this._websocket) {
       return
     }
     if (this.fontSize == this._xterm.getOption("fontSize")) {
@@ -260,5 +275,9 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this._xterm.setOption("fontSize", this.fontSize)
     this._fitAddon.fit()
+    this._websocket.send(JSON.stringify({
+      cmd: CmdFontsize,
+      val: this.fontSize,
+    }))
   }
 }

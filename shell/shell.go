@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"gitlab.com/king011/webpc/db/manipulator"
 	"gitlab.com/king011/webpc/shell/internal/term"
 )
 
@@ -18,6 +19,8 @@ const (
 	CmdInfo
 	// CmdHeart websocket 心跳防止瀏覽器 關閉不獲取 websocket
 	CmdHeart
+	// CmdFontsize 設置字體大小
+	CmdFontsize
 )
 
 // ErrAlreadyAttach .
@@ -34,6 +37,7 @@ type Shell struct {
 	cols     uint16
 	rows     uint16
 	started  int64
+	fontSize int
 
 	mutex sync.Mutex
 }
@@ -53,7 +57,7 @@ func (s *Shell) Run(ws *websocket.Conn, cols, rows uint16) (e error) {
 	if ws != nil {
 		ws.WriteMessage(websocket.BinaryMessage, []byte("\r\nwelcome guys, more info at https://gitlab.com/king011/webpc\r\n\r\n"))
 
-		WriteInfo(ws, s.shellid, s.name, s.started)
+		WriteInfo(ws, s.shellid, s.name, s.started, s.fontSize)
 	}
 
 	// 等待進程結束
@@ -102,7 +106,7 @@ func (s *Shell) Attack(ws *websocket.Conn, cols, rows uint16) (e error) {
 			s.rows = rows
 		}
 		if e == nil {
-			WriteInfo(ws, s.shellid, s.name, s.started)
+			WriteInfo(ws, s.shellid, s.name, s.started, s.fontSize)
 		}
 	} else {
 		e = ErrAlreadyAttach
@@ -158,6 +162,18 @@ func (s *Shell) SetSize(cols, rows uint16) (e error) {
 	return
 }
 
+// SetFontsize .
+func (s *Shell) SetFontsize(val int) (e error) {
+	s.mutex.Lock()
+	if s.fontSize != val {
+		s.fontSize = val
+		var mShell manipulator.Shell
+		mShell.SetFontSize(s.username, s.shellid, val)
+	}
+	s.mutex.Unlock()
+	return
+}
+
 // Write .
 func (s *Shell) Write(b []byte) (int, error) {
 	return s.term.Write(b)
@@ -169,7 +185,7 @@ func (s *Shell) Rename(name string) {
 	if s.name != name {
 		s.name = name
 		if s.conn != nil {
-			WriteInfo(s.conn, s.shellid, name, s.started)
+			WriteInfo(s.conn, s.shellid, name, s.started, s.fontSize)
 		}
 	}
 	s.mutex.Unlock()

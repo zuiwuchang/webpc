@@ -157,6 +157,7 @@ func (m *Manager) restore(username string, bucket *bolt.Bucket) {
 			username: username,
 			shellid:  shell.ID,
 			name:     shell.Name,
+			fontSize: shell.FontSize,
 		}
 		e = s.Run(nil, 24, 10)
 		if e != nil {
