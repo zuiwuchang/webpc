@@ -56,11 +56,13 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   private _subject = new Subject()
   private _subscription: Subscription
   private _xterm: Terminal
+  private _fitAddon: FitAddon
   private _websocket: WebSocket
   info: Info
   private _subscriptionInterval: Subscription
   private _subscriptionPing: Subscription
   duration: string = ''
+  fontSize = 15
   get ok(): boolean {
     if (this._websocket) {
       return true
@@ -109,9 +111,11 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
       screenReaderMode: true,
     })
     this._xterm = xterm
-    console.log(xterm.getOption("fontSize"))
+    this.fontSize = xterm.getOption("fontSize")
+
     // 加載插件
     const fitAddon = new FitAddon()
+    this._fitAddon = fitAddon
     xterm.loadAddon(fitAddon)
     xterm.loadAddon(new WebLinksAddon())
 
@@ -246,5 +250,15 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
       default:
         console.warn(`unknow command : `, obj)
     }
+  }
+  onClickFontSize() {
+    if (!this._xterm || this.fontSize < 5 || !isNumber(this.fontSize) || !this._fitAddon) {
+      return
+    }
+    if (this.fontSize == this._xterm.getOption("fontSize")) {
+      return
+    }
+    this._xterm.setOption("fontSize", this.fontSize)
+    this._fitAddon.fit()
   }
 }
