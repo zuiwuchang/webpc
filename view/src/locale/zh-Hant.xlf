@@ -372,7 +372,7 @@
       </trans-unit>
       <trans-unit id="e638d2f4ac91aa9566017b58dba7917c874ca914" datatype="html">
         <source>terminal has been deleted</source>
-        <target>终端已被移除</target>
+        <target>終端已被移除</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
           <context context-type="linenumber">14</context>
@@ -380,10 +380,18 @@
       </trans-unit>
       <trans-unit id="e9a1e99ed0b3b197b9bfaeba769afee15f8430d5" datatype="html">
         <source>change terminal completed</source>
-        <target>更改终端完成</target>
+        <target>更改終端完成</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
           <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7698abde8f9da1b98376c71bf1a8ad8bca21b705" datatype="html">
+        <source>delete terminal</source>
+        <target>刪除終端</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
       <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
@@ -452,7 +460,7 @@
       </trans-unit>
       <trans-unit id="2c6ed0dfff156d0a467e56ae26bb3a81bd66b53a" datatype="html">
         <source>Change Terminal</source>
-        <target>更改终端</target>
+        <target>更改終端</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
           <context context-type="linenumber">2</context>
@@ -480,7 +488,7 @@
       </trans-unit>
       <trans-unit id="2d64c5ec475afbe35d9309b8405d6654441b386b" datatype="html">
         <source>Create Connect</source>
-        <target>创建连接</target>
+        <target>創建連接</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
           <context context-type="linenumber">33</context>

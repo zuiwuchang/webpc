@@ -12,10 +12,12 @@ import (
 const (
 	// CmdError 錯誤
 	CmdError = iota + 1
-	// CmdResize 更改大小
+	// CmdResize 更改窗口大小
 	CmdResize
-	// CmdInfo 返回终端信息
+	// CmdInfo 返回終端信息
 	CmdInfo
+	// CmdHeart websocket 心跳防止瀏覽器 關閉不獲取 websocket
+	CmdHeart
 )
 
 // ErrAlreadyAttach .

@@ -11,10 +11,12 @@ import { interval } from 'rxjs';
 
 // CmdError 錯誤
 const CmdError = 1
-// CmdResize 更改大小
+// CmdResize 更改窗口大小
 const CmdResize = 2
-// CmdInfo 返回终端信息
+// CmdInfo 返回終端信息
 const CmdInfo = 3
+// CmdHeart websocket 心跳防止瀏覽器 關閉不獲取 websocket
+const CmdHeart = 4
 
 interface Info {
   cmd: number
@@ -57,6 +59,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   private _websocket: WebSocket
   info: Info
   private _subscriptionInterval: Subscription
+  private _subscriptionPing: Subscription
   duration: string = ''
   get ok(): boolean {
     if (this._websocket) {
@@ -74,10 +77,18 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
         this.duration = durationToString(val / 1000)
       }
     })
+    this._subscriptionPing = interval(1000 * 30).subscribe(() => {
+      if (this._websocket) {
+        this._websocket.send(JSON.stringify({
+          cmd: CmdHeart,
+        }))
+      }
+    })
   }
   ngOnDestroy() {
     this._closed = true
     this._subscriptionInterval.unsubscribe()
+    this._subscriptionPing.unsubscribe()
     if (this._websocket) {
       this._websocket.close()
       this._websocket = null

@@ -386,6 +386,14 @@
           <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="7698abde8f9da1b98376c71bf1a8ad8bca21b705" datatype="html">
+        <source>delete terminal</source>
+        <target>delete terminal</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
         <source>Refresh</source>
         <target>Refresh</target>
