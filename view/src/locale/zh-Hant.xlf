@@ -394,6 +394,38 @@
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="3c3f9cfd423f4471c09dfc9caec089c4b1c92078" datatype="html">
+        <source>about web pc text</source>
+        <target>擁有一個命令shell即可擁有完整的pc控制能力，websocket爲此提供了可能。方便的檔案管理，在線播放pc上的電影音樂，html5爲此提供了可能。web pc便是爲此目的而創建。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/content/about/about.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="322c0767dc9c04ae0cd899f0f9ce1403769a3163" datatype="html">
+        <source>Web Shell</source>
+        <target>Web Shell</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/content/about/about.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7c25ffdfdcbc340e0abe8ead8c8f9ca6a260e970" datatype="html">
+        <source>File Management</source>
+        <target>檔案管理</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/content/about/about.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="b3b7cbb5e68ad79b5f30d8d5be98b940099ca06e" datatype="html">
+        <source>Video Audio Play</source>
+        <target>視頻音頻播放</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/content/about/about.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
         <source>Refresh</source>
         <target>刷新</target>
@@ -483,7 +515,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
-          <context context-type="linenumber">16</context>
+          <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2d64c5ec475afbe35d9309b8405d6654441b386b" datatype="html">
@@ -494,20 +526,12 @@
           <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="11f4334bbb40a09c78f16d8e11e68cfd01badd4d" datatype="html">
-        <source>Terminal</source>
-        <target>終端</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
-          <context context-type="linenumber">3</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="0bd1b7ca428a0c47d189e1f26194062b13a0aa6c" datatype="html">
         <source>Font Size</source>
         <target>字體大小</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="450d56b40f37bf040e7eb84e2668903ddf020e7a" datatype="html">
@@ -515,7 +539,7 @@
         <target>無效的字體大小</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="a36cbf882f4d743c19a2dfdd899ec6ba44006289" datatype="html">
@@ -523,7 +547,7 @@
         <target>設置屬性</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
     </body>

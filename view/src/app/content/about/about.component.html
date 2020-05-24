@@ -1,1 +1,37 @@
-<p>about works!</p>
+<mat-card>
+    <mat-card-title>
+        Web PC
+    </mat-card-title>
+    <mat-card-content>
+        <p i18n>about web pc text</p>
+        <mat-list>
+            <mat-list-item>
+                <mat-icon>settings_ethernet</mat-icon>
+                <span class="context" i18n>Web Shell</span>
+            </mat-list-item>
+            <mat-list-item>
+                <mat-icon>folder_special</mat-icon>
+                <span class="context" i18n>File Management</span>
+            </mat-list-item>
+            <mat-list-item>
+                <mat-icon>video_library</mat-icon>
+                <span class="context" i18n>Video Audio Play</span>
+            </mat-list-item>
+        </mat-list>
+    </mat-card-content>
+</mat-card>
+<p>
+<mat-card>
+    <mat-card-title>
+        Version
+    </mat-card-title>
+    <mat-card-content>
+        <p>angular {{VERSION.full}}</p>
+        <div *ngIf="version">
+            <p>{{version.tag}} {{version.date}}</p>
+            <p>{{version.commit}}</p>
+        </div>
+
+    </mat-card-content>
+</mat-card>
+</p>
