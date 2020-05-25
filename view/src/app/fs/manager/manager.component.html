@@ -1,0 +1,7 @@
+<fs-path [path]="folder?.dir" (pathChange)="onPathChange($event)"></fs-path>
+
+<div class="view" #box (contextmenu)="onContextmenu($event)" (mousedown)="onStart($event)">
+    <fs-file [source]="node" *ngFor="let node of source"></fs-file>
+    <div [style.left]="rect.l+'px'" [style.top]="rect.t+'px'" [style.width]="rect.w+'px'" [style.height]="rect.h+'px'"
+        class="rectangle"></div>
+</div>

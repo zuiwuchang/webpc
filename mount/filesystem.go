@@ -106,12 +106,11 @@ func (m *Mount) LS(path string) (dir string, results []FileInfo, e error) {
 	}
 
 	dir = dst[len(m.root):]
-	if dir == `` {
-		dir = `/`
-	} else {
-		if Separator != `/` {
-			dir = strings.ReplaceAll(path, Separator, `/`)
-		}
+	if Separator != `/` {
+		dir = strings.ReplaceAll(path, Separator, `/`)
+	}
+	if !strings.HasPrefix(dir, Separator) {
+		dir = `/` + dir
 	}
 	results = make([]FileInfo, count)
 	for i := 0; i < count; i++ {

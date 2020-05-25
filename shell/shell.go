@@ -96,7 +96,7 @@ func (s *Shell) Attack(ws *websocket.Conn, cols, rows uint16) (e error) {
 	if s.conn == nil {
 		s.conn = ws
 		if s.cols == cols && s.rows == rows {
-			e0 := s.term.SetSize(cols+1, rows)
+			e0 := s.term.SetSize(1, 1)
 			if e0 == nil {
 				e = s.term.SetSize(cols, rows)
 			}

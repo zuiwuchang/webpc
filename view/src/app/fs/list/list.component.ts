@@ -6,36 +6,10 @@ import { ToasterService } from 'angular2-toaster';
 import { SessionService } from 'src/app/core/session/session.service';
 import { Subscription } from 'rxjs';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
-import { isArray, isString } from 'util';
+import { isArray } from 'util';
+import { FileInfo, Dir } from '../fs';
 
-interface Dir {
-  root: string
-  read?: boolean
-  write?: boolean
-  shared?: boolean
-  dir?: string
-}
-class FileInfo {
-  name: string
-  mode: number
-  size: number
-  isDir: boolean
 
-  filename: string
-  root: string
-  constructor(root: string, dir: string, other: FileInfo) {
-    this.name = other.name
-    this.mode = other.mode
-    this.size = other.size
-    this.isDir = other.isDir
-    if (dir.endsWith('/')) {
-      this.filename = dir + other.name
-    } else {
-      this.filename = dir + '/' + other.name
-    }
-    this.root = root
-  }
-}
 interface LSResponse {
   dir: Dir
   items: Array<FileInfo>
@@ -74,6 +48,10 @@ export class ListComponent implements OnInit, OnDestroy {
         if (!this.dir) {
           this.dir = {
             root: root,
+            read: false,
+            write: false,
+            shared: false,
+            dir: '',
           }
         }
         this._id++
@@ -95,6 +73,7 @@ export class ListComponent implements OnInit, OnDestroy {
             for (let i = 0; i < response.items.length; i++) {
               this._source.push(new FileInfo(this.dir.root, this.dir.dir, response.items[i]))
             }
+            this._source.sort(FileInfo.compare)
           } else {
             this._source = null
           }

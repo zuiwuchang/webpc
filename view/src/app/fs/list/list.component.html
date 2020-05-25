@@ -1,15 +1,13 @@
 <mat-card>
-    <mat-card-title>
-        <ng-container>{{root}}</ng-container>
-
-        <mat-spinner color="accent" diameter='32' *ngIf="query"></mat-spinner>
-    </mat-card-title>
     <mat-card-content>
-        <mat-nav-list>
-            <a [routerLink]="['/fs/list']" [queryParams]="{root:node.root,path:node.filename}"  mat-list-item *ngFor="let node of source">
-                <h3 matLine>{{node.name}}</h3>
-            </a>
-            </mat-nav-list>
-            
+        <a mat-button [routerLink]="['/fs/list']" [queryParams]="{root:root}">
+            <mat-icon>folder_special</mat-icon>
+            <span class="left8">{{root}}</span>
+        </a>
+        <button mat-button disabled>
+            <mat-spinner color="accent" diameter='24' *ngIf="query"></mat-spinner>
+        </button>
+
+        <fs-manager [folder]="dir" [source]="source"></fs-manager>
     </mat-card-content>
 </mat-card>
