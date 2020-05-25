@@ -184,6 +184,15 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this._clearChecked()
     return false
   }
+  onContextmenuNode(evt: CheckEvent) {
+    console.log(evt)
+    if (!evt.target.checked) {
+      this._clearChecked()
+      evt.target.checked = true
+    }
+    console.log('onContextmenuNode', evt.event)
+    return false
+  }
   private _box: Box = new Box()
   onStart(evt) {
     if (evt.button == 2 || evt.ctrlKey || evt.shiftKey) {

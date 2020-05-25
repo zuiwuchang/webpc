@@ -2,7 +2,7 @@
 
 <div class="view" #box (contextmenu)="onContextmenu($event)" (mousedown)="onStart($event)" (click)="onClick($event)">
     <div #fs>
-        <fs-file  [source]="node" (checkChange)="onCheckChange($event)" *ngFor="let node of source"></fs-file>
+        <fs-file  [source]="node"  (menuChange)="onContextmenuNode($event)" (checkChange)="onCheckChange($event)" *ngFor="let node of source"></fs-file>
     </div>
     <div [style.left]="x+'px'" [style.top]="y+'px'" [style.width]="w+'px'" [style.height]="h+'px'"
         class="rectangle"></div>

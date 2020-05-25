@@ -20,6 +20,8 @@ export class FileComponent implements OnInit {
   source: FileInfo
   @Output()
   checkChange = new EventEmitter<CheckEvent>()
+  @Output()
+  menuChange = new EventEmitter<CheckEvent>()
   ngOnInit(): void {
   }
   get icon(): string {
@@ -41,11 +43,10 @@ export class FileComponent implements OnInit {
   }
   onContextmenu(evt: NativeEvent) {
     evt.stopPropagation()
-    this.checkChange.emit({
+    this.menuChange.emit({
       event: evt,
       target: this.source,
     })
-    console.log('menu', this.source)
     return false
   }
   onClick(evt: NativeEvent) {
