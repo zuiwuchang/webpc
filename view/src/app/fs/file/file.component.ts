@@ -1,5 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FileInfo, FileType } from '../fs';
+export interface NativeEvent extends Event {
+  ctrlKey: boolean
+  shiftKey: boolean
+}
+export interface CheckEvent {
+  target: FileInfo
+  event: NativeEvent
+}
 @Component({
   selector: 'fs-file',
   templateUrl: './file.component.html',
@@ -10,6 +18,8 @@ export class FileComponent implements OnInit {
   constructor() { }
   @Input()
   source: FileInfo
+  @Output()
+  checkChange = new EventEmitter<CheckEvent>()
   ngOnInit(): void {
   }
   get icon(): string {
@@ -29,14 +39,21 @@ export class FileComponent implements OnInit {
     }
     return 'insert_drive_file'
   }
-  onContextmenu(evt: Event) {
+  onContextmenu(evt: NativeEvent) {
     evt.stopPropagation()
+    this.checkChange.emit({
+      event: evt,
+      target: this.source,
+    })
     console.log('menu', this.source)
     return false
   }
-  onClick(evt: Event) {
+  onClick(evt: NativeEvent) {
     evt.stopPropagation()
-    console.log('click', this.source)
+    this.checkChange.emit({
+      event: evt,
+      target: this.source,
+    })
     return false
   }
   onDbclick() {

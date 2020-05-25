@@ -1,8 +1,8 @@
 <ng-container *ngIf="source;then readyView;"></ng-container>
 <ng-template #readyView>
-    <div class="wrapper ripple" (contextmenu)="onContextmenu($event)" (click)="onClick($event)"
+    <div class="wrapper ripple" (contextmenu)="onContextmenu($event)"  (click)="onClick($event)"
         (dblclick)="onDbclick()">
-        <mat-icon matTooltip="{{source.name}}">{{icon}}</mat-icon>
+        <mat-icon [color]="source.checked?'accent':''" matTooltip="{{source.name}}">{{icon}}</mat-icon>
         <div class="content">
             {{source.name}}
         </div>

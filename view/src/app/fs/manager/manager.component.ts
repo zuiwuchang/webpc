@@ -4,79 +4,135 @@ import { Router } from '@angular/router';
 import { isString } from 'util';
 import { fromEvent, Subscription } from 'rxjs';
 import { takeUntil, first } from 'rxjs/operators';
+import { CheckEvent, NativeEvent } from '../file/file.component';
+
 class Point {
   constructor(public x: number, public y: number) {
+  }
+  toView(): Point {
+    if (document.compatMode == "BackCompat") {
+      this.x -= document.body.scrollLeft
+      this.y -= document.body.scrollTop
+    } else {
+      this.x -= document.documentElement.scrollLeft
+      this.y -= document.documentElement.scrollTop
+    }
+    return this
   }
 }
 // 有效範圍
 class Box {
   private _p0: Point
   private _p1: Point
-  constructor() {
-
-  }
+  start: Point
+  stop: Point
   setRange(element) {
     this._p0 = getViewPoint(element)
     this._p1 = new Point(this._p0.x + element.offsetWidth, this._p0.y + element.offsetHeight)
-    console.log(`p0`, this._p0)
-    console.log(`p1`, this._p1)
-    console.log(element)
   }
-}
-class Rect {
-  x: number = 0
-  y: number = 0
-  x1: number = 0
-  y1: number = 0
+  private _fixStart() {
+    if (this.start.x < this._p0.x) {
+      this.start.x = this._p0.x
+    } else if (this.start.x > this._p1.x) {
+      this.start.x = this._p1.x
+    }
 
-  reset(x: number, y: number) {
-    this.x = x
-    this.x1 = x
-    this.y = y
-    this.y1 = y
+    if (this.start.y < this._p0.y) {
+      this.start.y = this._p0.y
+    } else if (this.start.y > this._p1.y) {
+      this.start.y = this._p1.y
+    }
   }
-  set(x: number, y: number) {
-    this.x1 = x
-    this.y1 = y
+
+  private _fixStop() {
+    if (this.stop.x < this._p0.x) {
+      this.stop.x = this._p0.x
+    } else if (this.stop.x > this._p1.x) {
+      this.stop.x = this._p1.x
+    }
+
+    if (this.stop.y < this._p0.y) {
+      this.stop.y = this._p0.y
+    } else if (this.stop.y > this._p1.y) {
+      this.stop.y = this._p1.y
+    }
   }
-  get l(): number {
-    return Math.min(this.x, this.x1)
+  calculate() {
+    if (!this.start || !this.stop) {
+      return
+    }
+    if (this._p0 && this._p1) {
+      this._fixStart()
+      this._fixStop()
+    }
+    this.x = Math.min(this.start.x, this.stop.x)
+    this.y = Math.min(this.start.y, this.stop.y)
+    this.w = Math.abs(this.start.x - this.stop.x)
+    this.h = Math.abs(this.start.y - this.stop.y)
   }
-  get t(): number {
-    return Math.min(this.y, this.y1)
+  x = 0
+  y = 0
+  w = 0
+  h = 0
+  reset() {
+    this.x = 0
+    this.y = 0
+    this.w = 0
+    this.h = 0
+    this._p0 = null
+    this._p1 = null
+    this.start = null
+    this.stop = null
   }
-  get w(): number {
-    return Math.abs(this.x - this.x1)
+
+  checked(doc: Document): Array<number> {
+    const result = new Array<number>()
+    const nodes = doc.childNodes
+
+    if (nodes && nodes.length > 0) {
+      let parent: any
+      for (let i = 0; i < nodes.length; i++) {
+        let node = (nodes[i] as any)
+        if (!node || !node.querySelector) {
+          continue
+        }
+        node = node.querySelector('.wrapper')
+        if (!node) {
+          continue
+        }
+        const l = getViewPoint(node)
+        const r = new Point(l.x + node.offsetWidth, l.y + node.offsetHeight)
+        const ok = this.testView(l, r)
+        if (ok) {
+          result.push(i)
+        }
+      }
+    }
+    return result
   }
-  get h(): number {
-    return Math.abs(this.y - this.y1)
+  testView(l: Point, r: Point): boolean {
+    if (r.x < this.x || l.x > (this.x + this.w)) {
+      return false
+    }
+    if (r.y < this.y || l.y > (this.y + this.h)) {
+      return false
+    }
+    return true
   }
 }
 function getPagePoint(element): Point {
-  let x = element.offsetLeft
-  let current = element.offsetParent
-  while (current) {
-    x += current.offsetLeft
-    current = current.offsetParent
-  }
-  let y = element.offsetTop
-  current = element.offsetParent
-  while (current !== null) {
-    y += (current.offsetTop + current.clientTop)
-    current = current.offsetParent
+  let x = 0
+  let y = 0
+  while (element) {
+    x += element.offsetLeft + element.clientLeft
+    y += element.offsetTop + element.clientTop
+    element = element.offsetParent
   }
   return new Point(x, y)
 }
+
 function getViewPoint(element): Point {
-  const point = getPagePoint(element)
-  if (document.compatMode == "BackCompat") {
-    point.x -= document.body.scrollLeft
-    point.y -= document.body.scrollTop
-  } else {
-    point.x -= document.documentElement.scrollLeft
-    point.y -= document.documentElement.scrollTop
-  }
-  return point
+  return getPagePoint(element).toView()
 }
 @Component({
   selector: 'fs-manager',
@@ -99,6 +155,8 @@ export class ManagerComponent implements OnInit, OnDestroy {
       this._subscription.unsubscribe()
     }
   }
+  @ViewChild('fs')
+  fs: ElementRef
   @ViewChild('box')
   box: ElementRef
   onPathChange(path: string) {
@@ -123,29 +181,42 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
   onContextmenu(evt) {
     console.log('onContextmenu', evt)
+    this._clearChecked()
     return false
   }
-  rect = new Rect()
   private _box: Box = new Box()
   onStart(evt) {
-    if (evt.button == 2) {
+    if (evt.button == 2 || evt.ctrlKey || evt.shiftKey) {
       return
     }
     if (this._subscription) {
       this._subscription.unsubscribe()
     }
+    this._displayBox = false
     const doc = this.box.nativeElement
     doc.setCapture()
-    this._box.setRange(doc)
 
-    this.rect.reset(evt.clientX, evt.clientY)
-
+    let start = new Date()
     this._subscription = fromEvent(this.box.nativeElement, 'mousemove').pipe(
       takeUntil(fromEvent(this.box.nativeElement, 'mouseup').pipe(first()))
     ).subscribe({
       next: (evt: any) => {
+        if (start) {
+          const now = new Date()
+          const diff = now.getTime() - start.getTime()
+          if (diff < 100) {
+            return
+          }
+          this._displayBox = true
+          start = null
+          this._box.setRange(doc)
+          this._box.start = new Point(evt.clientX, evt.clientY)
+          this._box.stop = this._box.start
+          return;
+        }
         this._box.setRange(doc)
-        this.rect.set(evt.clientX, evt.clientY)
+        this._box.stop = new Point(evt.clientX, evt.clientY)
+        this._box.calculate()
       },
       complete: () => {
         doc.releaseCapture()
@@ -153,8 +224,92 @@ export class ManagerComponent implements OnInit, OnDestroy {
       },
     })
   }
+  private _displayBox = false
+  onClick(evt: NativeEvent) {
+    if (this._displayBox || evt.ctrlKey || evt.shiftKey) {
+      return
+    }
+    // 清空選項
+    this._clearChecked()
+  }
+  private _clearChecked() {
+    const source = this.source
+    for (let i = 0; i < source.length; i++) {
+      if (source[i].checked) {
+        source[i].checked = false
+      }
+    }
+  }
   private _select() {
-    //console.log(this.rect)
-    this.rect.reset(0, 0)
+    const arrs = this._box.checked(this.fs.nativeElement)
+    this._clearChecked()
+    const source = this.source
+    for (let i = 0; i < arrs.length; i++) {
+      const index = arrs[i]
+      if (index < source.length) {
+        source[index].checked = true
+      }
+    }
+    this._box.reset()
+  }
+  get x(): number {
+    return this._box.x
+  }
+  get y(): number {
+    return this._box.y
+  }
+  get w(): number {
+    return this._box.w
+  }
+  get h(): number {
+    return this._box.h
+  }
+  onCheckChange(evt: CheckEvent) {
+    if (evt.event.ctrlKey) {
+      evt.target.checked = true
+      return
+    }
+    let start = -1
+    let stop = -1
+    let index = -1
+    // 清空選項
+    const source = this.source
+    if (source) {
+      for (let i = 0; i < source.length; i++) {
+        if (source[i] == evt.target) {
+          index = i
+        }
+        if (source[i].checked) {
+          if (start == -1) {
+            start = i
+          }
+          stop = i
+        }
+        if (source[i].checked) {
+          source[i].checked = false
+        }
+      }
+    }
+    if (index == -1) {
+      return
+    }
+    // 設置選項
+    if (evt.event.shiftKey && start != -1) {
+      if (index <= start) {
+        for (let i = index; i <= stop; i++) {
+          source[i].checked = true
+        }
+      } else if (index >= stop) {
+        for (let i = start; i <= index; i++) {
+          source[i].checked = true
+        }
+      } else {
+        for (let i = start; i <= stop; i++) {
+          source[i].checked = true
+        }
+      }
+      return
+    }
+    source[index].checked = true
   }
 }

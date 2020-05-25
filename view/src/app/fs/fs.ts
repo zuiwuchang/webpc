@@ -63,6 +63,7 @@ export class FileInfo {
 
     filename: string
     root: string
+    checked = false
     private _filetype = FileType.Binary
 
     constructor(root: string, dir: string, other: FileInfo) {
