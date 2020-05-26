@@ -5,6 +5,7 @@ import { ImageComponent } from './view/image/image.component';
 import { VideoComponent } from './view/video/video.component';
 import { AudioComponent } from './view/audio/audio.component';
 import { TextComponent } from './view/text/text.component';
+import { TextGuard } from './view/text/text.guard';
 
 const routes: Routes = [
   {
@@ -26,6 +27,7 @@ const routes: Routes = [
   {
     path: 'view/text',
     component: TextComponent,
+    canDeactivate: [TextGuard],
   },
 ];
 

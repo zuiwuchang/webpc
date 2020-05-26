@@ -1,1 +1,28 @@
-<p>text works!</p>
+<mat-card>
+    <mat-card-title i18n>Text View</mat-card-title>
+    <mat-card-content>
+    <ng-container *ngIf="ready;then readyView;"></ng-container>        
+    </mat-card-content>
+</mat-card>
+
+<ng-template #readyView>
+    <mat-card-subtitle>
+        {{filepath}}
+    </mat-card-subtitle>
+    <a  class="header" mat-button [routerLink]="['/fs/list']" [queryParams]="{root:root}">
+        <mat-icon>folder_special</mat-icon>
+        <span class="left8">{{root}}</span>
+    </a>
+    <fs-path  [disabled]="loading||saving"  [path]="dir" (pathChange)="onPathChange($event)"></fs-path>
+    <mat-form-field appearance="fill">
+        <mat-label>{{name}}</mat-label>
+        <textarea matInput [(ngModel)]="val" [disabled]="loading||saving" rows="15" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
+    </mat-form-field>
+
+    <mat-card-actions>
+        <button mat-stroked-button color="primary" [disabled]="loading||saving" i18n (click)="onClickLoad()">Load</button>
+        <button mat-stroked-button color="primary" [disabled]="loading||saving||isNotChanged" i18n (click)="onCLickSave()">Save</button>
+        <mat-spinner *ngIf="loading||saving" color="accent" diameter='24'></mat-spinner>
+    </mat-card-actions>
+</ng-template>
+

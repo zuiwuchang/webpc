@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { SessionService } from 'src/app/core/session/session.service';
 import { ServerAPI } from 'src/app/core/core/api';
 import { isString } from 'util';
@@ -11,10 +10,10 @@ import { isString } from 'util';
   styleUrls: ['./image.component.scss']
 })
 export class ImageComponent implements OnInit, OnDestroy {
-
   constructor(private router: Router,
     private route: ActivatedRoute,
-    private sessionService: SessionService, ) { }
+    private sessionService: SessionService,
+  ) { }
 
   ngOnInit(): void {
     this.sessionService.ready.then(() => {

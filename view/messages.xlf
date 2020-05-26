@@ -366,6 +366,13 @@
           <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="ae0378d2442812ae46ace487bf5139936ae1c2fd" datatype="html">
+        <source>Wait for data to be saved</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="7c25ffdfdcbc340e0abe8ead8c8f9ca6a260e970" datatype="html">
         <source>File Management</source>
         <context-group purpose="location">
@@ -535,6 +542,13 @@
         <source>Image View</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/view/image/image.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2f94232f5d2ac15b91e51dbcc0047905b94a36e1" datatype="html">
+        <source>Text View</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/view/text/text.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>

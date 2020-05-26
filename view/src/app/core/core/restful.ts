@@ -1,5 +1,5 @@
 import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http'
-import { isNumber, isString, isObject } from 'util'
+import { isNumber, isString, isObject, isArray } from 'util'
 
 export function resolveError(e): string {
     if (!e) {
@@ -18,7 +18,11 @@ export function resolveHttpError(e) {
         return `${e.status} ${e.error}`
     }
     if (e.error) {
-        return `${e.status} ${e.error.description}`
+        if (e.error.description) {
+            return `${e.status} ${e.error.description}`
+        } else if (e.error.error) {
+            return `${e.status} ${e.error.error}`
+        }
     } else if (e.message) {
         return `${e.status} ${e.message}`
     }
@@ -40,10 +44,16 @@ export class RESTful {
     constructor(public baseURL: string) {
 
     }
-    oneURL(id: string | number | boolean): string {
-        return `${this.baseURL}/${encodeURIComponent(encodeURIComponent(id))}`
+    oneURL(id: string | number | boolean | Array<any>): string {
+        let val: string
+        if (isArray(id)) {
+            val = (id as Array<any>).map<string>((val) => encodeURIComponent(encodeURIComponent(val))).join('/')
+        } else {
+            val = encodeURIComponent(encodeURIComponent(id as string))
+        }
+        return `${this.baseURL}/${val}`
     }
-    onePatchURL(id: string | number | boolean, patch: string): string {
+    onePatchURL(id: string | number | boolean | Array<any>, patch: string): string {
         return `${this.oneURL(id)}/${patch}`
     }
     get<T>(client: HttpClient, options?: {
@@ -117,7 +127,7 @@ export class RESTful {
         return wrapPromise(client.patch<T>(`${this.baseURL}/${patch}`, body, options).toPromise())
     }
 
-    getOne<T>(client: HttpClient, id: string | number | boolean, options?: {
+    getOne<T>(client: HttpClient, id: string | number | boolean | Array<any>, options?: {
         headers?: HttpHeaders | {
             [header: string]: string | string[];
         };
@@ -131,7 +141,21 @@ export class RESTful {
     }): Promise<T> {
         return wrapPromise(client.get<T>(this.oneURL(id), options).toPromise())
     }
-    postOne<T>(client: HttpClient, id: string | number | boolean, body: any | null, options?: {
+    getOneText(client: HttpClient, id: string | number | boolean | Array<any>, options: {
+        headers?: HttpHeaders | {
+            [header: string]: string | string[];
+        };
+        observe?: 'body';
+        params?: HttpParams | {
+            [param: string]: string | string[];
+        };
+        reportProgress?: boolean;
+        responseType: 'text';
+        withCredentials?: boolean;
+    }): Promise<string> {
+        return wrapPromise(client.get(this.oneURL(id), options).toPromise())
+    }
+    postOne<T>(client: HttpClient, id: string | number | boolean | Array<any>, body: any | null, options?: {
         headers?: HttpHeaders | {
             [header: string]: string | string[];
         };
@@ -145,7 +169,7 @@ export class RESTful {
     }): Promise<T> {
         return wrapPromise(client.post<T>(this.oneURL(id), body, options).toPromise())
     }
-    deleteOne<T>(client: HttpClient, id: string | number | boolean, options?: {
+    deleteOne<T>(client: HttpClient, id: string | number | boolean | Array<any>, options?: {
         headers?: HttpHeaders | {
             [header: string]: string | string[];
         };
@@ -159,7 +183,7 @@ export class RESTful {
     }): Promise<T> {
         return wrapPromise(client.delete<T>(this.oneURL(id), options).toPromise())
     }
-    putOne<T>(client: HttpClient, id: string | number | boolean, body: any | null, options?: {
+    putOne<T>(client: HttpClient, id: string | number | boolean | Array<any>, body: any | null, options?: {
         headers?: HttpHeaders | {
             [header: string]: string | string[];
         };
@@ -173,7 +197,7 @@ export class RESTful {
     }): Promise<T> {
         return wrapPromise(client.put<T>(this.oneURL(id), body, options).toPromise())
     }
-    patchOne<T>(client: HttpClient, id: string | number | boolean, patch: string, body: any | null, options?: {
+    patchOne<T>(client: HttpClient, id: string | number | boolean | Array<any>, patch: string, body: any | null, options?: {
         headers?: HttpHeaders | {
             [header: string]: string | string[];
         };

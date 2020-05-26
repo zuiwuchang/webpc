@@ -16,6 +16,8 @@ export class PathComponent implements OnInit {
   dirs: Array<Dir>
   private _path: string = ''
   @Input()
+  disabled: boolean
+  @Input()
   set path(val: string) {
     if (!isString(val)) {
       val = ''
