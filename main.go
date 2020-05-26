@@ -3,6 +3,9 @@ package main
 import (
 	"log"
 
+	_ "gitlab.com/king011/webpc/assets/en-US/statik"
+	_ "gitlab.com/king011/webpc/assets/zh-Hans/statik"
+	_ "gitlab.com/king011/webpc/assets/zh-Hant/statik"
 	"gitlab.com/king011/webpc/cmd"
 )
 

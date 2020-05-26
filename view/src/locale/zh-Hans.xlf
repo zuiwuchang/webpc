@@ -2,6 +2,582 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="zh-Hans" datatype="plaintext" original="ng2.template">
     <body>
+      <trans-unit id="2177c841bf548bc76db5b969b789f3a03c93c83f" datatype="html">
+        <source>sign in</source>
+        <target>登入</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/login/login.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="62029286ca62531f2dbe4708f6d3509c5cde0438" datatype="html">
+        <source>connecting to server, please wait...</source>
+        <target>正在连接服务器,请稍等...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/login/login.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="bb9499bc1fa143bc6bfa326dbae6594f59541e99" datatype="html">
+        <source>Welcome <x id="INTERPOLATION" equiv-text="{{session?.name}}"/>, you have logged in</source>
+        <target>欢迎 <x id="INTERPOLATION" equiv-text="{{session?.name}}"/>，你已经登入服务器。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/login/login.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cff1428d10d59d14e45edec3c735a27b5482db59" datatype="html">
+        <source>Name</source>
+        <target>名称</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/login/login.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/add/add.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5314f3960d1a662e977d8f0a5a3943120824255c" datatype="html">
+        <source>Default Name : killer</source>
+        <target>默认名称 : killer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/login/login.component.html</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="bd4960dae6ed2a772e2ca2ecd20e1f5ff9b0641e" datatype="html">
+        <source>Name Invalid</source>
+        <target>无效的名称</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/login/login.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/add/add.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
+        <source>Password</source>
+        <target>密码</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/login/login.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">46</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/add/add.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/password/password.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="d854df62b419d808aabec38b7394d792591f45c3" datatype="html">
+        <source>Default Password : 19890604</source>
+        <target>默认密码 : 19890604</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/login/login.component.html</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2f41285b5264498e812cd5577b50bfaa0f715009" datatype="html">
+        <source>Password Invalid</source>
+        <target>无效的密码</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/login/login.component.html</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/password/password.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/password/password.component.html</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/add/add.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/password/password.component.html</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3eb49d60bd859eb2d9d3a6d380cdf4e0b8252333" datatype="html">
+        <source>Remember me</source>
+        <target>记住登入状态</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/login/login.component.html</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html">
+        <source>Submit</source>
+        <target>提交</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/login/login.component.html</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/password/password.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/add/add.component.html</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/password/password.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/change/change.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
+        <source>Close</source>
+        <target>关闭</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/login/login.component.html</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/password/password.component.html</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialog/confirm/confirm.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/add/add.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/password/password.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/change/change.component.html</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5edf054f14aa57bc25a28cb7db01956fee53dac8" datatype="html">
+        <source>Change Password</source>
+        <target>更改密码</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/password/password.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/password/password.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4ad47fba753bd89ce442197653ce65004eff1e6d" datatype="html">
+        <source>Old Password</source>
+        <target>原密码</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/password/password.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c7014c6360e94b236286b869c3fe0ea9911c0387" datatype="html">
+        <source>New Password</source>
+        <target>新密码</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/password/password.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="438fdc617a22c8dd029e74b64ab66355e36eeb9d" datatype="html">
+        <source>Home Tooltip</source>
+        <target>首页</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="84371e059ce3176b4114bdf840cea4e251561e8b" datatype="html">
+        <source>Terminal Tooltip</source>
+        <target>终端</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="558cf284a586969d529d302380efe98f7bfb218f" datatype="html">
+        <source>Source Tooltip</source>
+        <target>源码</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="bc1f34fbcd508eeefebcc2033e6509cb9d3c0d1e" datatype="html">
+        <source>License Tooltip</source>
+        <target>协议</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e203fbda1a68c2ee0b206d0959f9323d3deac894" datatype="html">
+        <source>About Tooltip</source>
+        <target>关于</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1b1ad5362590fce84c21b00ddccaf2c913713928" datatype="html">
+        <source>Menu Tooltip</source>
+        <target>菜单</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6ad31729632818476420bb0f698d617436263675" datatype="html">
+        <source>User Management</source>
+        <target>用户管理</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dcfc990a822e11feb00eb91d9cf4d6ec0ed37dd0" datatype="html">
+        <source>Debug</source>
+        <target>调试</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/debug/list/list.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="be394178ed48540a1665330866853faecea24c55" datatype="html">
+        <source>sign out</source>
+        <target>登出</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/navigation-bar/navigation-bar.component.html</context>
+          <context context-type="linenumber">69</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="f0dc0497ad16adbd386a3b2f2c55d81c51a1f029" datatype="html">
+        <source>Sure</source>
+        <target>确认</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialog/confirm/confirm.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6080b77234e92ad41bb52653b239c4c4f851317d" datatype="html">
+        <source>Error</source>
+        <target>错误</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1e035e6ccfab771cad4226b2ad230cb0d4a88cba" datatype="html">
+        <source>Success</source>
+        <target>成功</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ddf76fbcdec11680042515a728e6eb9605a671b1" datatype="html">
+        <source>delete user</source>
+        <target>删除用户</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="0ccdcbfd50c9713971bf65cd1e758a7e0b2f3e49" datatype="html">
+        <source>user has been deleted</source>
+        <target>用户已被移除</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ed8ca8b79a1836aa54fa0869921e545d5b92f3a7" datatype="html">
+        <source>user added successfully</source>
+        <target>添加用户成功</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="0528187f6dc07c875899db6a6979f480e4a1078f" datatype="html">
+        <source>change password completed</source>
+        <target>更改密码完成</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6a8926918c4a55fd6d03e99b15d0511c742a119a" datatype="html">
+        <source>change authorization completed</source>
+        <target>更改授权完成</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e638d2f4ac91aa9566017b58dba7917c874ca914" datatype="html">
+        <source>terminal has been deleted</source>
+        <target>终端已被移除</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e9a1e99ed0b3b197b9bfaeba769afee15f8430d5" datatype="html">
+        <source>change terminal completed</source>
+        <target>更改终端完成</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7698abde8f9da1b98376c71bf1a8ad8bca21b705" datatype="html">
+        <source>delete terminal</source>
+        <target>删除终端</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7c25ffdfdcbc340e0abe8ead8c8f9ca6a260e970" datatype="html">
+        <source>File Management</source>
+        <target>档案管理</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app/home/home.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/content/about/about.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
+        <source>Refresh</source>
+        <target>刷新</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app/home/home.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/debug/list/list.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3c3f9cfd423f4471c09dfc9caec089c4b1c92078" datatype="html">
+        <source>about web pc text</source>
+        <target>拥有一个命令shell即可拥有完整的pc控制能力，websocket为此提供了可能。方便的档案管理，在线播放pc上的电影音乐，html5为此提供了可能。web pc便是为此目的而创建。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/content/about/about.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="322c0767dc9c04ae0cd899f0f9ce1403769a3163" datatype="html">
+        <source>Web Shell</source>
+        <target>Web Shell</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/content/about/about.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="b3b7cbb5e68ad79b5f30d8d5be98b940099ca06e" datatype="html">
+        <source>Video Audio Play</source>
+        <target>视频音频播放</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/content/about/about.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="94be6ae6ec1f87bedc67020629343b27fdbece0a" datatype="html">
+        <source>Add User</source>
+        <target>添加用户</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/add/add.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="09e39e1ef914d37d4e84fa77ee0d3ac207adba4b" datatype="html">
+        <source>Change authorization</source>
+        <target>更改授权</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/change/change.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a568d6cc7b8a3f14399663426bb1b4fc137b1a8d" datatype="html">
+        <source>edit</source>
+        <target>编辑</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="70ef158c584bafe788e319a0bffa11b02ee9abf1" datatype="html">
+        <source>delete</source>
+        <target>删除</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a11ec4e640f241329943237d2a3cceaa4823658e" datatype="html">
+        <source>add</source>
+        <target>添加</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2c6ed0dfff156d0a467e56ae26bb3a81bd66b53a" datatype="html">
+        <source>Change Terminal</source>
+        <target>更改终端</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7a890188d24cc8449764f72befdb37458adced07" datatype="html">
+        <source>Terminal List</source>
+        <target>终端列表</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="da6aa9950c74cadd85a3bf26272f34f28d8338c8" datatype="html">
+        <source>Connect</source>
+        <target>连接</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2d64c5ec475afbe35d9309b8405d6654441b386b" datatype="html">
+        <source>Create Connect</source>
+        <target>创建连接</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="0bd1b7ca428a0c47d189e1f26194062b13a0aa6c" datatype="html">
+        <source>Font Size</source>
+        <target>字体大小</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="450d56b40f37bf040e7eb84e2668903ddf020e7a" datatype="html">
+        <source>Font Size Invalid</source>
+        <target>无效的字体大小</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a36cbf882f4d743c19a2dfdd899ec6ba44006289" datatype="html">
+        <source>Set Option</source>
+        <target>设置属性</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="272fb7b69aa7689350d5785238419c2102934883" datatype="html">
+        <source>Switch between button and text-based position bar</source>
+        <target>于按钮和基于文字的位置列间切换</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/path/path.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/path/path.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1ba7568bba29f8d8e352f93e67002d0b548eb838" datatype="html">
+        <source>Position</source>
+        <target>位置</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/path/path.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

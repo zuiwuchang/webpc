@@ -11,6 +11,7 @@ require (
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/websocket v1.4.2
 	github.com/json-iterator/go v1.1.9
+	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cobra v1.0.0
 	gitlab.com/king011/king-go v0.0.10
 	gitlab.com/king011/v2ray-web v1.1.0 // indirect

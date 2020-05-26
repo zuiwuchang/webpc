@@ -394,6 +394,38 @@
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="7c25ffdfdcbc340e0abe8ead8c8f9ca6a260e970" datatype="html">
+        <source>File Management</source>
+        <target>File Management</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app/home/home.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/content/about/about.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
+        <source>Refresh</source>
+        <target>Refresh</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app/home/home.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/debug/list/list.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="3c3f9cfd423f4471c09dfc9caec089c4b1c92078" datatype="html">
         <source>about web pc text</source>
         <target>With a command shell, you can have complete PC control capabilities, websocket provides the possibility for this. Convenient file management, online playback of movie music, HTML5 provides the possibility for this. The web pc was created for this purpose.</target>
@@ -410,36 +442,12 @@
           <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7c25ffdfdcbc340e0abe8ead8c8f9ca6a260e970" datatype="html">
-        <source>File Management</source>
-        <target>File Management</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/content/about/about.component.html</context>
-          <context context-type="linenumber">14</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="b3b7cbb5e68ad79b5f30d8d5be98b940099ca06e" datatype="html">
         <source>Video Audio Play</source>
         <target>Video Audio Play</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/content/about/about.component.html</context>
           <context context-type="linenumber">18</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
-        <source>Refresh</source>
-        <target>Refresh</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/debug/list/list.component.html</context>
-          <context context-type="linenumber">17</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/user/list/list.component.html</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
-          <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="94be6ae6ec1f87bedc67020629343b27fdbece0a" datatype="html">
@@ -548,6 +556,26 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
           <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="272fb7b69aa7689350d5785238419c2102934883" datatype="html">
+        <source>Switch between button and text-based position bar</source>
+        <target>Switch between button and text-based position bar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/path/path.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/path/path.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1ba7568bba29f8d8e352f93e67002d0b548eb838" datatype="html">
+        <source>Position</source>
+        <target>Position</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/path/path.component.html</context>
+          <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
     </body>

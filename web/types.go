@@ -152,18 +152,20 @@ func (h Helper) CheckSession(c *gin.Context) {
 
 // NegotiateError .
 func (h Helper) NegotiateError(c *gin.Context, code int, e error) {
-	c.Negotiate(code, gin.Negotiate{
-		Offered: Offered,
-		Data:    e.Error(),
-	})
+	c.String(code, e.Error())
+	// c.Negotiate(code, gin.Negotiate{
+	// 	Offered: Offered,
+	// 	Data:    e.Error(),
+	// })
 }
 
 // NegotiateErrorString .
 func (h Helper) NegotiateErrorString(c *gin.Context, code int, e string) {
-	c.Negotiate(code, gin.Negotiate{
-		Offered: Offered,
-		Data:    e,
-	})
+	c.String(code, e)
+	// c.Negotiate(code, gin.Negotiate{
+	// 	Offered: Offered,
+	// 	Data:    e,
+	// })
 }
 
 // NegotiateData .
