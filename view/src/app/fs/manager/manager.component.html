@@ -1,9 +1,36 @@
 <fs-path [path]="folder?.dir" (pathChange)="onPathChange($event)"></fs-path>
 
-<div class="view" #box (contextmenu)="onContextmenu($event)" (mousedown)="onStart($event)" (click)="onClick($event)">
+<div #box (contextmenu)="onContextmenu($event)" (mousedown)="onStart($event)" (click)="onClick($event)">
     <div #fs>
-        <fs-file  [source]="node"  (menuChange)="onContextmenuNode($event)" (checkChange)="onCheckChange($event)" *ngFor="let node of source"></fs-file>
+        <fs-file [source]="node" (menuChange)="onContextmenuNode($event)" (checkChange)="onCheckChange($event)"
+            *ngFor="let node of source"></fs-file>
     </div>
-    <div [style.left]="x+'px'" [style.top]="y+'px'" [style.width]="w+'px'" [style.height]="h+'px'"
-        class="rectangle"></div>
+    <div [style.left]="x+'px'" [style.top]="y+'px'" [style.width]="w+'px'" [style.height]="h+'px'" class="rectangle">
+    </div>
 </div>
+<mat-menu #actionMenu="matMenu">
+    <button mat-menu-item>Settings</button>
+    <button mat-menu-item>Help</button>
+</mat-menu>
+
+<div class="actionMenu" [style.left]="menuLeft+'px'" [style.top]="menuTop+'px'" [matMenuTriggerFor]="actionMenu">
+</div>
+
+<mat-toolbar class="footer" color="primary">
+    <button mat-button (click)="ctrl=!ctrl">
+        <mat-icon>{{ctrl?'check_circle_outline':'not_interested'}}</mat-icon>
+        <span class="left8">CTRL</span>
+    </button>
+    <button mat-button (click)="shift=!shift">
+        <mat-icon>{{shift?'check_circle_outline':'not_interested'}}</mat-icon>
+        <span class="left8">SHIFT</span>
+    </button>
+    <button mat-button (click)="toggleDisplay()">
+        <mat-icon>{{all?'visibility':'visibility_off'}}</mat-icon>
+        <span class="left8">ALL</span>
+    </button>
+    <button mat-button (click)="onClickMenu($event)">
+        <mat-icon>menu</mat-icon>
+        <span class="left8">MENU</span>
+    </button>
+</mat-toolbar>

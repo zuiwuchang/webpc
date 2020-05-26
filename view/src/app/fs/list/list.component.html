@@ -1,9 +1,10 @@
 <mat-card>
     <mat-card-content>
-        <a mat-button [routerLink]="['/fs/list']" [queryParams]="{root:root}">
+        <a class="header" mat-button [routerLink]="['/fs/list']" [queryParams]="{root:root}">
             <mat-icon>folder_special</mat-icon>
             <span class="left8">{{root}}</span>
         </a>
+
         <button mat-button disabled>
             <mat-spinner color="accent" diameter='24' *ngIf="query"></mat-spinner>
         </button>
@@ -11,3 +12,4 @@
         <fs-manager [folder]="dir" [source]="source"></fs-manager>
     </mat-card-content>
 </mat-card>
+<div class="fill-footer"></div>

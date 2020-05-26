@@ -1,5 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FileInfo, FileType } from '../fs';
+import { Router } from '@angular/router';
+import { ToasterService } from 'angular2-toaster';
+import { I18nService } from 'src/app/core/i18n/i18n.service';
 export interface NativeEvent extends Event {
   ctrlKey: boolean
   shiftKey: boolean
@@ -15,7 +18,10 @@ export interface CheckEvent {
 })
 export class FileComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router,
+    private toasterService: ToasterService,
+    private i18nService: I18nService,
+  ) { }
   @Input()
   source: FileInfo
   @Output()
@@ -58,6 +64,58 @@ export class FileComponent implements OnInit {
     return false
   }
   onDbclick() {
-    console.log('dbclick', this.source)
+    switch (this.source.filetype) {
+      case FileType.Dir:
+        this.router.navigate(['fs', 'list'], {
+          queryParams: {
+            root: this.source.root,
+            path: this.source.filename,
+          }
+        })
+        return
+      case FileType.Video:
+        this.router.navigate(['fs', 'view', 'video'], {
+          queryParams: {
+            root: this.source.root,
+            path: this.source.filename,
+          }
+        })
+        return
+      case FileType.Audio:
+        this.router.navigate(['fs', 'view', 'audio'], {
+          queryParams: {
+            root: this.source.root,
+            path: this.source.filename,
+          }
+        })
+        return
+      case FileType.Image:
+        this.router.navigate(['fs', 'view', 'image'], {
+          queryParams: {
+            root: this.source.root,
+            path: this.source.filename,
+          }
+        })
+        return
+      case FileType.Text:
+        this.router.navigate(['fs', 'view', 'text'], {
+          queryParams: {
+            root: this.source.root,
+            path: this.source.filename,
+          }
+        })
+        return
+      case FileType.Binary:
+        this.toasterService.pop('warning',
+          this.i18nService.get('Unsupported file type'),
+          this.source.filename,
+        )
+        return
+      default:
+        this.toasterService.pop('warning',
+          this.i18nService.get('Unsupported file type'),
+          this.source.filename,
+        )
+    }
   }
 }

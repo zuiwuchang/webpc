@@ -5,6 +5,7 @@ import { isString } from 'util';
 import { fromEvent, Subscription } from 'rxjs';
 import { takeUntil, first } from 'rxjs/operators';
 import { CheckEvent, NativeEvent } from '../file/file.component';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 class Point {
   constructor(public x: number, public y: number) {
@@ -146,8 +147,26 @@ export class ManagerComponent implements OnInit, OnDestroy {
   @Input()
   folder: Dir
 
-  @Input()
-  source: Array<FileInfo>
+  private _source: Array<FileInfo>
+  private _hide: Array<FileInfo>
+  @Input('source')
+  set source0(arrs: Array<FileInfo>) {
+    this._source = arrs
+    this._hide = null
+    if (arrs && arrs.length > 0) {
+      const items = new Array<FileInfo>()
+      for (let i = 0; i < arrs.length; i++) {
+        if (arrs[i].name.startsWith('.')) {
+          continue
+        }
+        items.push(arrs[i])
+      }
+      this._hide = items
+    }
+  }
+  get source(): Array<FileInfo> {
+    return this.all ? this._source : this._hide
+  }
   ngOnInit(): void {
   }
   ngOnDestroy() {
@@ -159,6 +178,12 @@ export class ManagerComponent implements OnInit, OnDestroy {
   fs: ElementRef
   @ViewChild('box')
   box: ElementRef
+  @ViewChild(MatMenuTrigger)
+  trigger: MatMenuTrigger
+
+  ctrl: boolean
+  shift: boolean
+  all: boolean
   onPathChange(path: string) {
     const folder = this.folder
     if (!folder) {
@@ -179,9 +204,23 @@ export class ManagerComponent implements OnInit, OnDestroy {
       }
     })
   }
+  menuLeft: 0
+  menuTop: 0
+  onClickMenu(evt) {
+    if (!this.trigger) {
+      return
+    }
+    this.menuLeft = evt.clientX
+    this.menuTop = evt.clientY
+    this.trigger.openMenu()
+  }
   onContextmenu(evt) {
-    console.log('onContextmenu', evt)
     this._clearChecked()
+    if (this.trigger) {
+      this.menuLeft = evt.clientX
+      this.menuTop = evt.clientY
+      this.trigger.openMenu()
+    }
     return false
   }
   onContextmenuNode(evt: CheckEvent) {
@@ -190,12 +229,16 @@ export class ManagerComponent implements OnInit, OnDestroy {
       this._clearChecked()
       evt.target.checked = true
     }
-    console.log('onContextmenuNode', evt.event)
+    if (this.trigger) {
+      this.menuLeft = (evt.event as any).clientX
+      this.menuTop = (evt.event as any).clientY
+      this.trigger.openMenu()
+    }
     return false
   }
   private _box: Box = new Box()
   onStart(evt) {
-    if (evt.button == 2 || evt.ctrlKey || evt.shiftKey) {
+    if (evt.button == 2 || evt.ctrlKey || evt.shiftKey || this.ctrl || this.shift) {
       return
     }
     if (this._subscription) {
@@ -203,11 +246,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
     }
     this._displayBox = false
     const doc = this.box.nativeElement
-    doc.setCapture()
-
     let start = new Date()
-    this._subscription = fromEvent(this.box.nativeElement, 'mousemove').pipe(
-      takeUntil(fromEvent(this.box.nativeElement, 'mouseup').pipe(first()))
+    this._subscription = fromEvent(document, 'mousemove').pipe(
+      takeUntil(fromEvent(document, 'mouseup').pipe(first()))
     ).subscribe({
       next: (evt: any) => {
         if (start) {
@@ -228,21 +269,21 @@ export class ManagerComponent implements OnInit, OnDestroy {
         this._box.calculate()
       },
       complete: () => {
-        doc.releaseCapture()
         this._select()
       },
     })
   }
   private _displayBox = false
   onClick(evt: NativeEvent) {
-    if (this._displayBox || evt.ctrlKey || evt.shiftKey) {
+    evt.stopPropagation()
+    if (this._displayBox || evt.ctrlKey || evt.shiftKey || this.ctrl || this.shift) {
       return
     }
     // 清空選項
     this._clearChecked()
   }
   private _clearChecked() {
-    const source = this.source
+    const source = this._source
     for (let i = 0; i < source.length; i++) {
       if (source[i].checked) {
         source[i].checked = false
@@ -274,7 +315,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     return this._box.h
   }
   onCheckChange(evt: CheckEvent) {
-    if (evt.event.ctrlKey) {
+    if (evt.event.ctrlKey || this.ctrl) {
       evt.target.checked = true
       return
     }
@@ -303,7 +344,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
       return
     }
     // 設置選項
-    if (evt.event.shiftKey && start != -1) {
+    if ((evt.event.shiftKey || this.shift) && start != -1) {
       if (index <= start) {
         for (let i = index; i <= stop; i++) {
           source[i].checked = true
@@ -320,5 +361,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
       return
     }
     source[index].checked = true
+  }
+  toggleDisplay() {
+    this.all = !this.all
+    this._clearChecked()
   }
 }

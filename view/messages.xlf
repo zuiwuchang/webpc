@@ -359,6 +359,13 @@
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="1c902affd9a2c65640090dd7dab3b52ffa3cdf73" datatype="html">
+        <source>Unsupported file type</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="7c25ffdfdcbc340e0abe8ead8c8f9ca6a260e970" datatype="html">
         <source>File Management</source>
         <context-group purpose="location">
