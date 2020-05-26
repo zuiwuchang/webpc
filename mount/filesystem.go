@@ -79,12 +79,9 @@ func (m *Mount) Shared() bool {
 
 // LS .
 func (m *Mount) LS(path string) (dir string, results []FileInfo, e error) {
-	dst := filepath.Clean(m.root + path)
-	if path != dst {
-		root := m.root + Separator
-		if !strings.HasPrefix(path, root) {
-			e = errors.New(`Illegal path`)
-		}
+	dst, e := m.Filename(path)
+	if e != nil {
+		return
 	}
 	f, e := os.Open(dst)
 	if e != nil {
@@ -118,6 +115,19 @@ func (m *Mount) LS(path string) (dir string, results []FileInfo, e error) {
 		results[i].Mode = uint32(infos[i].Mode())
 		results[i].Size = infos[i].Size()
 		results[i].IsDir = infos[i].IsDir()
+	}
+	return
+}
+
+// Filename .
+func (m *Mount) Filename(path string) (filename string, e error) {
+	filename = filepath.Clean(m.root + path)
+	if m.root != filename {
+		root := m.root + Separator
+		if !strings.HasPrefix(filename, root) {
+			e = errors.New(`Illegal path`)
+			return
+		}
 	}
 	return
 }

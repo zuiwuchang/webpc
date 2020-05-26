@@ -25,7 +25,12 @@ const videos = new Set();
 });
 const images = new Set();
 ([
-    '.jpg',
+    '.gif',
+    '.jpeg', '.jpg',
+    '.bmp',
+    '.png',
+    '.svg', '.ico',
+    '.webp',
 
 ]).forEach(function (str: string) {
     images.add(str)

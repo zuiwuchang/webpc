@@ -21,7 +21,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
       <trans-unit id="bb9499bc1fa143bc6bfa326dbae6594f59541e99" datatype="html">
@@ -88,7 +88,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="d854df62b419d808aabec38b7394d792591f45c3" datatype="html">
@@ -261,7 +261,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
-          <context context-type="linenumber">25</context>
+          <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="dcfc990a822e11feb00eb91d9cf4d6ec0ed37dd0" datatype="html">
@@ -389,7 +389,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">19</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
@@ -435,7 +435,7 @@
         <source>edit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">30</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
@@ -446,7 +446,7 @@
         <source>delete</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">38</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
@@ -457,7 +457,7 @@
         <source>add</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user/list/list.component.html</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">46</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2c6ed0dfff156d0a467e56ae26bb3a81bd66b53a" datatype="html">
@@ -529,6 +529,13 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/path/path.component.html</context>
           <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="47b42d655f6c69a19a36fe852091dbd87876e750" datatype="html">
+        <source>Image View</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/view/image/image.component.html</context>
+          <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
     </body>
