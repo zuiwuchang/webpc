@@ -103,10 +103,6 @@ func (h FS) checkRead(c *gin.Context, m *mount.Mount) (ok bool) {
 	return
 }
 func (h FS) checkWirte(c *gin.Context, m *mount.Mount) (ok bool) {
-	if m.Shared() {
-		ok = true
-		return
-	}
 	session := h.BindSession(c)
 	if session == nil {
 		return
@@ -215,7 +211,7 @@ func (h FS) put(c *gin.Context) {
 		return
 	}
 
-	if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 		ce.Write(
 			zap.String(`method`, c.Request.Method),
 		)

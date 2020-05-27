@@ -15,6 +15,8 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { FsRoutingModule } from './fs-routing.module';
 import { ListComponent } from './list/list.component';
@@ -25,17 +27,25 @@ import { ImageComponent } from './view/image/image.component';
 import { TextComponent } from './view/text/text.component';
 import { AudioComponent } from './view/audio/audio.component';
 import { VideoComponent } from './view/video/video.component';
+import { RenameComponent } from './dialog/rename/rename.component';
 
 
 @NgModule({
-  declarations: [ListComponent, ManagerComponent, PathComponent, FileComponent, ImageComponent, TextComponent, AudioComponent, VideoComponent],
+  declarations: [ListComponent, ManagerComponent, PathComponent,
+    FileComponent, ImageComponent, TextComponent,
+    AudioComponent, VideoComponent, RenameComponent
+  ],
   imports: [
     CommonModule, RouterModule, FormsModule,
     MatListModule, MatCardModule, MatProgressSpinnerModule,
     MatButtonModule, MatIconModule, MatTooltipModule,
     MatFormFieldModule, MatInputModule, MatRippleModule,
     MatToolbarModule, MatCheckboxModule, MatMenuModule,
+    MatDividerModule, MatDialogModule,
     FsRoutingModule
+  ],
+  entryComponents: [
+    RenameComponent,
   ]
 })
 export class FsModule { }

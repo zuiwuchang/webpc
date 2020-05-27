@@ -39,6 +39,7 @@ export class VideoComponent implements OnInit, OnDestroy {
   filepath: string
   dir: string
   url: string
+  stretch = true
   ngOnDestroy() {
     this._closed = true
   }

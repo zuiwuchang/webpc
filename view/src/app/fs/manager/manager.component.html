@@ -9,11 +9,90 @@
     </div>
 </div>
 <mat-menu #actionMenu="matMenu">
-    <button mat-menu-item>Settings</button>
-    <button mat-menu-item>Help</button>
+    <ng-container *ngIf="target.length==0;then blankView;else countView"></ng-container>
+    <ng-template #blankView>
+        <button mat-menu-item [disabled]="isNotCanWrite">
+            <mat-icon  fontSet="fontawesome-fas" fontIcon="fa-paste"></mat-icon>
+            <ng-container i18n>Paste</ng-container>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item [disabled]="isNotCanWrite">
+            <mat-icon>cloud_upload</mat-icon>
+            <ng-container i18n>Upload</ng-container>
+        </button>
+    </ng-template>
+    <ng-template #countView>
+        <ng-container *ngIf="target.length==1;then oneView"></ng-container>
+        <ng-template #oneView>
+            <a mat-menu-item *ngIf="target[0].url" [routerLink]="target[0].url" [queryParams]="{root:target[0].root,path:target[0].filename}" >
+                <mat-icon>link</mat-icon>
+                <ng-container i18n>Open</ng-container>
+            </a>
+            <button *ngIf="!target[0].isDir" mat-menu-item [matMenuTriggerFor]="opens">
+                <mat-icon>launch</mat-icon>
+                <ng-container i18n>Open as</ng-container>
+            </button>
+            <mat-menu #opens="matMenu">
+                <a mat-menu-item  routerLink="/fs/view/video" [queryParams]="{root:target[0].root,path:target[0].filename}">
+                    <mat-icon>movie_creation</mat-icon>
+                    <ng-container i18n>Video</ng-container>
+                </a>
+                <a mat-menu-item  routerLink="/fs/view/audio" [queryParams]="{root:target[0].root,path:target[0].filename}">
+                 
+                    <mat-icon>audiotrack</mat-icon>
+                    <ng-container i18n>Audio</ng-container>
+                </a>
+                <a mat-menu-item  routerLink="/fs/view/image" [queryParams]="{root:target[0].root,path:target[0].filename}">
+                 
+                    <mat-icon>insert_photo</mat-icon>
+                    <ng-container i18n>Image</ng-container>
+                </a>
+                <a mat-menu-item  routerLink="/fs/view/text" [queryParams]="{root:target[0].root,path:target[0].filename}">
+                    <mat-icon>event_note</mat-icon>
+                    <ng-container i18n>Text</ng-container>
+                </a>
+              </mat-menu>
+            <button mat-menu-item [disabled]="isNotCanWrite" (click)="onClickRename()">
+                <mat-icon>edit</mat-icon>
+                <ng-container i18n>Rename</ng-container>
+            </button>
+            <a *ngIf="target[0].downloadURL" [href]="target[0].downloadURL"  mat-menu-item>
+                <mat-icon>cloud_download</mat-icon>
+                <ng-container i18n>Download</ng-container>
+            </a>
+            <mat-divider></mat-divider>
+        </ng-template>
+        <button mat-menu-item [disabled]="isNotCanWrite">
+            <mat-icon>file_copy</mat-icon>
+            <ng-container i18n>Copy</ng-container>
+        </button>
+        <button mat-menu-item [disabled]="isNotCanWrite">
+            <mat-icon  fontSet="fontawesome-fas" fontIcon="fa-cut"></mat-icon>
+            <ng-container i18n>Cut</ng-container>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item [disabled]="isNotCanWrite">
+            <mat-icon>archive</mat-icon>
+            <ng-container i18n>Compress</ng-container>
+        </button>
+        <button mat-menu-item [disabled]="isNotCanWrite" *ngIf="target.length==1 && target[0].isSupportUncompress">
+            <mat-icon>unarchive</mat-icon>
+            <ng-container i18n>Uncompress</ng-container>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item [disabled]="isNotCanWrite">
+            <mat-icon>delete</mat-icon>
+            <ng-container i18n>Delete</ng-container>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item>
+            <mat-icon>info</mat-icon>
+            <ng-container i18n>Property</ng-container>
+        </button>
+    </ng-template>
 </mat-menu>
 
-<div class="actionMenu" [style.left]="menuLeft+'px'" [style.top]="menuTop+'px'" [matMenuTriggerFor]="actionMenu">
+<div #trigger class="actionMenu" [style.left]="menuLeft+'px'" [style.top]="menuTop+'px'" [matMenuTriggerFor]="actionMenu">
 </div>
 
 <mat-toolbar class="footer" color="primary">

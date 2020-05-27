@@ -6,151 +6,31 @@ import { fromEvent, Subscription } from 'rxjs';
 import { takeUntil, first } from 'rxjs/operators';
 import { CheckEvent, NativeEvent } from '../file/file.component';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
+import { Box, Point } from './box';
+import { SessionService, Session } from 'src/app/core/session/session.service';
+import { RenameComponent } from '../dialog/rename/rename.component';
 
-class Point {
-  constructor(public x: number, public y: number) {
-  }
-  toView(): Point {
-    if (document.compatMode == "BackCompat") {
-      this.x -= document.body.scrollLeft
-      this.y -= document.body.scrollTop
-    } else {
-      this.x -= document.documentElement.scrollLeft
-      this.y -= document.documentElement.scrollTop
-    }
-    return this
-  }
-}
-// 有效範圍
-class Box {
-  private _p0: Point
-  private _p1: Point
-  start: Point
-  stop: Point
-  setRange(element) {
-    this._p0 = getViewPoint(element)
-    this._p1 = new Point(this._p0.x + element.offsetWidth, this._p0.y + element.offsetHeight)
-  }
-  private _fixStart() {
-    if (this.start.x < this._p0.x) {
-      this.start.x = this._p0.x
-    } else if (this.start.x > this._p1.x) {
-      this.start.x = this._p1.x
-    }
-
-    if (this.start.y < this._p0.y) {
-      this.start.y = this._p0.y
-    } else if (this.start.y > this._p1.y) {
-      this.start.y = this._p1.y
-    }
-  }
-
-  private _fixStop() {
-    if (this.stop.x < this._p0.x) {
-      this.stop.x = this._p0.x
-    } else if (this.stop.x > this._p1.x) {
-      this.stop.x = this._p1.x
-    }
-
-    if (this.stop.y < this._p0.y) {
-      this.stop.y = this._p0.y
-    } else if (this.stop.y > this._p1.y) {
-      this.stop.y = this._p1.y
-    }
-  }
-  calculate() {
-    if (!this.start || !this.stop) {
-      return
-    }
-    if (this._p0 && this._p1) {
-      this._fixStart()
-      this._fixStop()
-    }
-    this.x = Math.min(this.start.x, this.stop.x)
-    this.y = Math.min(this.start.y, this.stop.y)
-    this.w = Math.abs(this.start.x - this.stop.x)
-    this.h = Math.abs(this.start.y - this.stop.y)
-  }
-  x = 0
-  y = 0
-  w = 0
-  h = 0
-  reset() {
-    this.x = 0
-    this.y = 0
-    this.w = 0
-    this.h = 0
-    this._p0 = null
-    this._p1 = null
-    this.start = null
-    this.stop = null
-  }
-
-  checked(doc: Document): Array<number> {
-    const result = new Array<number>()
-    const nodes = doc.childNodes
-
-    if (nodes && nodes.length > 0) {
-      let parent: any
-      for (let i = 0; i < nodes.length; i++) {
-        let node = (nodes[i] as any)
-        if (!node || !node.querySelector) {
-          continue
-        }
-        node = node.querySelector('.wrapper')
-        if (!node) {
-          continue
-        }
-        const l = getViewPoint(node)
-        const r = new Point(l.x + node.offsetWidth, l.y + node.offsetHeight)
-        const ok = this.testView(l, r)
-        if (ok) {
-          result.push(i)
-        }
-      }
-    }
-    return result
-  }
-  testView(l: Point, r: Point): boolean {
-    if (r.x < this.x || l.x > (this.x + this.w)) {
-      return false
-    }
-    if (r.y < this.y || l.y > (this.y + this.h)) {
-      return false
-    }
-    return true
-  }
-}
-function getPagePoint(element): Point {
-  let x = 0
-  let y = 0
-  while (element) {
-    x += element.offsetLeft + element.clientLeft
-    y += element.offsetTop + element.clientTop
-    element = element.offsetParent
-  }
-  return new Point(x, y)
-}
-
-function getViewPoint(element): Point {
-  return getPagePoint(element).toView()
-}
 @Component({
   selector: 'fs-manager',
   templateUrl: './manager.component.html',
   styleUrls: ['./manager.component.scss']
 })
 export class ManagerComponent implements OnInit, OnDestroy {
-
-  constructor(private router: Router) { }
+  constructor(private router: Router,
+    public matDialog: MatDialog,
+    private sessionService: SessionService,
+  ) { }
   private _subscription: Subscription
+  private _session: Session
+  private _sessionSubscription: Subscription
   @Input()
   folder: Dir
-
+  private _closed: boolean
   private _source: Array<FileInfo>
   private _hide: Array<FileInfo>
   @Input('source')
-  set source0(arrs: Array<FileInfo>) {
+  set source(arrs: Array<FileInfo>) {
     this._source = arrs
     this._hide = null
     if (arrs && arrs.length > 0) {
@@ -168,18 +48,32 @@ export class ManagerComponent implements OnInit, OnDestroy {
     return this.all ? this._source : this._hide
   }
   ngOnInit(): void {
+    this._sessionSubscription = this.sessionService.observable.subscribe((session) => {
+      this._session = session
+    })
   }
   ngOnDestroy() {
+    this._closed = true
     if (this._subscription) {
       this._subscription.unsubscribe()
     }
+    this._sessionSubscription.unsubscribe()
   }
   @ViewChild('fs')
   fs: ElementRef
   @ViewChild('box')
   box: ElementRef
+  _trigger: MatMenuTrigger
   @ViewChild(MatMenuTrigger)
-  trigger: MatMenuTrigger
+  set trigger(trigger: MatMenuTrigger) {
+    if (this._trigger) {
+      return
+    }
+    this._trigger = trigger
+  }
+  get trigger(): MatMenuTrigger {
+    return this._trigger
+  }
 
   ctrl: boolean
   shift: boolean
@@ -204,27 +98,26 @@ export class ManagerComponent implements OnInit, OnDestroy {
       }
     })
   }
-  menuLeft: 0
-  menuTop: 0
+  menuLeft = 0
+  menuTop = 0
   onContextmenu(evt) {
-    this._clearChecked()
+    if (!this.ctrl && !this.shift && !evt.ctrlKey && !evt.shiftKey) {
+      this._clearChecked()
+    }
     if (this.trigger) {
-      this.menuLeft = evt.clientX
-      this.menuTop = evt.clientY
-      this.trigger.openMenu()
+      this._openMenu(this.trigger, evt.clientX, evt.clientY)
     }
     return false
   }
   onContextmenuNode(evt: CheckEvent) {
-    console.log(evt)
     if (!evt.target.checked) {
-      this._clearChecked()
+      if (!this.ctrl && !this.shift && !evt.event.ctrlKey && !evt.event.shiftKey) {
+        this._clearChecked()
+      }
       evt.target.checked = true
     }
     if (this.trigger) {
-      this.menuLeft = (evt.event as any).clientX
-      this.menuTop = (evt.event as any).clientY
-      this.trigger.openMenu()
+      this._openMenu(this.trigger, (evt.event as any).clientX, (evt.event as any).clientY)
     }
     return false
   }
@@ -357,5 +250,38 @@ export class ManagerComponent implements OnInit, OnDestroy {
   toggleDisplay() {
     this.all = !this.all
     this._clearChecked()
+  }
+  // 爲 彈出菜單 緩存 選中目標
+  target = new Array<FileInfo>()
+  private _openMenu(trigger: MatMenuTrigger, x: number, y: number) {
+    this.menuLeft = x
+    this.menuTop = y
+    trigger.openMenu()
+    const target = new Array<FileInfo>()
+    for (let i = 0; i < this.source.length; i++) {
+      if (this.source[i].checked) {
+        target.push(this.source[i])
+      }
+    }
+    this.target = target
+  }
+  get isNotCanWrite(): boolean {
+    if (this._session) {
+      if (this._session.root) {
+        return false
+      }
+      if (this._session.write && this.folder.write) {
+        return false
+      }
+    }
+    return true
+  }
+  onClickRename() {
+    if (this.target && this.target.length == 1) {
+      this.matDialog.open(RenameComponent, {
+        data: this.target[0],
+        disableClose: true,
+      })
+    }
   }
 }

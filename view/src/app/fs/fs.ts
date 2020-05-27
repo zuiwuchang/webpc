@@ -1,3 +1,5 @@
+import { ServerAPI } from '../core/core/api';
+
 const audios = new Set();
 ([
     '.mp3',
@@ -126,5 +128,33 @@ export class FileInfo {
     }
     get filetype(): FileType {
         return this._filetype
+    }
+    get isSupportUncompress(): boolean {
+        if (this.isDir) {
+            return false
+        }
+        const name = this.name.toLowerCase()
+        return name.endsWith(`.tar.gz`) || name.endsWith(`.tar.bz2`)
+    }
+    get url(): string {
+        switch (this._filetype) {
+            case FileType.Dir:
+                return '/fs/list'
+            case FileType.Video:
+                return '/fs/view/video'
+            case FileType.Audio:
+                return '/fs/view/audio'
+            case FileType.Image:
+                return '/fs/view/image'
+            case FileType.Text:
+                return '/fs/view/text'
+        }
+        return ''
+    }
+    get downloadURL(): string {
+        if (this.isDir) {
+            return ''
+        }
+        return ServerAPI.v1.fs.oneURL([this.root, this.filename])
     }
 }

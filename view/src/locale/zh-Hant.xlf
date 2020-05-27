@@ -410,6 +410,14 @@
           <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="b8b1f4380472ddd45e08ce78580fad15f6957d5c" datatype="html">
+        <source>Data saved</source>
+        <target>數據已保存</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="7c25ffdfdcbc340e0abe8ead8c8f9ca6a260e970" datatype="html">
         <source>File Management</source>
         <target>檔案管理</target>
@@ -574,6 +582,134 @@
           <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="170919b6c28b7eb90fead8af3d10ce8f10dc041e" datatype="html">
+        <source>Paste</source>
+        <target>貼上</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4b3972c3e9485218508a95f7a4ce7758e3f09ced" datatype="html">
+        <source>Upload</source>
+        <target>上傳</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html">
+        <source>Open</source>
+        <target>打開</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1eb95103405c577cc75f3e2f77ba84fa497831ee" datatype="html">
+        <source>Open as</source>
+        <target>打開爲</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2d1ea268a6a9f483dbc2cbfe19bf4256a57a6af4" datatype="html">
+        <source>Video</source>
+        <target>視頻</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="f0baeb8b69d120073b6d60d34785889b0c3232c8" datatype="html">
+        <source>Audio</source>
+        <target>音頻</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a5f9ba9bb9faa8284bcadb1cdbc6aaf969e9c4bb" datatype="html">
+        <source>Image</source>
+        <target>圖像</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8ba143716c2da6e4120c0c1a804f0bdd9a7e5f5b" datatype="html">
+        <source>Text</source>
+        <target>文檔</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e26f9cf3666aace4e524b1505c9795d76d87738d" datatype="html">
+        <source>Rename</source>
+        <target>重命名</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dc75033a5238fdc4f462212c847a45ba8018a3fd" datatype="html">
+        <source>Download</source>
+        <target>下載</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1979da7460819153e11d2078244645d94291b69c" datatype="html">
+        <source>Copy</source>
+        <target>複製</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">65</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="393584cc19f5730acb6ca04a01d7b818e5cda8a4" datatype="html">
+        <source>Cut</source>
+        <target>剪下</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">69</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="f1aea024fc1f74582f6863f215ddc3438ca65956" datatype="html">
+        <source>Compress</source>
+        <target>壓縮</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="eee748902e363090150f4fa84687f2ebe353eaac" datatype="html">
+        <source>Uncompress</source>
+        <target>解壓</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="826b25211922a1b46436589233cb6f1a163d89b7" datatype="html">
+        <source>Delete</source>
+        <target>刪除</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">83</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cf17e2f3737e74b8e3b874867ec9cf5fa46f2146" datatype="html">
+        <source>Property</source>
+        <target>屬性</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">88</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="272fb7b69aa7689350d5785238419c2102934883" datatype="html">
         <source>Switch between button and text-based position bar</source>
         <target>於按鈕和基於文字的位置列間切換</target>
@@ -624,6 +760,22 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/view/text/text.component.html</context>
           <context context-type="linenumber">24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ecb82440ef7e800346069b1932182e1bda643ca0" datatype="html">
+        <source>Audio View</source>
+        <target>音頻視圖</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/view/audio/audio.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3c5a92935ba932c46cd84d27a00c336578a2331c" datatype="html">
+        <source>Video View</source>
+        <target>視頻視圖</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/view/video/video.component.html</context>
+          <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
     </body>

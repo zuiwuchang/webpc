@@ -14,8 +14,11 @@
         <span class="left8">{{root}}</span>
     </a>
     <fs-path  [path]="dir" (pathChange)="onPathChange($event)"></fs-path>
+    <p>
+        <mat-checkbox [(ngModel)]="stretch" i18n>Stretch Width</mat-checkbox>
+    </p>
     <div class="view">
-        <video *ngIf="url" [src]="url" controls="controls" autoplay loop>Not support video tag,Please use a modern browser.</video>
+        <video *ngIf="url" [src]="url" [style.width]="stretch?'100%':''" controls="controls" autoplay loop>Not support video tag,Please use a modern browser.</video>
     </div>
 </ng-template>
 
