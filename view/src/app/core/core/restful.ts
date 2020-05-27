@@ -1,5 +1,6 @@
 import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http'
-import { isNumber, isString, isObject, isArray } from 'util'
+import { isNumber, isString, isObject, isArray, isNullOrUndefined } from 'util'
+import { environment } from 'src/environments/environment'
 
 export function resolveError(e): string {
     if (!e) {
@@ -41,8 +42,11 @@ export function wrapPromise<T>(promise: Promise<T>): Promise<T> {
     })
 }
 export class RESTful {
-    constructor(public baseURL: string) {
+    constructor(public root, public version, public url: string) {
 
+    }
+    get baseURL(): string {
+        return `${this.root}/${this.version}/${this.url}`
     }
     oneURL(id: string | number | boolean | Array<any>): string {
         let val: string
@@ -55,6 +59,38 @@ export class RESTful {
     }
     onePatchURL(id: string | number | boolean | Array<any>, patch: string): string {
         return `${this.oneURL(id)}/${patch}`
+    }
+    websocketURL(id: string | number | boolean | Array<any>): string {
+        const location = document.location
+        let addr: string
+        if (location.protocol == "https") {
+            addr = `wss://${location.hostname}`
+            if (location.port == "") {
+                addr += ":443"
+            } else {
+                addr += `:${location.port}`
+            }
+        } else {
+            addr = `ws://${location.hostname}`
+            if (location.port == "") {
+                addr += ":80"
+            } else {
+                addr += `:${location.port}`
+            }
+        }
+        let val: string
+        if (!isNullOrUndefined(id)) {
+            if (isArray(id)) {
+                val = (id as Array<any>).map<string>((val) => encodeURIComponent(encodeURIComponent(val))).join('/')
+            } else {
+                val = encodeURIComponent(encodeURIComponent(id as string))
+            }
+        }
+        let url = `${addr}${this.baseURL}/websocket`
+        if (!isNullOrUndefined(val)) {
+            url += '/' + val
+        }
+        return url
     }
     get<T>(client: HttpClient, options?: {
         headers?: HttpHeaders | {
@@ -222,4 +258,6 @@ export class RESTful {
     }): Promise<T> {
         return wrapPromise(client.patch<T>(this.onePatchURL(id, patch), body, options).toPromise())
     }
+
+
 }

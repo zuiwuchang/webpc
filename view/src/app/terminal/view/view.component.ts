@@ -5,7 +5,7 @@ import { FitAddon } from 'xterm-addon-fit';
 import { WebLinksAddon } from 'xterm-addon-web-links';
 import { Subject, Subscription } from 'rxjs'
 import { debounceTime } from 'rxjs/operators';
-import { ServerAPI, getWebSocketAddr } from 'src/app/core/core/api';
+import { ServerAPI } from 'src/app/core/core/api';
 import { isString, isNumber } from 'util';
 import { interval } from 'rxjs';
 
@@ -157,7 +157,11 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
       return
     }
     this.connect = true
-    const url = getWebSocketAddr(`/ws${ServerAPI.v1.shells.baseURL}/${id}/${this._xterm.cols}/${this._xterm.rows}`)
+    const url = ServerAPI.v1.shells.websocketURL([
+      id,
+      this._xterm.cols,
+      this._xterm.rows,
+    ])
     console.log(url)
     const websocket = new WebSocket(url)
     this._websocket = websocket

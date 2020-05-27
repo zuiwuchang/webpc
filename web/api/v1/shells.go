@@ -28,7 +28,7 @@ func (h Shells) Register(router *gin.RouterGroup) {
 	r := router.Group(`/shells`)
 
 	r.GET(``, h.CheckSession, h.list)
-	r.GET(`:id/:cols/:rows`, h.CheckShell, h.connect)
+	r.GET(`websocket/:id/:cols/:rows`, h.CheckShell, h.connect)
 	r.PATCH(`:id/name`, h.CheckShell, h.rename)
 	r.DELETE(`:id`, h.CheckShell, h.remove)
 }

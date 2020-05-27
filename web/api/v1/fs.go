@@ -45,6 +45,7 @@ func (h FS) Register(router *gin.RouterGroup) {
 	r.GET(``, h.ls)
 	r.GET(`:root/:path`, h.get)
 	r.PUT(`:root/:path`, h.put)
+	r.PATCH(`:root/:path/name`, h.rename)
 }
 func (h FS) ls(c *gin.Context) {
 	var obj struct {
@@ -231,4 +232,64 @@ func (h FS) writeFile(filename string, data []byte, perm os.FileMode) error {
 		err = err1
 	}
 	return err
+}
+func (h FS) rename(c *gin.Context) {
+	session := h.BindSession(c)
+	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
+		return
+	}
+	objURI, e := h.bindURI(c)
+	if e != nil {
+		return
+	}
+	fs := mount.Single()
+	m := fs.Root(objURI.Root)
+	if m == nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+	if !h.checkWirte(c, m) {
+		return
+	}
+	filename, e := m.Filename(objURI.Path)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+
+	var obj struct {
+		Val string `form:"val" json:"val" xml:"val" yaml:"val" binding:"required"`
+	}
+	e = h.Bind(c, &obj)
+	if e != nil {
+		return
+	}
+	dst := filepath.Base(filepath.Clean(obj.Val))
+	if dst != obj.Val {
+		h.NegotiateErrorString(c, http.StatusBadRequest, `name not support`)
+		return
+	}
+	dst = filepath.Dir(filename) + `/` + dst
+	e = os.Rename(filename, dst)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.String(`method`, c.Request.Method),
+			zap.String(`root`, objURI.Root),
+			zap.String(`path`, objURI.Path),
+			zap.String(`val`, obj.Val),
+			zap.String(`src`, filename),
+			zap.String(`dst`, dst),
+		)
+	}
+	c.Status(http.StatusNoContent)
 }

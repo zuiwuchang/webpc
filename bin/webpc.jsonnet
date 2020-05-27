@@ -54,6 +54,13 @@ local GB=MB * 1024;
 				Read: true,
 				Shared: false,
 			},
+			{
+				Name: "media",
+				Root: "/media/king/",
+				Write: false,
+				Read: true,
+				Shared: false,
+			},
 		],
 	},
 	Cookie: {

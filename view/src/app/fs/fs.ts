@@ -72,12 +72,14 @@ export class FileInfo {
     root: string
     checked = false
     private _filetype = FileType.Binary
+    private _dir: string
 
     constructor(root: string, dir: string, other: FileInfo) {
         this.name = other.name
         this.mode = other.mode
         this.size = other.size
         this.isDir = other.isDir
+        this._dir = dir
         if (dir.endsWith('/')) {
             this.filename = dir + other.name
         } else {
@@ -88,18 +90,33 @@ export class FileInfo {
         if (this.isDir) {
             this._filetype = FileType.Dir
         } else {
-            const ext = this.ext.toLowerCase()
-            if (videos.has(ext)) {
-                this._filetype = FileType.Video
-            } else if (audios.has(ext)) {
-                this._filetype = FileType.Audio
-            } else if (images.has(ext)) {
-                this._filetype = FileType.Image
-            } else if (texts.has(ext)) {
-                this._filetype = FileType.Text
-            } else {
-                this._filetype = FileType.Binary
-            }
+            this._settype()
+        }
+    }
+    private _settype() {
+        const ext = this.ext.toLowerCase()
+        if (videos.has(ext)) {
+            this._filetype = FileType.Video
+        } else if (audios.has(ext)) {
+            this._filetype = FileType.Audio
+        } else if (images.has(ext)) {
+            this._filetype = FileType.Image
+        } else if (texts.has(ext)) {
+            this._filetype = FileType.Text
+        } else {
+            this._filetype = FileType.Binary
+        }
+    }
+    setName(name: string) {
+        this.name = name
+        const dir = this._dir
+        if (dir.endsWith('/')) {
+            this.filename = dir + name
+        } else {
+            this.filename = dir + '/' + name
+        }
+        if (!this.isDir) {
+            this._settype()
         }
     }
     static compare(l: FileInfo, r: FileInfo): number {

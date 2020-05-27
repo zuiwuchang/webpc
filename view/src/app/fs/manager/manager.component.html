@@ -12,6 +12,15 @@
     <ng-container *ngIf="target.length==0;then blankView;else countView"></ng-container>
     <ng-template #blankView>
         <button mat-menu-item [disabled]="isNotCanWrite">
+            <mat-icon>note_add</mat-icon>
+            <ng-container i18n>New File</ng-container>
+        </button>
+        <button mat-menu-item [disabled]="isNotCanWrite">
+            <mat-icon>create_new_folder</mat-icon>
+            <ng-container i18n>New Folder</ng-container>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item [disabled]="isNotCanWrite">
             <mat-icon  fontSet="fontawesome-fas" fontIcon="fa-paste"></mat-icon>
             <ng-container i18n>Paste</ng-container>
         </button>

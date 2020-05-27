@@ -278,9 +278,34 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
   onClickRename() {
     if (this.target && this.target.length == 1) {
+      const node = this.target[0]
+      const name = node.name
       this.matDialog.open(RenameComponent, {
-        data: this.target[0],
+        data: node,
         disableClose: true,
+      }).afterClosed().toPromise().then(() => {
+        const current = node.name;
+        if (name == current) {
+          return
+        }
+        if (name.startsWith(`.`)) {
+          if (!current.startsWith(`.`)) {
+            if (!this._hide) {
+              this._hide = new Array<FileInfo>()
+            }
+            this._hide.push(node)
+            this._hide.sort(FileInfo.compare)
+          }
+        } else {
+          if (current.startsWith(`.`)) {
+            if (this._hide) {
+              const index = this._hide.indexOf(node)
+              if (index != -1) {
+                this._hide.splice(index, 1)
+              }
+            }
+          }
+        }
       })
     }
   }

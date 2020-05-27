@@ -34,8 +34,10 @@ export class RenameComponent implements OnInit {
     this._disabled = true
     ServerAPI.v1.fs.patchOne<string>(this.httpClient, [this.data.root, this.data.filename], 'name', {
       val: this.name,
-    }).then((name) => {
-      this.name = name
+    }).then(() => {
+      this.toasterService.pop('success', undefined, this.i18nService.get(`Rename Success`))
+      this.data.setName(this.name)
+      this.matDialogRef.close()
     }, (e) => {
       this.toasterService.pop('error', undefined, e)
     }).finally(() => {
