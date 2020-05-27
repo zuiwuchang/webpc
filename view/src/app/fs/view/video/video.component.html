@@ -1,1 +1,21 @@
-<p>video works!</p>
+<mat-card>
+    <mat-card-title i18n>Video View</mat-card-title>
+    <mat-card-content>
+    <ng-container *ngIf="ready;then readyView;"></ng-container>        
+    </mat-card-content>
+</mat-card>
+
+<ng-template #readyView>
+    <mat-card-subtitle>
+        {{filepath}}
+    </mat-card-subtitle>
+    <a  class="header" mat-button [routerLink]="['/fs/list']" [queryParams]="{root:root}">
+        <mat-icon>folder_special</mat-icon>
+        <span class="left8">{{root}}</span>
+    </a>
+    <fs-path  [path]="dir" (pathChange)="onPathChange($event)"></fs-path>
+    <div class="view">
+        <video *ngIf="url" [src]="url" controls="controls" autoplay loop>Not support video tag,Please use a modern browser.</video>
+    </div>
+</ng-template>
+

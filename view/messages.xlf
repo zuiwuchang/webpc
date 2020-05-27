@@ -373,6 +373,13 @@
           <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="b8b1f4380472ddd45e08ce78580fad15f6957d5c" datatype="html">
+        <source>Data saved</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="7c25ffdfdcbc340e0abe8ead8c8f9ca6a260e970" datatype="html">
         <source>File Management</source>
         <context-group purpose="location">
@@ -564,6 +571,20 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/view/text/text.component.html</context>
           <context context-type="linenumber">24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ecb82440ef7e800346069b1932182e1bda643ca0" datatype="html">
+        <source>Audio View</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/view/audio/audio.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3c5a92935ba932c46cd84d27a00c336578a2331c" datatype="html">
+        <source>Video View</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/view/video/video.component.html</context>
+          <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
     </body>
