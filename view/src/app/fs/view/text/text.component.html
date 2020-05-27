@@ -16,12 +16,12 @@
     <fs-path  [disabled]="loading||saving"  [path]="dir" (pathChange)="onPathChange($event)"></fs-path>
     <mat-form-field appearance="fill">
         <mat-label>{{name}}</mat-label>
-        <textarea matInput [(ngModel)]="val" [disabled]="loading||saving" rows="15" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
+        <textarea matInput [(ngModel)]="val" [disabled]="loading||saving||isNotCanWrite" rows="15" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
     </mat-form-field>
 
     <mat-card-actions>
         <button mat-stroked-button color="primary" [disabled]="loading||saving" i18n (click)="onClickLoad()">Load</button>
-        <button mat-stroked-button color="primary" [disabled]="loading||saving||isNotChanged" i18n (click)="onCLickSave()">Save</button>
+        <button mat-stroked-button color="primary" [disabled]="loading||saving||isNotCanWrite||isNotChanged" i18n (click)="onCLickSave()">Save</button>
         <mat-spinner *ngIf="loading||saving" color="accent" diameter='24'></mat-spinner>
     </mat-card-actions>
 </ng-template>

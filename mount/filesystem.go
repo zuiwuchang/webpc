@@ -123,7 +123,10 @@ func (m *Mount) LS(path string) (dir string, results []FileInfo, e error) {
 func (m *Mount) Filename(path string) (filename string, e error) {
 	filename = filepath.Clean(m.root + path)
 	if m.root != filename {
-		root := m.root + Separator
+		root := m.root
+		if !strings.HasSuffix(root, Separator) {
+			root += Separator
+		}
 		if !strings.HasPrefix(filename, root) {
 			e = errors.New(`Illegal path`)
 			return

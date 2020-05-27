@@ -35,6 +35,12 @@ func (h Shells) Register(router *gin.RouterGroup) {
 func (h Shells) list(c *gin.Context) {
 	session := h.BindSession(c)
 	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
 		return
 	}
 	manager := shell.Single()
@@ -44,7 +50,12 @@ func (h Shells) list(c *gin.Context) {
 func (h Shells) connect(c *gin.Context) {
 	session := h.BindSession(c)
 	if session == nil {
-		h.NegotiateErrorString(c, http.StatusInternalServerError, `session miss`)
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
 		return
 	}
 	var obj struct {
@@ -163,7 +174,12 @@ func (h Shells) connect(c *gin.Context) {
 func (h Shells) rename(c *gin.Context) {
 	session := h.BindSession(c)
 	if session == nil {
-		h.NegotiateErrorString(c, http.StatusInternalServerError, `session miss`)
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
 		return
 	}
 	var objURI struct {
@@ -199,7 +215,12 @@ func (h Shells) rename(c *gin.Context) {
 func (h Shells) remove(c *gin.Context) {
 	session := h.BindSession(c)
 	if session == nil {
-		h.NegotiateErrorString(c, http.StatusInternalServerError, `session miss`)
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
 		return
 	}
 	var objURI struct {

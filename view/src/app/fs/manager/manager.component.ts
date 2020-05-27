@@ -206,14 +206,6 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
   menuLeft: 0
   menuTop: 0
-  onClickMenu(evt) {
-    if (!this.trigger) {
-      return
-    }
-    this.menuLeft = evt.clientX
-    this.menuTop = evt.clientY
-    this.trigger.openMenu()
-  }
   onContextmenu(evt) {
     this._clearChecked()
     if (this.trigger) {

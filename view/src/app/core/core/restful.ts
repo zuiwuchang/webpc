@@ -67,8 +67,21 @@ export class RESTful {
         reportProgress?: boolean;
         responseType?: 'json';
         withCredentials?: boolean;
-    }): Promise<T> {
-        return wrapPromise(client.get<T>(this.baseURL, options).toPromise())
+    }): Promise<T>;
+    get(client: HttpClient, options: {
+        headers?: HttpHeaders | {
+            [header: string]: string | string[];
+        };
+        observe?: 'body';
+        params?: HttpParams | {
+            [param: string]: string | string[];
+        };
+        reportProgress?: boolean;
+        responseType: 'text';
+        withCredentials?: boolean;
+    }): Promise<string>;
+    get(client: HttpClient, options?: any): any {
+        return wrapPromise(client.get(this.baseURL, options).toPromise())
     }
     post<T>(client: HttpClient, body: any | null, options?: {
         headers?: HttpHeaders | {
@@ -126,7 +139,6 @@ export class RESTful {
     }): Promise<T> {
         return wrapPromise(client.patch<T>(`${this.baseURL}/${patch}`, body, options).toPromise())
     }
-
     getOne<T>(client: HttpClient, id: string | number | boolean | Array<any>, options?: {
         headers?: HttpHeaders | {
             [header: string]: string | string[];
@@ -138,10 +150,8 @@ export class RESTful {
         reportProgress?: boolean;
         responseType?: 'json';
         withCredentials?: boolean;
-    }): Promise<T> {
-        return wrapPromise(client.get<T>(this.oneURL(id), options).toPromise())
-    }
-    getOneText(client: HttpClient, id: string | number | boolean | Array<any>, options: {
+    }): Promise<T>;
+    getOne(client: HttpClient, id: string | number | boolean | Array<any>, options: {
         headers?: HttpHeaders | {
             [header: string]: string | string[];
         };
@@ -152,7 +162,8 @@ export class RESTful {
         reportProgress?: boolean;
         responseType: 'text';
         withCredentials?: boolean;
-    }): Promise<string> {
+    }): Promise<string>;
+    getOne(client: HttpClient, id: string | number | boolean | Array<any>, options?: any): any {
         return wrapPromise(client.get(this.oneURL(id), options).toPromise())
     }
     postOne<T>(client: HttpClient, id: string | number | boolean | Array<any>, body: any | null, options?: {

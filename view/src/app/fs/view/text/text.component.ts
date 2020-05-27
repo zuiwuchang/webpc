@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { SessionService } from 'src/app/core/session/session.service';
+import { SessionService, Session } from 'src/app/core/session/session.service';
 import { ServerAPI } from 'src/app/core/core/api';
 import { isString } from 'util';
 import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { resolveError } from 'src/app/core/core/restful';
+import { HttpClient } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-text',
@@ -24,6 +24,8 @@ export class TextComponent implements OnInit, OnDestroy {
   saving: boolean
   val: string
   private _val: string
+  private _subscription: Subscription
+  private _session: Session
   constructor(private router: Router,
     private route: ActivatedRoute,
     private sessionService: SessionService,
@@ -33,6 +35,12 @@ export class TextComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this._subscription = this.sessionService.observable.subscribe((session) => {
+      if (this._closed) {
+        return
+      }
+      this._session = session
+    })
     this.sessionService.ready.then(() => {
       if (this._closed) {
         return
@@ -54,6 +62,9 @@ export class TextComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy() {
     this._closed = true
+    if (this._subscription) {
+      this._subscription.unsubscribe()
+    }
   }
   onPathChange(path: string) {
     if (!isString(path)) {
@@ -82,7 +93,7 @@ export class TextComponent implements OnInit, OnDestroy {
   }
   onClickLoad() {
     this.loading = true
-    ServerAPI.v1.fs.getOneText(this.httpClient,
+    ServerAPI.v1.fs.getOne(this.httpClient,
       [this.root, this.filepath],
       {
         responseType: 'text',
@@ -99,18 +110,25 @@ export class TextComponent implements OnInit, OnDestroy {
   get isNotChanged(): boolean {
     return this.val == this._val
   }
+  get isNotCanWrite(): boolean {
+    if (this._session) {
+      if (this._session.write || this._session.root) {
+        return false
+      }
+    }
+    return true
+  }
   onCLickSave() {
     this.saving = true
     ServerAPI.v1.fs.putOne(this.httpClient,
       [
         this.root,
-        this.filepath
+        this.filepath,
       ],
-      {
-        val: this.val,
-      },
+      this.val,
     ).then(() => {
-      console.log('ok')
+      this.toasterService.pop('success', undefined, 'Data saved')
+      this._val = this.val
     }, (e) => {
       this.toasterService.pop('error', undefined, e)
     }).finally(() => {

@@ -97,6 +97,12 @@ func (h Session) logout(c *gin.Context) {
 func (h Session) password(c *gin.Context) {
 	session := h.BindSession(c)
 	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
 		return
 	}
 	// 解析參數

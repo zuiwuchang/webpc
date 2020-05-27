@@ -29,8 +29,7 @@ export class ImageComponent implements OnInit, OnDestroy {
       if (index != -1) {
         this.dir = path.substring(0, index)
       }
-
-      this.url = `${ServerAPI.v1.fs.baseURL}/${encodeURIComponent(encodeURIComponent(root))}/${encodeURIComponent(encodeURIComponent(path))}`
+      this.url = ServerAPI.v1.fs.oneURL([root, path])
       this.ready = true
     })
   }
