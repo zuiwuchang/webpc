@@ -32,18 +32,7 @@ export class FileComponent implements OnInit {
   }
   get icon(): string {
     if (this.source) {
-      switch (this.source.filetype) {
-        case FileType.Dir:
-          return 'folder'
-        case FileType.Video:
-          return 'movie_creation'
-        case FileType.Audio:
-          return 'audiotrack'
-        case FileType.Image:
-          return 'insert_photo'
-        case FileType.Text:
-          return 'event_note'
-      }
+      return this.source.icon
     }
     return 'insert_drive_file'
   }

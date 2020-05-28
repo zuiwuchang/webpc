@@ -174,4 +174,47 @@ export class FileInfo {
         }
         return ServerAPI.v1.fs.oneURL([this.root, this.filename])
     }
+    get icon(): string {
+        switch (this.filetype) {
+            case FileType.Dir:
+                return 'folder'
+            case FileType.Video:
+                return 'movie_creation'
+            case FileType.Audio:
+                return 'audiotrack'
+            case FileType.Image:
+                return 'insert_photo'
+            case FileType.Text:
+                return 'event_note'
+        }
+        return 'insert_drive_file'
+    }
+    get modeString(): string {
+        const str = "dalTLDpSugct?"
+        let w = 0
+        const buf = new Array<string>(32)
+        const m = this.mode || 0
+        for (let i = 0; i < str.length; i++) {
+            const c = str[i]
+            if ((m & (1 << (32 - 1 - i))) != 0) {
+                buf[w] = c
+                w++
+            }
+        }
+        if (w == 0) {
+            buf[w] = '-'
+            w++
+        }
+        const rwx = "rwxrwxrwx"
+        for (let i = 0; i < rwx.length; i++) {
+            const c = rwx[i]
+            if ((m & (1 << (9 - 1 - i))) != 0) {
+                buf[w] = c
+            } else {
+                buf[w] = '-'
+            }
+            w++
+        }
+        return buf.slice(0, w).join('')
+    }
 }

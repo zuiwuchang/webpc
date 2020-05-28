@@ -12,6 +12,7 @@ import { SessionService, Session } from 'src/app/core/session/session.service';
 import { RenameComponent } from '../dialog/rename/rename.component';
 import { NewFileComponent } from '../dialog/new-file/new-file.component';
 import { NewFolderComponent } from '../dialog/new-folder/new-folder.component';
+import { PropertyComponent } from '../dialog/property/property.component';
 
 @Component({
   selector: 'fs-manager',
@@ -351,5 +352,13 @@ export class ManagerComponent implements OnInit, OnDestroy {
     }
     this._hide.push(fileinfo)
     this._hide.sort(FileInfo.compare)
+  }
+  onClickProperty() {
+    if (!this.target || this.target.length == 0) {
+      return
+    }
+    this.matDialog.open(PropertyComponent, {
+      data: this.target,
+    })
   }
 }

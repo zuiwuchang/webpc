@@ -30,12 +30,13 @@ import { VideoComponent } from './view/video/video.component';
 import { RenameComponent } from './dialog/rename/rename.component';
 import { NewFileComponent } from './dialog/new-file/new-file.component';
 import { NewFolderComponent } from './dialog/new-folder/new-folder.component';
+import { PropertyComponent } from './dialog/property/property.component';
 
 
 @NgModule({
   declarations: [ListComponent, ManagerComponent, PathComponent,
     FileComponent, ImageComponent, TextComponent,
-    AudioComponent, VideoComponent, RenameComponent, NewFileComponent, NewFolderComponent
+    AudioComponent, VideoComponent, RenameComponent, NewFileComponent, NewFolderComponent, PropertyComponent
   ],
   imports: [
     CommonModule, RouterModule, FormsModule,
@@ -47,7 +48,7 @@ import { NewFolderComponent } from './dialog/new-folder/new-folder.component';
     FsRoutingModule
   ],
   entryComponents: [
-    RenameComponent, NewFileComponent, NewFolderComponent,
+    RenameComponent, NewFileComponent, NewFolderComponent, PropertyComponent,
   ]
 })
 export class FsModule { }
