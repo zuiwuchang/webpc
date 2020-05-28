@@ -69,23 +69,19 @@ export class FileInfo {
     isDir: boolean
 
     filename: string
-    root: string
     checked = false
     private _filetype = FileType.Binary
-    private _dir: string
 
-    constructor(root: string, dir: string, other: FileInfo) {
+    constructor(public root: string, public dir: string, other: FileInfo) {
         this.name = other.name
         this.mode = other.mode
         this.size = other.size
         this.isDir = other.isDir
-        this._dir = dir
         if (dir.endsWith('/')) {
             this.filename = dir + other.name
         } else {
             this.filename = dir + '/' + other.name
         }
-        this.root = root
 
         if (this.isDir) {
             this._filetype = FileType.Dir
@@ -109,7 +105,7 @@ export class FileInfo {
     }
     setName(name: string) {
         this.name = name
-        const dir = this._dir
+        const dir = this.dir
         if (dir.endsWith('/')) {
             this.filename = dir + name
         } else {

@@ -28,7 +28,7 @@ func (h Shells) Register(router *gin.RouterGroup) {
 	r := router.Group(`/shells`)
 
 	r.GET(``, h.CheckSession, h.list)
-	r.GET(`websocket/:id/:cols/:rows`, h.CheckShell, h.connect)
+	r.GET(`:id/:cols/:rows/websocket`, h.CheckWebsocket, h.CheckShell, h.connect)
 	r.PATCH(`:id/name`, h.CheckShell, h.rename)
 	r.DELETE(`:id`, h.CheckShell, h.remove)
 }
@@ -48,6 +48,12 @@ func (h Shells) list(c *gin.Context) {
 	h.NegotiateData(c, http.StatusOK, arrs)
 }
 func (h Shells) connect(c *gin.Context) {
+	ws, e := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if e != nil {
+		h.NegotiateError(c, http.StatusBadRequest, e)
+		return
+	}
+	defer ws.Close()
 	session := h.BindSession(c)
 	if session == nil {
 		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
@@ -56,6 +62,11 @@ func (h Shells) connect(c *gin.Context) {
 				zap.String(`error`, `session nil`),
 			)
 		}
+
+		shell.WriteJSON(ws, gin.H{
+			`cmd`:   shell.CmdError,
+			`error`: `session nil`,
+		})
 		return
 	}
 	var obj struct {
@@ -63,8 +74,12 @@ func (h Shells) connect(c *gin.Context) {
 		Cols uint16 `uri:"cols"  binding:"required"`
 		Rows uint16 `uri:"rows" binding:"required"`
 	}
-	e := h.BindURI(c, &obj)
+	e = c.ShouldBindUri(&obj)
 	if e != nil {
+		shell.WriteJSON(ws, gin.H{
+			`cmd`:   shell.CmdError,
+			`error`: e.Error(),
+		})
 		return
 	}
 	var newshell bool
@@ -76,10 +91,6 @@ func (h Shells) connect(c *gin.Context) {
 		shellid = obj.ID
 	}
 
-	ws, e := upgrader.Upgrade(c.Writer, c.Request, nil)
-	if e != nil {
-		return
-	}
 	manager := shell.Single()
 	s, e := manager.Attach(ws, session.Name, shellid, obj.Cols, obj.Rows, newshell)
 	if e != nil {
@@ -98,7 +109,6 @@ func (h Shells) connect(c *gin.Context) {
 			`cmd`:   shell.CmdError,
 			`error`: e.Error(),
 		})
-		ws.Close()
 		return
 	}
 	if ce := logger.Logger.Check(zap.InfoLevel, c.FullPath()); ce != nil {
@@ -111,10 +121,7 @@ func (h Shells) connect(c *gin.Context) {
 			zap.Int64(`id`, shellid),
 		)
 	}
-	defer func() {
-		ws.Close()
-		s.Unattack(ws)
-	}()
+	defer s.Unattack(ws)
 
 	// 讀取 websocket
 	var msg shell.Message

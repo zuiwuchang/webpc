@@ -127,7 +127,7 @@ export class TextComponent implements OnInit, OnDestroy {
       ],
       this.val,
     ).then(() => {
-      this.toasterService.pop('success', undefined, 'Data saved')
+      this.toasterService.pop('success', undefined, this.i18nService.get('Data saved'))
       this._val = this.val
     }, (e) => {
       this.toasterService.pop('error', undefined, e)

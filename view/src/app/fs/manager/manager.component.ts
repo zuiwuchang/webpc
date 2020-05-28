@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Dir, FileInfo } from '../fs';
 import { Router } from '@angular/router';
 import { isString } from 'util';
@@ -13,6 +13,8 @@ import { RenameComponent } from '../dialog/rename/rename.component';
 import { NewFileComponent } from '../dialog/new-file/new-file.component';
 import { NewFolderComponent } from '../dialog/new-folder/new-folder.component';
 import { PropertyComponent } from '../dialog/property/property.component';
+import { RemoveComponent } from '../dialog/remove/remove.component';
+import { CompressComponent } from '../dialog/compress/compress.component';
 
 @Component({
   selector: 'fs-manager',
@@ -32,6 +34,8 @@ export class ManagerComponent implements OnInit, OnDestroy {
   private _closed: boolean
   private _source: Array<FileInfo>
   private _hide: Array<FileInfo>
+  @Output()
+  sourceChange = new EventEmitter<Array<FileInfo>>()
   @Input('source')
   set source(arrs: Array<FileInfo>) {
     this._source = arrs
@@ -172,6 +176,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
   private _clearChecked() {
     const source = this._source
+    if (!source) {
+      return
+    }
     for (let i = 0; i < source.length; i++) {
       if (source[i].checked) {
         source[i].checked = false
@@ -182,10 +189,12 @@ export class ManagerComponent implements OnInit, OnDestroy {
     const arrs = this._box.checked(this.fs.nativeElement)
     this._clearChecked()
     const source = this.source
-    for (let i = 0; i < arrs.length; i++) {
-      const index = arrs[i]
-      if (index < source.length) {
-        source[index].checked = true
+    if (source) {
+      for (let i = 0; i < arrs.length; i++) {
+        const index = arrs[i]
+        if (index < source.length) {
+          source[index].checked = true
+        }
       }
     }
     this._box.reset()
@@ -261,9 +270,12 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.menuTop = y
     trigger.openMenu()
     const target = new Array<FileInfo>()
-    for (let i = 0; i < this.source.length; i++) {
-      if (this.source[i].checked) {
-        target.push(this.source[i])
+    const source = this.source
+    if (source) {
+      for (let i = 0; i < this.source.length; i++) {
+        if (this.source[i].checked) {
+          target.push(this.source[i])
+        }
       }
     }
     this.target = target
@@ -341,6 +353,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   private _pushNode(fileinfo: FileInfo) {
     if (!this._source) {
       this._source = new Array<FileInfo>()
+      this.sourceChange.emit(this._source)
     }
     this._source.push(fileinfo)
     this._source.sort(FileInfo.compare)
@@ -359,6 +372,66 @@ export class ManagerComponent implements OnInit, OnDestroy {
     }
     this.matDialog.open(PropertyComponent, {
       data: this.target,
+    })
+  }
+  onClickRemove() {
+    const target = this.target
+    if (!target || target.length == 0) {
+      return
+    }
+    const dir = this.folder
+    this.matDialog.open(RemoveComponent, {
+      data: {
+        dir: dir,
+        source: target,
+      },
+      disableClose: true,
+    }).afterClosed().toPromise().then((ok) => {
+      if (ok) {
+        for (let i = 0; i < target.length; i++) {
+          const element = target[i]
+          if (this._source) {
+            const index = this._source.indexOf(element)
+            if (index != -1) {
+              this._source.splice(index, 1)
+            }
+          }
+          if (this._hide) {
+            const index = this._hide.indexOf(element)
+            if (index != -1) {
+              this._hide.splice(index, 1)
+            }
+          }
+        }
+      }
+    })
+  }
+  onClickCompress() {
+    const target = this.target
+    if (!target || target.length == 0) {
+      return
+    }
+    const dir = this.folder
+    this.matDialog.open(CompressComponent, {
+      data: {
+        dir: dir,
+        source: target,
+      },
+      disableClose: true,
+    }).afterClosed().toPromise().then((fileinfo: FileInfo) => {
+      if (fileinfo instanceof FileInfo) {
+        if (!this._source) {
+          this._source = new Array<FileInfo>()
+          this.sourceChange.emit(this._source)
+        }
+        this._source.push(fileinfo)
+        this._source.sort(FileInfo.compare)
+        if (!this._hide) {
+          this._hide = new Array<FileInfo>()
+        }
+        this._hide.push(fileinfo)
+        this._hide.sort(FileInfo.compare)
+      }
     })
   }
 }

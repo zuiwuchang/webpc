@@ -1,6 +1,6 @@
 <fs-path [path]="folder?.dir" (pathChange)="onPathChange($event)"></fs-path>
 
-<div #box (contextmenu)="onContextmenu($event)" (mousedown)="onStart($event)" (click)="onClick($event)">
+<div class="view" #box (contextmenu)="onContextmenu($event)" (mousedown)="onStart($event)" (click)="onClick($event)">
     <div #fs>
         <fs-file [source]="node" (menuChange)="onContextmenuNode($event)" (checkChange)="onCheckChange($event)"
             *ngFor="let node of source"></fs-file>
@@ -85,7 +85,7 @@
             <ng-container i18n>Cut</ng-container>
         </button>
         <mat-divider></mat-divider>
-        <button mat-menu-item [disabled]="isNotCanWrite">
+        <button mat-menu-item [disabled]="isNotCanWrite" (click)="onClickCompress()">
             <mat-icon>archive</mat-icon>
             <ng-container i18n>Compress</ng-container>
         </button>
@@ -94,7 +94,7 @@
             <ng-container i18n>Uncompress</ng-container>
         </button>
         <mat-divider></mat-divider>
-        <button mat-menu-item [disabled]="isNotCanWrite">
+        <button mat-menu-item [disabled]="isNotCanWrite" (click)="onClickRemove()">
             <mat-icon>delete</mat-icon>
             <ng-container i18n>Delete</ng-container>
         </button>

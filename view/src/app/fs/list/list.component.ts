@@ -33,10 +33,7 @@ export class ListComponent implements OnInit, OnDestroy {
   private _subscription: Subscription
   query: boolean
   dir: Dir
-  private _source: Array<FileInfo>
-  get source(): Array<FileInfo> {
-    return this._source
-  }
+  source: Array<FileInfo>
   ngOnInit(): void {
     this.sessionService.ready.then(() => {
       if (this._closed) {
@@ -69,13 +66,13 @@ export class ListComponent implements OnInit, OnDestroy {
 
           this.dir = response.dir
           if (isArray(response.items) && response.items.length > 0) {
-            this._source = new Array<FileInfo>()
+            this.source = new Array<FileInfo>()
             for (let i = 0; i < response.items.length; i++) {
-              this._source.push(new FileInfo(this.dir.root, this.dir.dir, response.items[i]))
+              this.source.push(new FileInfo(this.dir.root, this.dir.dir, response.items[i]))
             }
-            this._source.sort(FileInfo.compare)
+            this.source.sort(FileInfo.compare)
           } else {
-            this._source = null
+            this.source = null
           }
         }, (e) => {
           if (this._closed || this._id != id) {

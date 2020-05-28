@@ -23,7 +23,6 @@ var maxBytesReader int64
 func (h Helper) Register(router *gin.RouterGroup) {
 	maxBytesReader = configure.Single().HTTP.MaxBytesReader
 	r := router.Group(BaseURL)
-	r.Use(h.CheckBodySize)
 
 	ms := []web.IHelper{
 		v1.Helper{},

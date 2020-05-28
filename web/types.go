@@ -141,6 +141,13 @@ func (h Helper) CheckShell(c *gin.Context) {
 	}
 }
 
+// CheckWebsocket 驗證請求是否是 websocket
+func (h Helper) CheckWebsocket(c *gin.Context) {
+	if !c.IsWebsocket() {
+		c.AbortWithStatus(http.StatusForbidden)
+	}
+}
+
 // CheckSession 檢查是否具有 session
 func (h Helper) CheckSession(c *gin.Context) {
 	session := h.BindSession(c)

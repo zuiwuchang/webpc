@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"gitlab.com/king011/webpc/logger"
 	"gitlab.com/king011/webpc/mount"
+	"gitlab.com/king011/webpc/shell"
 	"gitlab.com/king011/webpc/utils"
 	"gitlab.com/king011/webpc/web"
 	"go.uber.org/zap"
@@ -41,12 +42,15 @@ func (f *fsURI) Unescape() (e error) {
 // Register impl IHelper
 func (h FS) Register(router *gin.RouterGroup) {
 	r := router.Group(`fs`)
+	r.Use(h.CheckSession)
 
 	r.GET(``, h.ls)
 	r.GET(`:root/:path`, h.get)
 	r.PUT(`:root/:path`, h.put)
 	r.PATCH(`:root/:path/name`, h.rename)
 	r.POST(`:root/:path`, h.post)
+	r.DELETE(`:root/:path`, h.remove)
+	r.GET(`:root/:path/compress/websocket`, h.CheckWebsocket, h.compress)
 }
 func (h FS) ls(c *gin.Context) {
 	var obj struct {
@@ -373,4 +377,108 @@ func (h FS) post(c *gin.Context) {
 		)
 	}
 	h.NegotiateData(c, http.StatusCreated, &info)
+}
+func (h FS) remove(c *gin.Context) {
+	session := h.BindSession(c)
+	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
+		return
+	}
+	objURI, e := h.bindURI(c)
+	if e != nil {
+		return
+	}
+	fs := mount.Single()
+	m := fs.Root(objURI.Root)
+	if m == nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+	if !h.checkWirte(c, m) {
+		return
+	}
+	filename, e := m.Filename(objURI.Path)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+
+	var obj struct {
+		Names []string `form:"names" json:"names" xml:"names" yaml:"names" binding:"required"`
+	}
+	e = h.Bind(c, &obj)
+	if e != nil {
+		return
+	}
+	count := len(obj.Names)
+	if count == 0 {
+		h.NegotiateErrorString(c, http.StatusBadRequest, `names nil`)
+		return
+	}
+	dsts := make([]string, count)
+	for i := 0; i < count; i++ {
+		dst := filepath.Base(filepath.Clean(obj.Names[i]))
+		if dst != obj.Names[i] {
+			h.NegotiateErrorString(c, http.StatusBadRequest, `name not support`)
+			return
+		}
+		dsts[i] = filepath.Clean(filename + `/` + dst)
+	}
+	for i := 0; i < count; i++ {
+		e := os.RemoveAll(dsts[i])
+		if e != nil {
+			if i != 0 {
+				if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+					ce.Write(
+						zap.String(`method`, c.Request.Method),
+						zap.Error(e),
+						zap.String(`root`, objURI.Root),
+						zap.String(`dir`, objURI.Path),
+						zap.Strings(`names`, obj.Names),
+						zap.Strings(`dsts`, dsts[:i]),
+					)
+				}
+			}
+			h.NegotiateError(c, http.StatusInternalServerError, e)
+			return
+		}
+	}
+	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.String(`method`, c.Request.Method),
+			zap.String(`root`, objURI.Root),
+			zap.String(`dir`, objURI.Path),
+			zap.Strings(`names`, obj.Names),
+			zap.Strings(`dsts`, dsts),
+		)
+	}
+	c.Status(http.StatusNoContent)
+}
+func (h FS) compress(c *gin.Context) {
+	ws, e := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if e != nil {
+		h.NegotiateError(c, http.StatusBadRequest, e)
+		return
+	}
+	defer ws.Close()
+	session := h.BindSession(c)
+	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
+		shell.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `session nil`,
+		})
+		return
+	}
+
 }

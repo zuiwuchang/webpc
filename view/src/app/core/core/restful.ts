@@ -86,11 +86,11 @@ export class RESTful {
                 val = encodeURIComponent(encodeURIComponent(id as string))
             }
         }
-        let url = `${addr}${this.baseURL}/websocket`
+        let url = `${addr}${this.baseURL}`
         if (!isNullOrUndefined(val)) {
             url += '/' + val
         }
-        return url
+        return `${url}/compress/websocket`
     }
     get<T>(client: HttpClient, options?: {
         headers?: HttpHeaders | {
@@ -258,6 +258,4 @@ export class RESTful {
     }): Promise<T> {
         return wrapPromise(client.patch<T>(this.onePatchURL(id, patch), body, options).toPromise())
     }
-
-
 }

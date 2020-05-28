@@ -5,7 +5,7 @@
             <span class="left8">{{root}}</span>
         </a>
         <mat-spinner *ngIf="query" color="accent" diameter='24'></mat-spinner>
-        <fs-manager [folder]="dir" [source]="source"></fs-manager>
+        <fs-manager [folder]="dir" [source]="source" (sourceChange)="source=$event"></fs-manager>
     </mat-card-content>
 </mat-card>
 <div class="fill-footer"></div>

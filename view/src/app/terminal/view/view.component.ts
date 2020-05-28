@@ -218,10 +218,10 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
           try {
             this._onMessage(JSON.parse(evt.data))
           } catch (e) {
-            console.warn(e)
+            console.warn('ws-shell', e)
           }
         } else {
-          console.warn(`unknow type`, evt.data)
+          console.warn(`ws-shell unknow type`, evt.data)
         }
       }
       websocket.onclose = (evt) => {
@@ -256,7 +256,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
         this._xterm.writeln("\n" + obj.error)
         break
       default:
-        console.warn(`unknow command : `, obj)
+        console.warn(`ws-shell unknow msg : `, obj)
     }
   }
   private _onFontsize(fontSize: number) {

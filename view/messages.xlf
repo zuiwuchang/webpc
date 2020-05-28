@@ -49,6 +49,14 @@
           <context context-type="sourcefile">src/app/fs/dialog/rename/rename.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-file/new-file.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-folder/new-folder.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="5314f3960d1a662e977d8f0a5a3943120824255c" datatype="html">
         <source>Default Name : killer</source>
@@ -70,6 +78,18 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
           <context context-type="linenumber">18</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/rename/rename.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-file/new-file.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-folder/new-folder.component.html</context>
+          <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
@@ -162,6 +182,14 @@
           <context context-type="sourcefile">src/app/fs/dialog/rename/rename.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-file/new-file.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-folder/new-folder.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
         <source>Close</source>
@@ -196,6 +224,18 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/dialog/rename/rename.component.html</context>
           <context context-type="linenumber">25</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-file/new-file.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-folder/new-folder.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/remove/remove.component.html</context>
+          <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5edf054f14aa57bc25a28cb7db01956fee53dac8" datatype="html">
@@ -300,6 +340,10 @@
           <context context-type="sourcefile">src/app/shared/dialog/confirm/confirm.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/remove/remove.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="6080b77234e92ad41bb52653b239c4c4f851317d" datatype="html">
         <source>Error</source>
@@ -397,6 +441,57 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
           <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="79e4486927009b188bba3b697eb91c475495e639" datatype="html">
+        <source>New File</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-file/new-file.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c293be6125764337b3e53e59163ddf618519d22e" datatype="html">
+        <source>New File Success</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6b74467987623883f8365d202c2173d9e0271458" datatype="html">
+        <source>New Folder</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-folder/new-folder.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="959a91792868c9cac12f6c5ea6bae695cc20d2b1" datatype="html">
+        <source>New Folder Success</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="d8bcc9c4ee939429759fcf9c9633703096ad4d4a" datatype="html">
+        <source>File deleted</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7c25ffdfdcbc340e0abe8ead8c8f9ca6a260e970" datatype="html">
@@ -554,21 +649,29 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="79e4486927009b188bba3b697eb91c475495e639" datatype="html">
-        <source>New File</source>
+      <trans-unit id="cf17e2f3737e74b8e3b874867ec9cf5fa46f2146" datatype="html">
+        <source>Property</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/property/property.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">16</context>
+          <context context-type="linenumber">104</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6b74467987623883f8365d202c2173d9e0271458" datatype="html">
-        <source>New Folder</source>
+      <trans-unit id="826b25211922a1b46436589233cb6f1a163d89b7" datatype="html">
+        <source>Delete</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/remove/remove.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="170919b6c28b7eb90fead8af3d10ce8f10dc041e" datatype="html">
@@ -589,91 +692,77 @@
         <source>Open</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">38</context>
+          <context context-type="linenumber">39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1eb95103405c577cc75f3e2f77ba84fa497831ee" datatype="html">
         <source>Open as</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2d1ea268a6a9f483dbc2cbfe19bf4256a57a6af4" datatype="html">
         <source>Video</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="f0baeb8b69d120073b6d60d34785889b0c3232c8" datatype="html">
         <source>Audio</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="a5f9ba9bb9faa8284bcadb1cdbc6aaf969e9c4bb" datatype="html">
         <source>Image</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8ba143716c2da6e4120c0c1a804f0bdd9a7e5f5b" datatype="html">
         <source>Text</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="dc75033a5238fdc4f462212c847a45ba8018a3fd" datatype="html">
         <source>Download</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1979da7460819153e11d2078244645d94291b69c" datatype="html">
         <source>Copy</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">81</context>
         </context-group>
       </trans-unit>
       <trans-unit id="393584cc19f5730acb6ca04a01d7b818e5cda8a4" datatype="html">
         <source>Cut</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">80</context>
+          <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="f1aea024fc1f74582f6863f215ddc3438ca65956" datatype="html">
         <source>Compress</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">85</context>
+          <context context-type="linenumber">90</context>
         </context-group>
       </trans-unit>
       <trans-unit id="eee748902e363090150f4fa84687f2ebe353eaac" datatype="html">
         <source>Uncompress</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">89</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="826b25211922a1b46436589233cb6f1a163d89b7" datatype="html">
-        <source>Delete</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
           <context context-type="linenumber">94</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="cf17e2f3737e74b8e3b874867ec9cf5fa46f2146" datatype="html">
-        <source>Property</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="272fb7b69aa7689350d5785238419c2102934883" datatype="html">

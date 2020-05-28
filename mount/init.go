@@ -6,6 +6,17 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	// CmdError 錯誤
+	CmdError = iota + 1
+	// CmdHeart websocket 心跳防止瀏覽器 關閉不獲取 websocket
+	CmdHeart
+	// CmdProgress 更新進度
+	CmdProgress
+	// CmdDone 操作完成
+	CmdDone
+)
+
 var fs FileSystem
 
 // Init .
