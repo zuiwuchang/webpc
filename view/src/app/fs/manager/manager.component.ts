@@ -10,6 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Box, Point } from './box';
 import { SessionService, Session } from 'src/app/core/session/session.service';
 import { RenameComponent } from '../dialog/rename/rename.component';
+import { NewFileComponent } from '../dialog/new-file/new-file.component';
+import { NewFolderComponent } from '../dialog/new-folder/new-folder.component';
 
 @Component({
   selector: 'fs-manager',
@@ -308,5 +310,46 @@ export class ManagerComponent implements OnInit, OnDestroy {
         }
       })
     }
+  }
+  onClickNewFile() {
+    if (!this.folder || this._closed) {
+      return
+    }
+    this.matDialog.open(NewFileComponent, {
+      data: this.folder,
+      disableClose: true,
+    }).afterClosed().toPromise().then((fileinfo: FileInfo) => {
+      if (fileinfo && fileinfo instanceof FileInfo) {
+        this._pushNode(fileinfo)
+      }
+    })
+  }
+  onClickNewFolder() {
+    if (!this.folder || this._closed) {
+      return
+    }
+    this.matDialog.open(NewFolderComponent, {
+      data: this.folder,
+      disableClose: true,
+    }).afterClosed().toPromise().then((fileinfo: FileInfo) => {
+      if (fileinfo && fileinfo instanceof FileInfo) {
+        this._pushNode(fileinfo)
+      }
+    })
+  }
+  private _pushNode(fileinfo: FileInfo) {
+    if (!this._source) {
+      this._source = new Array<FileInfo>()
+    }
+    this._source.push(fileinfo)
+    this._source.sort(FileInfo.compare)
+    if (isString(fileinfo.name) && fileinfo.name.startsWith('.')) {
+      return
+    }
+    if (!this._hide) {
+      this._hide = new Array<FileInfo>()
+    }
+    this._hide.push(fileinfo)
+    this._hide.sort(FileInfo.compare)
   }
 }

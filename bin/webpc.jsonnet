@@ -21,7 +21,7 @@ local GB=MB * 1024;
 		// 用戶數據庫
 		DB : "webpc.db",
 		// 用戶shell
-		Shell : ["/bin/bash","-l"],
+		Shell : ["/bin/bash","-l"], // linux bash
 		// 映射到web的目錄
 		Mount : [
 			{

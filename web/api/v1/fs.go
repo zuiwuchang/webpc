@@ -46,6 +46,7 @@ func (h FS) Register(router *gin.RouterGroup) {
 	r.GET(`:root/:path`, h.get)
 	r.PUT(`:root/:path`, h.put)
 	r.PATCH(`:root/:path/name`, h.rename)
+	r.POST(`:root/:path`, h.post)
 }
 func (h FS) ls(c *gin.Context) {
 	var obj struct {
@@ -292,4 +293,84 @@ func (h FS) rename(c *gin.Context) {
 		)
 	}
 	c.Status(http.StatusNoContent)
+}
+func (h FS) post(c *gin.Context) {
+	session := h.BindSession(c)
+	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
+		return
+	}
+	objURI, e := h.bindURI(c)
+	if e != nil {
+		return
+	}
+	fs := mount.Single()
+	m := fs.Root(objURI.Root)
+	if m == nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+	if !h.checkWirte(c, m) {
+		return
+	}
+	filename, e := m.Filename(objURI.Path)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+
+	var obj struct {
+		Dir  bool   `form:"dir" json:"dir" xml:"dir" yaml:"dir"`
+		Name string `form:"name" json:"name" xml:"name" yaml:"name" binding:"required"`
+	}
+	e = h.Bind(c, &obj)
+	if e != nil {
+		return
+	}
+	dst := filepath.Base(filepath.Clean(obj.Name))
+	if dst != obj.Name {
+		h.NegotiateErrorString(c, http.StatusBadRequest, `name not support`)
+		return
+	}
+	dst = filename + `/` + dst
+	var f *os.File
+	var info mount.FileInfo
+	info.Name = obj.Name
+	if obj.Dir {
+		e = os.Mkdir(dst, 0775)
+		if e != nil {
+			h.NegotiateError(c, http.StatusForbidden, e)
+			return
+		}
+		info.IsDir = true
+	} else {
+		f, e = os.OpenFile(dst, os.O_CREATE|os.O_EXCL, 0666)
+		if e != nil {
+			h.NegotiateError(c, http.StatusForbidden, e)
+			return
+		}
+		f.Close()
+	}
+	stat, _ := os.Stat(dst)
+	if stat != nil {
+		info.IsDir = stat.IsDir()
+		info.Size = stat.Size()
+		info.Mode = uint32(stat.Mode())
+	}
+	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.String(`method`, c.Request.Method),
+			zap.String(`root`, objURI.Root),
+			zap.String(`dir`, objURI.Path),
+			zap.String(`name`, obj.Name),
+			zap.Bool(`dir`, obj.Dir),
+			zap.String(`dst`, dst),
+		)
+	}
+	h.NegotiateData(c, http.StatusCreated, &info)
 }

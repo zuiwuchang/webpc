@@ -4,19 +4,19 @@ import { ServerAPI } from 'src/app/core/core/api';
 import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FileInfo } from '../../fs';
+import { FileInfo, Dir } from '../../fs';
 
 @Component({
-  selector: 'app-rename',
-  templateUrl: './rename.component.html',
-  styleUrls: ['./rename.component.scss']
+  selector: 'app-new-folder',
+  templateUrl: './new-folder.component.html',
+  styleUrls: ['./new-folder.component.scss']
 })
-export class RenameComponent implements OnInit {
+export class NewFolderComponent implements OnInit {
   constructor(private httpClient: HttpClient,
     private toasterService: ToasterService,
     private i18nService: I18nService,
-    private matDialogRef: MatDialogRef<RenameComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: FileInfo,
+    private matDialogRef: MatDialogRef<NewFolderComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: Dir,
   ) {
   }
   private _disabled: boolean
@@ -24,20 +24,18 @@ export class RenameComponent implements OnInit {
     return this._disabled
   }
   ngOnInit(): void {
-    this.name = this.data.name
+    this.name = this.i18nService.get('New Folder')
   }
   name: string
-  get isNotChanged(): boolean {
-    return this.name == this.data.name
-  }
   onSubmit() {
     this._disabled = true
-    ServerAPI.v1.fs.patchOne<string>(this.httpClient, [this.data.root, this.data.filename], 'name', {
-      val: this.name,
-    }).then(() => {
-      this.toasterService.pop('success', undefined, this.i18nService.get(`Rename Success`))
-      this.data.setName(this.name)
-      this.matDialogRef.close()
+    ServerAPI.v1.fs.postOne<FileInfo>(this.httpClient, [this.data.root, this.data.dir], {
+      dir: true,
+      name: this.name,
+    }).then((data) => {
+      this.toasterService.pop('success', undefined, this.i18nService.get(`New Folder Success`))
+      const node = new FileInfo(this.data.root, this.data.dir, data)
+      this.matDialogRef.close(node)
     }, (e) => {
       this.toasterService.pop('error', undefined, e)
     }).finally(() => {
