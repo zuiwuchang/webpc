@@ -15,6 +15,8 @@ const (
 	CmdProgress
 	// CmdDone 操作完成
 	CmdDone
+	// CmdInit 初始化
+	CmdInit
 )
 
 var fs FileSystem

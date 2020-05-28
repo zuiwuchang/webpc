@@ -3,11 +3,8 @@ package shell
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-
-	jsoniter "github.com/json-iterator/go"
+	"gitlab.com/king011/webpc/helper"
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // Message .
 type Message struct {
@@ -19,17 +16,7 @@ type Message struct {
 
 // Unmarshal .
 func (m *Message) Unmarshal(data []byte) error {
-	return json.Unmarshal(data, m)
-}
-
-// WriteJSON .
-func WriteJSON(ws *websocket.Conn, obj interface{}) (e error) {
-	b, e := json.Marshal(obj)
-	if e != nil {
-		return
-	}
-	e = ws.WriteMessage(websocket.TextMessage, b)
-	return
+	return helper.Unmarshal(data, m)
 }
 
 // WriteInfo .
@@ -43,7 +30,7 @@ func WriteInfo(ws *websocket.Conn, id int64, name string, started int64, fontSiz
 	if fontSize >= 5 {
 		m[`fontSize`] = fontSize
 	}
-	b, e := json.Marshal(m)
+	b, e := helper.Marshal(m)
 	if e != nil {
 		return
 	}

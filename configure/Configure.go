@@ -1,11 +1,11 @@
 package configure
 
 import (
-	"encoding/json"
 	"io/ioutil"
 
 	"github.com/google/go-jsonnet"
 	logger "gitlab.com/king011/king-go/log/logger.zap"
+	"gitlab.com/king011/webpc/helper"
 )
 
 // Configure global configure
@@ -35,7 +35,7 @@ func (c *Configure) String() string {
 	if c == nil {
 		return "nil"
 	}
-	b, e := json.MarshalIndent(c, "", "	")
+	b, e := helper.MarshalIndent(c, "", "	")
 	if e != nil {
 		return e.Error()
 	}
@@ -68,7 +68,7 @@ func (c *Configure) Load(basePath, filename string) (e error) {
 		return
 	}
 	b = []byte(jsonStr)
-	e = json.Unmarshal(b, c)
+	e = helper.Unmarshal(b, c)
 	if e != nil {
 		return
 	}

@@ -2,11 +2,12 @@ package cookie
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"io/ioutil"
-	"gitlab.com/king011/webpc/logger"
 	"os"
 	"time"
+
+	"gitlab.com/king011/webpc/helper"
+	"gitlab.com/king011/webpc/logger"
 
 	"github.com/gorilla/securecookie"
 	"go.uber.org/zap"
@@ -14,7 +15,7 @@ import (
 
 var _Secure *securecookie.SecureCookie
 
-// MaxAge return max age of timeout 
+// MaxAge return max age of timeout
 func MaxAge() int64 {
 	return _MaxAge
 }
@@ -42,7 +43,7 @@ func IniClient(filename string) (e error) {
 	}
 
 	var key _Key
-	e = json.Unmarshal(b, &key)
+	e = helper.Unmarshal(b, &key)
 	if e != nil {
 		return
 	}
@@ -78,7 +79,7 @@ func Init(filename string, maxAge time.Duration) (e error) {
 		return
 	}
 	var key _Key
-	e = json.Unmarshal(b, &key)
+	e = helper.Unmarshal(b, &key)
 	if e != nil {
 		if ce := logger.Logger.Check(zap.FatalLevel, "unmarshal securecookie"); ce != nil {
 			ce.Write(

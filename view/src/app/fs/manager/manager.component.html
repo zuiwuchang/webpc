@@ -33,12 +33,12 @@
     <ng-template #countView>
         <ng-container *ngIf="target.length==1;then oneView"></ng-container>
         <ng-template #oneView>
-            <a mat-menu-item *ngIf="target[0].url" [routerLink]="target[0].url"
+            <a class="menu" mat-menu-item *ngIf="target[0].url" [routerLink]="target[0].url"
                 [queryParams]="{root:target[0].root,path:target[0].filename}">
                 <mat-icon>link</mat-icon>
                 <ng-container i18n>Open</ng-container>
             </a>
-            <button *ngIf="!target[0].isDir" mat-menu-item [matMenuTriggerFor]="opens">
+            <button class="menu" *ngIf="!target[0].isDir" mat-menu-item [matMenuTriggerFor]="opens">
                 <mat-icon>launch</mat-icon>
                 <ng-container i18n>Open as</ng-container>
             </button>
@@ -66,40 +66,40 @@
                     <ng-container i18n>Text</ng-container>
                 </a>
             </mat-menu>
-            <button mat-menu-item [disabled]="isNotCanWrite" (click)="onClickRename()">
+            <button class="menu" mat-menu-item [disabled]="isNotCanWrite" (click)="onClickRename()">
                 <mat-icon>edit</mat-icon>
                 <ng-container i18n>Rename</ng-container>
             </button>
-            <a *ngIf="target[0].downloadURL" [href]="target[0].downloadURL" mat-menu-item>
+            <a class="menu" *ngIf="target[0].downloadURL" [href]="target[0].downloadURL" mat-menu-item>
                 <mat-icon>cloud_download</mat-icon>
                 <ng-container i18n>Download</ng-container>
             </a>
             <mat-divider></mat-divider>
         </ng-template>
-        <button mat-menu-item [disabled]="isNotCanWrite">
+        <button class="menu" mat-menu-item [disabled]="isNotCanWrite">
             <mat-icon>file_copy</mat-icon>
             <ng-container i18n>Copy</ng-container>
         </button>
-        <button mat-menu-item [disabled]="isNotCanWrite">
+        <button class="menu" mat-menu-item [disabled]="isNotCanWrite">
             <mat-icon fontSet="fontawesome-fas" fontIcon="fa-cut"></mat-icon>
             <ng-container i18n>Cut</ng-container>
         </button>
         <mat-divider></mat-divider>
-        <button mat-menu-item [disabled]="isNotCanWrite" (click)="onClickCompress()">
+        <button class="menu" mat-menu-item [disabled]="isNotCanWrite" (click)="onClickCompress()">
             <mat-icon>archive</mat-icon>
             <ng-container i18n>Compress</ng-container>
         </button>
-        <button mat-menu-item [disabled]="isNotCanWrite" *ngIf="target.length==1 && target[0].isSupportUncompress">
+        <button class="menu" mat-menu-item [disabled]="isNotCanWrite" *ngIf="target.length==1 && target[0].isSupportUncompress">
             <mat-icon>unarchive</mat-icon>
             <ng-container i18n>Uncompress</ng-container>
         </button>
         <mat-divider></mat-divider>
-        <button mat-menu-item [disabled]="isNotCanWrite" (click)="onClickRemove()">
+        <button class="menu" mat-menu-item [disabled]="isNotCanWrite" (click)="onClickRemove()">
             <mat-icon>delete</mat-icon>
             <ng-container i18n>Delete</ng-container>
         </button>
         <mat-divider></mat-divider>
-        <button mat-menu-item (click)="onClickProperty()">
+        <button class="menu" mat-menu-item (click)="onClickProperty()">
             <mat-icon>info</mat-icon>
             <ng-container i18n>Property</ng-container>
         </button>

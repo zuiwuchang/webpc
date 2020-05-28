@@ -63,7 +63,7 @@ func (h Shells) connect(c *gin.Context) {
 			)
 		}
 
-		shell.WriteJSON(ws, gin.H{
+		h.WriteJSON(ws, gin.H{
 			`cmd`:   shell.CmdError,
 			`error`: `session nil`,
 		})
@@ -76,7 +76,7 @@ func (h Shells) connect(c *gin.Context) {
 	}
 	e = c.ShouldBindUri(&obj)
 	if e != nil {
-		shell.WriteJSON(ws, gin.H{
+		h.WriteJSON(ws, gin.H{
 			`cmd`:   shell.CmdError,
 			`error`: e.Error(),
 		})
@@ -105,7 +105,7 @@ func (h Shells) connect(c *gin.Context) {
 				zap.Int64(`id`, shellid),
 			)
 		}
-		shell.WriteJSON(ws, gin.H{
+		h.WriteJSON(ws, gin.H{
 			`cmd`:   shell.CmdError,
 			`error`: e.Error(),
 		})

@@ -4,8 +4,10 @@ import { ServerAPI } from 'src/app/core/core/api';
 import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FileInfo, Dir, FileType } from '../../fs';
+import { FileInfo, Dir } from '../../fs';
 import { isString } from 'util';
+import { interval, Subscription } from 'rxjs';
+
 interface Target {
   dir: Dir
   source: Array<FileInfo>
@@ -25,6 +27,8 @@ const CmdHeart = 2
 const CmdProgress = 3
 // CmdDone 操作完成
 const CmdDone = 4
+// CmdInit 初始化
+const CmdInit = 5
 
 @Component({
   selector: 'app-compress',
@@ -32,13 +36,12 @@ const CmdDone = 4
   styleUrls: ['./compress.component.scss']
 })
 export class CompressComponent implements OnInit, OnDestroy {
-  constructor(private httpClient: HttpClient,
-    private toasterService: ToasterService,
+  constructor(private toasterService: ToasterService,
     private i18nService: I18nService,
     private matDialogRef: MatDialogRef<CompressComponent>,
     @Inject(MAT_DIALOG_DATA) public target: Target,
   ) { }
-
+  private _subscriptionPing: Subscription
   ngOnInit(): void {
     if (this.target.source.length == 1) {
       this.name = this.target.source[0].name
@@ -51,6 +54,13 @@ export class CompressComponent implements OnInit, OnDestroy {
     if (!isString(this.name) || this.name == '') {
       this.name = 'archive'
     }
+    this._subscriptionPing = interval(1000 * 30).subscribe(() => {
+      if (this._websocket) {
+        this._websocket.send(JSON.stringify({
+          cmd: CmdHeart,
+        }))
+      }
+    })
   }
   private _websocket: WebSocket
   get disabled(): boolean {
@@ -67,16 +77,16 @@ export class CompressComponent implements OnInit, OnDestroy {
       this._websocket.close()
       this._websocket = null
     }
+    this._subscriptionPing.unsubscribe()
   }
   onSubmit() {
     if (this._closed || this._websocket) {
       return
     }
-    //let url = ServerAPI.v1.fs.oneURL([this.target.dir.root, this.target.dir.dir])
-    // console.log(this.target.dir.root, this.target.dir.dir)
-    const url = ServerAPI.v1.fs.websocketURL([this.target.dir.root, this.target.dir.dir])
-    console.log(url)
-
+    const url = ServerAPI.v1.fs.websocketURL([
+      this.target.dir.root, this.target.dir.dir,
+      'compress',
+    ])
     const websocket = new WebSocket(url)
     this._websocket = websocket
     websocket.onerror = (evt) => {
@@ -117,7 +127,17 @@ export class CompressComponent implements OnInit, OnDestroy {
           console.warn(`ws-compress unknow type`, evt.data)
         }
       }
+      const names = new Array<string>()
+      for (let i = 0; i < this.target.source.length; i++) {
+        const element = this.target.source[i];
+        names.push(element.name)
+      }
       // send names
+      websocket.send(JSON.stringify({
+        'cmd': CmdInit,
+        'name': `${this.name}.tar.gz`,
+        'names': names,
+      }))
     }
   }
   onClose() {

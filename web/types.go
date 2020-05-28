@@ -9,9 +9,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/gorilla/websocket"
+	jsoniter "github.com/json-iterator/go"
 	"gitlab.com/king011/webpc/cookie"
+	"gitlab.com/king011/webpc/helper"
 	"gitlab.com/king011/webpc/logger"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // Offered accept Offered
 var Offered = []string{
@@ -181,4 +186,14 @@ func (h Helper) NegotiateData(c *gin.Context, code int, data interface{}) {
 		Offered: Offered,
 		Data:    data,
 	})
+}
+
+// WriteJSON .
+func (h Helper) WriteJSON(ws *websocket.Conn, obj interface{}) (e error) {
+	b, e := helper.Marshal(obj)
+	if e != nil {
+		return
+	}
+	e = ws.WriteMessage(websocket.TextMessage, b)
+	return
 }

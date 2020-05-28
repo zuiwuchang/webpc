@@ -7,12 +7,12 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"gitlab.com/king011/webpc/logger"
 	"gitlab.com/king011/webpc/mount"
-	"gitlab.com/king011/webpc/shell"
 	"gitlab.com/king011/webpc/utils"
 	"gitlab.com/king011/webpc/web"
 	"go.uber.org/zap"
@@ -108,7 +108,7 @@ func (h FS) checkRead(c *gin.Context, m *mount.Mount) (ok bool) {
 	ok = true
 	return
 }
-func (h FS) checkWirte(c *gin.Context, m *mount.Mount) (ok bool) {
+func (h FS) canWirte(c *gin.Context, m *mount.Mount) (ok bool) {
 	session := h.BindSession(c)
 	if session == nil {
 		return
@@ -118,11 +118,27 @@ func (h FS) checkWirte(c *gin.Context, m *mount.Mount) (ok bool) {
 		return
 	}
 	if !m.Write() {
+		return
+	}
+	ok = true
+	return
+}
+func (h FS) checkWirte(c *gin.Context, m *mount.Mount) (ok bool) {
+	if !h.canWirte(c, m) {
 		c.Status(http.StatusForbidden)
 		return
 	}
-
-	ok = true
+	return
+}
+func (h FS) bindURINormal(c *gin.Context) (obj fsURI, e error) {
+	e = c.ShouldBindUri(&obj)
+	if e != nil {
+		return
+	}
+	e = obj.Unescape()
+	if e != nil {
+		return
+	}
 	return
 }
 func (h FS) bindURI(c *gin.Context) (obj fsURI, e error) {
@@ -474,11 +490,65 @@ func (h FS) compress(c *gin.Context) {
 				zap.String(`error`, `session nil`),
 			)
 		}
-		shell.WriteJSON(ws, gin.H{
+		h.WriteJSON(ws, gin.H{
 			`cmd`:   mount.CmdError,
 			`error`: `session nil`,
 		})
 		return
 	}
-
+	objURI, e := h.bindURINormal(c)
+	if e != nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: e.Error(),
+		})
+		return
+	}
+	fs := mount.Single()
+	m := fs.Root(objURI.Root)
+	if m == nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `not found`,
+		})
+		return
+	}
+	if !h.canWirte(c, m) {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `Forbidden`,
+		})
+		return
+	}
+	dir, e := m.Filename(objURI.Path)
+	if e != nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: e.Error(),
+		})
+		return
+	}
+	name, names, e := m.Compress(ws, dir, time.Second*10)
+	if e != nil {
+		if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.Error(e),
+				zap.String(`method`, c.Request.Method),
+				zap.String(`root`, objURI.Root),
+				zap.String(`dir`, objURI.Path),
+				zap.Strings(`names`, names),
+				zap.String(`name`, name),
+			)
+		}
+		return
+	}
+	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.String(`method`, c.Request.Method),
+			zap.String(`root`, objURI.Root),
+			zap.String(`dir`, objURI.Path),
+			zap.Strings(`names`, names),
+			zap.String(`name`, name),
+		)
+	}
 }

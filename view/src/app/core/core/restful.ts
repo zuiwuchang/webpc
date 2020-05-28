@@ -90,7 +90,7 @@ export class RESTful {
         if (!isNullOrUndefined(val)) {
             url += '/' + val
         }
-        return `${url}/compress/websocket`
+        return `${url}/websocket`
     }
     get<T>(client: HttpClient, options?: {
         headers?: HttpHeaders | {

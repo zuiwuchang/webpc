@@ -2,11 +2,11 @@ package cookie
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"io/ioutil"
 
 	"github.com/gorilla/securecookie"
 	"gitlab.com/king011/king-go/os/fileperm"
+	"gitlab.com/king011/webpc/helper"
 )
 
 type _Key struct {
@@ -23,7 +23,7 @@ func Generate() (hashKey []byte, blockKey []byte) {
 
 // Save save key to file
 func Save(filename string, hashKey []byte, blockKey []byte) (e error) {
-	b, e := json.MarshalIndent(_Key{
+	b, e := helper.MarshalIndent(_Key{
 		Hash:  hex.EncodeToString(hashKey),
 		Block: hex.EncodeToString(blockKey),
 	}, "", "\t")

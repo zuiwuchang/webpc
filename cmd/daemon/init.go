@@ -1,7 +1,6 @@
 package daemon
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -57,9 +56,7 @@ func Run(release bool) {
 	if cnf.TLS() {
 		e = http.ServeTLS(l, router, cnf.CertFile, cnf.KeyFile)
 	} else {
-		e = http.Serve(l, &Handler{
-			router: router,
-		})
+		e = http.Serve(l, router)
 	}
 	if ce := logger.Logger.Check(zap.FatalLevel, `serve error`); ce != nil {
 		ce.Write(
@@ -67,13 +64,4 @@ func Run(release bool) {
 		)
 	}
 	os.Exit(1)
-}
-
-type Handler struct {
-	router *gin.Engine
-}
-
-func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.URL.Path)
-	h.router.ServeHTTP(w, r)
 }
