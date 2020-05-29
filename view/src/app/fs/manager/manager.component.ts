@@ -466,4 +466,17 @@ export class ManagerComponent implements OnInit, OnDestroy {
       }
     }
   }
+  onClickRefresh() {
+    const folder = this.folder
+    if (!folder) {
+      return
+    }
+    this.router.navigate(['fs', 'list'], {
+      queryParams: {
+        root: folder.root,
+        path: folder.dir,
+        tick: new Date().getTime(),
+      }
+    })
+  }
 }

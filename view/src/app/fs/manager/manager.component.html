@@ -29,6 +29,11 @@
             <mat-icon>cloud_upload</mat-icon>
             <ng-container i18n>Upload</ng-container>
         </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="onClickRefresh()">
+            <mat-icon>refresh</mat-icon>
+            <ng-container i18n>Refresh</ng-container>
+        </button>
     </ng-template>
     <ng-template #countView>
         <ng-container *ngIf="target.length==1;then oneView"></ng-container>
@@ -89,7 +94,8 @@
             <mat-icon>archive</mat-icon>
             <ng-container i18n>Compress</ng-container>
         </button>
-        <button class="menu" mat-menu-item [disabled]="isNotCanWrite" *ngIf="target.length==1 && target[0].isSupportUncompress">
+        <button class="menu" mat-menu-item [disabled]="isNotCanWrite"
+            *ngIf="target.length==1 && target[0].isSupportUncompress">
             <mat-icon>unarchive</mat-icon>
             <ng-container i18n>Uncompress</ng-container>
         </button>
