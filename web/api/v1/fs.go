@@ -51,6 +51,7 @@ func (h FS) Register(router *gin.RouterGroup) {
 	r.POST(`:root/:path`, h.CheckSession, h.post)
 	r.DELETE(`:root/:path`, h.CheckSession, h.remove)
 	r.GET(`:root/:path/compress/websocket`, h.CheckWebsocket, h.CheckSession, h.compress)
+	r.GET(`:root/:path/uncompress/websocket`, h.CheckWebsocket, h.CheckSession, h.uncompress)
 }
 func (h FS) ls(c *gin.Context) {
 	var obj struct {
@@ -488,7 +489,7 @@ func (h FS) compress(c *gin.Context) {
 		return
 	}
 	defer ws.Close()
-	session := h.BindSession(c)
+	session, _ := h.ShouldBindSession(c)
 	if session == nil {
 		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
 			ce.Write(
@@ -556,6 +557,83 @@ func (h FS) compress(c *gin.Context) {
 			zap.String(`root`, objURI.Root),
 			zap.String(`dir`, objURI.Path),
 			zap.Strings(`names`, names),
+			zap.String(`name`, name),
+		)
+	}
+}
+func (h FS) uncompress(c *gin.Context) {
+	ws, e := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if e != nil {
+		h.NegotiateError(c, http.StatusBadRequest, e)
+		return
+	}
+	defer ws.Close()
+	session, _ := h.ShouldBindSession(c)
+	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `session nil`,
+		})
+		return
+	}
+	objURI, e := h.bindURINormal(c)
+	if e != nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: e.Error(),
+		})
+		return
+	}
+	fs := mount.Single()
+	m := fs.Root(objURI.Root)
+	if m == nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `not found`,
+		})
+		return
+	}
+	if !h.canWirte(c, m) {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `Forbidden`,
+		})
+		return
+	}
+	dir, e := m.Filename(objURI.Path)
+	if e != nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: e.Error(),
+		})
+		return
+	}
+	name, e := mount.Uncompress(ws, dir, time.Second*10)
+	if e != nil {
+		if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.Error(e),
+				zap.String(`method`, c.Request.Method),
+				zap.String(`session`, session.String()),
+				zap.String(`root`, objURI.Root),
+				zap.String(`dir`, objURI.Path),
+				zap.String(`name`, name),
+			)
+		}
+		return
+	}
+	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
+			zap.String(`root`, objURI.Root),
+			zap.String(`dir`, objURI.Path),
 			zap.String(`name`, name),
 		)
 	}

@@ -95,7 +95,7 @@
             <ng-container i18n>Compress</ng-container>
         </button>
         <button class="menu" mat-menu-item [disabled]="isNotCanWrite"
-            *ngIf="target.length==1 && target[0].isSupportUncompress">
+            *ngIf="target.length==1 && target[0].isSupportUncompress" (click)="onClickUncompress()">
             <mat-icon>unarchive</mat-icon>
             <ng-container i18n>Uncompress</ng-container>
         </button>

@@ -23,6 +23,12 @@ const (
 	CmdNo
 	// CmdExist 檔案已經存在
 	CmdExist
+	// CmdYesAll 覆蓋全部 重複檔案
+	CmdYesAll
+	// CmdSkip 跳過 重複檔案
+	CmdSkip
+	// CmdSkipAll 跳過全部 重複檔案
+	CmdSkipAll
 )
 
 var fs FileSystem

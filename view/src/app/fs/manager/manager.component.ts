@@ -15,6 +15,7 @@ import { NewFolderComponent } from '../dialog/new-folder/new-folder.component';
 import { PropertyComponent } from '../dialog/property/property.component';
 import { RemoveComponent } from '../dialog/remove/remove.component';
 import { CompressComponent } from '../dialog/compress/compress.component';
+import { UncompressComponent } from '../dialog/uncompress/uncompress.component';
 
 @Component({
   selector: 'fs-manager',
@@ -476,6 +477,24 @@ export class ManagerComponent implements OnInit, OnDestroy {
         root: folder.root,
         path: folder.dir,
         tick: new Date().getTime(),
+      }
+    })
+  }
+  onClickUncompress() {
+    const target = this.target
+    if (!target || target.length == 0) {
+      return
+    }
+    const dir = this.folder
+    this.matDialog.open(UncompressComponent, {
+      data: {
+        dir: dir,
+        source: target[0],
+      },
+      disableClose: true,
+    }).afterClosed().toPromise().then((ok) => {
+      if (ok) {
+        this.onClickRefresh()
       }
     })
   }
