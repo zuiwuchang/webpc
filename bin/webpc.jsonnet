@@ -65,7 +65,7 @@ local GB=MB * 1024;
 	},
 	Cookie: {
 		// Filename:"securecookie.json"
-		// MaxAge:Day,
+		MaxAge:Day*14,
 	},
 	Logger: {
 		// zap http

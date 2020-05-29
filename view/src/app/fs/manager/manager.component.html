@@ -20,7 +20,7 @@
             <ng-container i18n>New Folder</ng-container>
         </button>
         <mat-divider></mat-divider>
-        <button mat-menu-item [disabled]="isNotCanWrite">
+        <button mat-menu-item [disabled]="isNotCanWrite" (click)="onClickPaste()">
             <mat-icon fontSet="fontawesome-fas" fontIcon="fa-paste"></mat-icon>
             <ng-container i18n>Paste</ng-container>
         </button>
@@ -81,11 +81,11 @@
             </a>
             <mat-divider></mat-divider>
         </ng-template>
-        <button class="menu" mat-menu-item [disabled]="isNotCanWrite">
+        <button class="menu" mat-menu-item [disabled]="isSessionNotCanWrite" (click)="onClickCopy()">
             <mat-icon>file_copy</mat-icon>
             <ng-container i18n>Copy</ng-container>
         </button>
-        <button class="menu" mat-menu-item [disabled]="isNotCanWrite">
+        <button class="menu" mat-menu-item [disabled]="isSessionNotCanWrite" (click)="onClickCut()">
             <mat-icon fontSet="fontawesome-fas" fontIcon="fa-cut"></mat-icon>
             <ng-container i18n>Cut</ng-container>
         </button>

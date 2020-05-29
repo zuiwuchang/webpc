@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Dir, FileInfo } from '../fs';
 import { Router } from '@angular/router';
-import { isString } from 'util';
+import { isString, isArray, isObject } from 'util';
 import { fromEvent, Subscription } from 'rxjs';
 import { takeUntil, first } from 'rxjs/operators';
 import { CheckEvent, NativeEvent } from '../file/file.component';
@@ -16,6 +16,9 @@ import { PropertyComponent } from '../dialog/property/property.component';
 import { RemoveComponent } from '../dialog/remove/remove.component';
 import { CompressComponent } from '../dialog/compress/compress.component';
 import { UncompressComponent } from '../dialog/uncompress/uncompress.component';
+import { FileService } from 'src/app/core/fs/file.service';
+import { ToasterService } from 'angular2-toaster';
+import { I18nService } from 'src/app/core/i18n/i18n.service';
 
 @Component({
   selector: 'fs-manager',
@@ -26,6 +29,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
   constructor(private router: Router,
     private matDialog: MatDialog,
     private sessionService: SessionService,
+    private fileService: FileService,
+    private toasterService: ToasterService,
+    private i18nService: I18nService,
   ) { }
   private _subscription: Subscription
   private _session: Session
@@ -292,6 +298,17 @@ export class ManagerComponent implements OnInit, OnDestroy {
     }
     return true
   }
+  get isSessionNotCanWrite(): boolean {
+    if (this._session) {
+      if (this._session.root) {
+        return false
+      }
+      if (this._session.write) {
+        return false
+      }
+    }
+    return true
+  }
   onClickRename() {
     if (this.target && this.target.length == 1) {
       const node = this.target[0]
@@ -497,5 +514,44 @@ export class ManagerComponent implements OnInit, OnDestroy {
         this.onClickRefresh()
       }
     })
+  }
+
+  private _copy(iscopy: boolean): boolean {
+    const target = this.target
+    if (!target || target.length == 0) {
+      return false
+    }
+    const folder = this.folder
+    if (!folder) {
+      return false
+    }
+    const names = new Array<string>()
+    for (let i = 0; i < target.length; i++) {
+      names.push(target[i].name)
+    }
+    this.fileService.files = {
+      copy: iscopy,
+      root: folder.root,
+      dir: folder.dir,
+      names: names,
+    }
+    return true
+  }
+  onClickCopy() {
+    if (this._copy(true)) {
+      this.toasterService.pop(`success`, undefined, this.i18nService.get(`File has been copied`))
+    }
+  }
+  onClickCut() {
+    if (this._copy(false)) {
+      this.toasterService.pop(`success`, undefined, this.i18nService.get(`File has been cut`))
+    }
+  }
+  onClickPaste() {
+    const files = this.fileService.files
+    if (!files || !isObject(files.names) || !isArray(files.names)) {
+      return
+    }
+    console.log(files)
   }
 }

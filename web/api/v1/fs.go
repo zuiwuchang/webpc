@@ -26,6 +26,12 @@ type fsURI struct {
 	Root string `uri:"root" form:"root" json:"root" xml:"root" yaml:"root" binding:"required"`
 	Path string `uri:"path" form:"path" json:"path" xml:"path" yaml:"path" binding:"required"`
 }
+type fsURI2 struct {
+	Root    string `uri:"root" form:"root" json:"root" xml:"root" yaml:"root" binding:"required"`
+	Path    string `uri:"path" form:"path" json:"path" xml:"path" yaml:"path" binding:"required"`
+	SrcRoot string `uri:"srcroot" form:"srcroot" json:"srcroot" xml:"srcroot" yaml:"srcroot" binding:"required"`
+	SrcPath string `uri:"srcpath" form:"srcpath" json:"srcpath" xml:"srcpath" yaml:"srcpath" binding:"required"`
+}
 
 func (f *fsURI) Unescape() (e error) {
 	f.Root, e = url.PathUnescape(f.Root)
@@ -33,6 +39,25 @@ func (f *fsURI) Unescape() (e error) {
 		return
 	}
 	f.Path, e = url.PathUnescape(f.Path)
+	if e != nil {
+		return
+	}
+	return
+}
+func (f *fsURI2) Unescape() (e error) {
+	f.Root, e = url.PathUnescape(f.Root)
+	if e != nil {
+		return
+	}
+	f.Path, e = url.PathUnescape(f.Path)
+	if e != nil {
+		return
+	}
+	f.SrcRoot, e = url.PathUnescape(f.SrcRoot)
+	if e != nil {
+		return
+	}
+	f.SrcPath, e = url.PathUnescape(f.SrcPath)
 	if e != nil {
 		return
 	}
@@ -52,6 +77,7 @@ func (h FS) Register(router *gin.RouterGroup) {
 	r.DELETE(`:root/:path`, h.CheckSession, h.remove)
 	r.GET(`:root/:path/compress/websocket`, h.CheckWebsocket, h.CheckSession, h.compress)
 	r.GET(`:root/:path/uncompress/websocket`, h.CheckWebsocket, h.CheckSession, h.uncompress)
+	r.GET(`:root/:path/cut/:srcroot/:srcpath/websocket`, h.CheckWebsocket, h.CheckSession, h.cut)
 }
 func (h FS) ls(c *gin.Context) {
 	var obj struct {
@@ -89,6 +115,14 @@ func (h FS) ls(c *gin.Context) {
 	})
 }
 func (h FS) checkRead(c *gin.Context, m *mount.Mount) (ok bool) {
+	if !h.canRead(c, m) {
+		c.Status(http.StatusForbidden)
+		return
+	}
+	ok = true
+	return
+}
+func (h FS) canRead(c *gin.Context, m *mount.Mount) (ok bool) {
 	if m.Shared() {
 		ok = true
 		return
@@ -102,7 +136,6 @@ func (h FS) checkRead(c *gin.Context, m *mount.Mount) (ok bool) {
 		return
 	}
 	if !m.Read() {
-		c.Status(http.StatusForbidden)
 		return
 	}
 
@@ -133,6 +166,17 @@ func (h FS) checkWirte(c *gin.Context, m *mount.Mount) (ok bool) {
 	return
 }
 func (h FS) bindURINormal(c *gin.Context) (obj fsURI, e error) {
+	e = c.ShouldBindUri(&obj)
+	if e != nil {
+		return
+	}
+	e = obj.Unescape()
+	if e != nil {
+		return
+	}
+	return
+}
+func (h FS) bind2URINormal(c *gin.Context) (obj fsURI2, e error) {
 	e = c.ShouldBindUri(&obj)
 	if e != nil {
 		return
@@ -635,6 +679,112 @@ func (h FS) uncompress(c *gin.Context) {
 			zap.String(`root`, objURI.Root),
 			zap.String(`dir`, objURI.Path),
 			zap.String(`name`, name),
+		)
+	}
+}
+func (h FS) cut(c *gin.Context) {
+	ws, e := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if e != nil {
+		h.NegotiateError(c, http.StatusBadRequest, e)
+		return
+	}
+	defer ws.Close()
+	session, _ := h.ShouldBindSession(c)
+	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `session nil`,
+		})
+		return
+	}
+	objURI, e := h.bind2URINormal(c)
+	if e != nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: e.Error(),
+		})
+		return
+	}
+	fs := mount.Single()
+	m := fs.Root(objURI.Root)
+	if m == nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `not found`,
+		})
+		return
+	}
+	if !h.canWirte(c, m) {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `Forbidden`,
+		})
+		return
+	}
+	dir, e := m.Filename(objURI.Path)
+	if e != nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: e.Error(),
+		})
+		return
+	}
+
+	srcM := fs.Root(objURI.SrcRoot)
+	if srcM == nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `not found`,
+		})
+		return
+	}
+	if !h.canWirte(c, srcM) {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `Forbidden`,
+		})
+		return
+	}
+	srcDir, e := srcM.Filename(objURI.SrcPath)
+	if e != nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: e.Error(),
+		})
+		return
+	}
+
+	names, e := mount.Cut(ws, dir, srcDir, time.Second*10)
+	if e != nil {
+		if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.Error(e),
+				zap.String(`method`, c.Request.Method),
+				zap.String(`session`, session.String()),
+				zap.String(`root`, objURI.Root),
+				zap.String(`dir`, objURI.Path),
+				zap.String(`src root`, objURI.SrcPath),
+				zap.String(`src dir`, objURI.SrcPath),
+				zap.Strings(`names`, names),
+			)
+		}
+		return
+	}
+	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
+			zap.String(`root`, objURI.Root),
+			zap.String(`dir`, objURI.Path),
+			zap.String(`src root`, objURI.SrcPath),
+			zap.String(`src dir`, objURI.SrcPath),
+			zap.Strings(`names`, names),
 		)
 	}
 }
