@@ -124,6 +124,7 @@ func (h Users) remove(c *gin.Context) {
 	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 		ce.Write(
 			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
 			zap.String(`id`, obj.ID),
 		)
 	}
@@ -174,6 +175,7 @@ func (h Users) password(c *gin.Context) {
 	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 		ce.Write(
 			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
 			zap.String(`id`, obj.ID),
 		)
 	}
@@ -226,6 +228,7 @@ func (h Users) change(c *gin.Context) {
 	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 		ce.Write(
 			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
 			zap.String(`id`, obj.ID),
 			zap.Bool(`shell`, val.Shell),
 			zap.Bool(`read`, val.Read),

@@ -214,6 +214,7 @@ func (h Shells) rename(c *gin.Context) {
 	if ce := logger.Logger.Check(zap.InfoLevel, c.FullPath()); ce != nil {
 		ce.Write(
 			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
 			zap.Int64(`id`, objURI.ID),
 			zap.String(`val`, obj.Name),
 		)
@@ -245,6 +246,7 @@ func (h Shells) remove(c *gin.Context) {
 	if ce := logger.Logger.Check(zap.InfoLevel, c.FullPath()); ce != nil {
 		ce.Write(
 			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
 			zap.Int64(`id`, objURI.ID),
 		)
 	}

@@ -17,6 +17,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatRadioModule } from '@angular/material/radio';
 
 import { FsRoutingModule } from './fs-routing.module';
 import { ListComponent } from './list/list.component';
@@ -33,12 +34,13 @@ import { NewFolderComponent } from './dialog/new-folder/new-folder.component';
 import { PropertyComponent } from './dialog/property/property.component';
 import { RemoveComponent } from './dialog/remove/remove.component';
 import { CompressComponent } from './dialog/compress/compress.component';
+import { ExistComponent } from './dialog/exist/exist.component';
 
 
 @NgModule({
   declarations: [ListComponent, ManagerComponent, PathComponent,
     FileComponent, ImageComponent, TextComponent,
-    AudioComponent, VideoComponent, RenameComponent, NewFileComponent, NewFolderComponent, PropertyComponent, RemoveComponent, CompressComponent
+    AudioComponent, VideoComponent, RenameComponent, NewFileComponent, NewFolderComponent, PropertyComponent, RemoveComponent, CompressComponent, ExistComponent
   ],
   imports: [
     CommonModule, RouterModule, FormsModule,
@@ -46,12 +48,13 @@ import { CompressComponent } from './dialog/compress/compress.component';
     MatButtonModule, MatIconModule, MatTooltipModule,
     MatFormFieldModule, MatInputModule, MatRippleModule,
     MatToolbarModule, MatCheckboxModule, MatMenuModule,
-    MatDividerModule, MatDialogModule,
+    MatDividerModule, MatDialogModule, MatRadioModule,
     FsRoutingModule
   ],
   entryComponents: [
     RenameComponent, NewFileComponent, NewFolderComponent,
     PropertyComponent, RemoveComponent, CompressComponent,
+    ExistComponent,
   ]
 })
 export class FsModule { }

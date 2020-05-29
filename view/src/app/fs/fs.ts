@@ -1,4 +1,5 @@
 import { ServerAPI } from '../core/core/api';
+import { sizeString } from '../core/core/utils';
 
 const audios = new Set();
 ([
@@ -147,7 +148,7 @@ export class FileInfo {
             return false
         }
         const name = this.name.toLowerCase()
-        return name.endsWith(`.tar.gz`) || name.endsWith(`.tar.bz2`)
+        return name.endsWith(`.tar.gz`) || name.endsWith(`.tar.bz2`) || name.endsWith(`.tar`) || name.endsWith(`.zip`)
     }
     get url(): string {
         switch (this._filetype) {
@@ -183,6 +184,9 @@ export class FileInfo {
             case FileType.Text:
                 return 'event_note'
         }
+        if (this.isSupportUncompress) {
+            return 'unarchive'
+        }
         return 'insert_drive_file'
     }
     get modeString(): string {
@@ -212,5 +216,11 @@ export class FileInfo {
             w++
         }
         return buf.slice(0, w).join('')
+    }
+    get sizeString(): string {
+        if (this.isDir) {
+            return ''
+        }
+        return sizeString(this.size)
     }
 }

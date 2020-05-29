@@ -46,11 +46,11 @@ func (h FS) Register(router *gin.RouterGroup) {
 
 	r.GET(``, h.ls)
 	r.GET(`:root/:path`, h.get)
-	r.PUT(`:root/:path`, h.put)
-	r.PATCH(`:root/:path/name`, h.rename)
-	r.POST(`:root/:path`, h.post)
-	r.DELETE(`:root/:path`, h.remove)
-	r.GET(`:root/:path/compress/websocket`, h.CheckWebsocket, h.compress)
+	r.PUT(`:root/:path`, h.CheckSession, h.put)
+	r.PATCH(`:root/:path/name`, h.CheckSession, h.rename)
+	r.POST(`:root/:path`, h.CheckSession, h.post)
+	r.DELETE(`:root/:path`, h.CheckSession, h.remove)
+	r.GET(`:root/:path/compress/websocket`, h.CheckWebsocket, h.CheckSession, h.compress)
 }
 func (h FS) ls(c *gin.Context) {
 	var obj struct {
@@ -128,6 +128,7 @@ func (h FS) checkWirte(c *gin.Context, m *mount.Mount) (ok bool) {
 		c.Status(http.StatusForbidden)
 		return
 	}
+	ok = true
 	return
 }
 func (h FS) bindURINormal(c *gin.Context) (obj fsURI, e error) {
@@ -236,6 +237,9 @@ func (h FS) put(c *gin.Context) {
 	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 		ce.Write(
 			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
+			zap.String(`root`, obj.Root),
+			zap.String(`path`, obj.Path),
 		)
 	}
 	c.Status(http.StatusNoContent)
@@ -305,6 +309,7 @@ func (h FS) rename(c *gin.Context) {
 	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 		ce.Write(
 			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
 			zap.String(`root`, objURI.Root),
 			zap.String(`path`, objURI.Path),
 			zap.String(`val`, obj.Val),
@@ -343,7 +348,6 @@ func (h FS) post(c *gin.Context) {
 		h.NegotiateError(c, http.StatusForbidden, e)
 		return
 	}
-
 	var obj struct {
 		Dir  bool   `form:"dir" json:"dir" xml:"dir" yaml:"dir"`
 		Name string `form:"name" json:"name" xml:"name" yaml:"name" binding:"required"`
@@ -385,6 +389,7 @@ func (h FS) post(c *gin.Context) {
 	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 		ce.Write(
 			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
 			zap.String(`root`, objURI.Root),
 			zap.String(`dir`, objURI.Path),
 			zap.String(`name`, obj.Name),
@@ -467,6 +472,7 @@ func (h FS) remove(c *gin.Context) {
 	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 		ce.Write(
 			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
 			zap.String(`root`, objURI.Root),
 			zap.String(`dir`, objURI.Path),
 			zap.Strings(`names`, obj.Names),
@@ -528,12 +534,13 @@ func (h FS) compress(c *gin.Context) {
 		})
 		return
 	}
-	name, names, e := m.Compress(ws, dir, time.Second*10)
+	name, names, e := mount.Compress(ws, dir, time.Second*10)
 	if e != nil {
 		if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 			ce.Write(
 				zap.Error(e),
 				zap.String(`method`, c.Request.Method),
+				zap.String(`session`, session.String()),
 				zap.String(`root`, objURI.Root),
 				zap.String(`dir`, objURI.Path),
 				zap.Strings(`names`, names),
@@ -545,6 +552,7 @@ func (h FS) compress(c *gin.Context) {
 	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 		ce.Write(
 			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
 			zap.String(`root`, objURI.Root),
 			zap.String(`dir`, objURI.Path),
 			zap.Strings(`names`, names),

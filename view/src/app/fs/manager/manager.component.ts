@@ -23,7 +23,7 @@ import { CompressComponent } from '../dialog/compress/compress.component';
 })
 export class ManagerComponent implements OnInit, OnDestroy {
   constructor(private router: Router,
-    public matDialog: MatDialog,
+    private matDialog: MatDialog,
     private sessionService: SessionService,
   ) { }
   private _subscription: Subscription
@@ -213,7 +213,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
   onCheckChange(evt: CheckEvent) {
     if (evt.event.ctrlKey || this.ctrl) {
-      evt.target.checked = true
+      evt.target.checked = !evt.target.checked
       return
     }
     let start = -1
@@ -420,18 +420,50 @@ export class ManagerComponent implements OnInit, OnDestroy {
       disableClose: true,
     }).afterClosed().toPromise().then((fileinfo: FileInfo) => {
       if (fileinfo instanceof FileInfo) {
-        if (!this._source) {
-          this._source = new Array<FileInfo>()
-          this.sourceChange.emit(this._source)
+        this._pushOrUpdate(fileinfo)
+      }
+    })
+  }
+  private _pushOrUpdate(fileinfo: FileInfo) {
+    if (!this._source) {
+      this._source = new Array<FileInfo>()
+      this.sourceChange.emit(this._source)
+    }
+    if (this._source.length == 0) {
+      this._source.push(fileinfo)
+    } else {
+      let ok = false
+      for (let i = 0; i < this._source.length; i++) {
+        if (this._source[i].name == fileinfo.name) {
+          ok = true
+          this._source[i] = fileinfo
+          break
         }
+      }
+      if (!ok) {
         this._source.push(fileinfo)
         this._source.sort(FileInfo.compare)
-        if (!this._hide) {
-          this._hide = new Array<FileInfo>()
+      }
+    }
+
+    if (!this._hide) {
+      this._hide = new Array<FileInfo>()
+    }
+    if (this._hide.length == 0) {
+      this._hide.push(fileinfo)
+    } else {
+      let ok = false
+      for (let i = 0; i < this._hide.length; i++) {
+        if (this._hide[i].name == fileinfo.name) {
+          ok = true
+          this._hide[i] = fileinfo
+          break
         }
+      }
+      if (!ok) {
         this._hide.push(fileinfo)
         this._hide.sort(FileInfo.compare)
       }
-    })
+    }
   }
 }

@@ -1,12 +1,12 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ServerAPI } from 'src/app/core/core/api';
 import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { FileInfo, Dir } from '../../fs';
 import { isString } from 'util';
 import { interval, Subscription } from 'rxjs';
+import { ExistComponent } from '../exist/exist.component';
 
 interface Target {
   dir: Dir
@@ -18,7 +18,9 @@ interface Message {
   val: string
   fileInfo: FileInfo
 }
-
+const AlgorithmTarGZ = 0
+const AlgorithmTar = 1
+const AlgorithmZip = 2
 // CmdError 錯誤
 const CmdError = 1
 // CmdHeart websocket 心跳防止瀏覽器 關閉不獲取 websocket
@@ -29,6 +31,12 @@ const CmdProgress = 3
 const CmdDone = 4
 // CmdInit 初始化
 const CmdInit = 5
+// CmdYes 確認操作
+const CmdYes = 6
+// CmdNo 取消操作
+const CmdNo = 7
+// CmdExist 檔案已經存在
+const CmdExist = 8
 
 @Component({
   selector: 'app-compress',
@@ -38,6 +46,7 @@ const CmdInit = 5
 export class CompressComponent implements OnInit, OnDestroy {
   constructor(private toasterService: ToasterService,
     private i18nService: I18nService,
+    private matDialog: MatDialog,
     private matDialogRef: MatDialogRef<CompressComponent>,
     @Inject(MAT_DIALOG_DATA) public target: Target,
   ) { }
@@ -71,6 +80,18 @@ export class CompressComponent implements OnInit, OnDestroy {
   }
   private _closed: boolean
   name: string
+  algorithm = AlgorithmTarGZ
+  algorithms = [AlgorithmTarGZ, AlgorithmTar, AlgorithmZip]
+  getExt(val: number): string {
+    switch (val) {
+      case AlgorithmTar:
+        return '.tar'
+      case AlgorithmZip:
+        return '.zip'
+      default:
+        return '.tar.gz'
+    }
+  }
   ngOnDestroy() {
     this._closed = true
     if (this._websocket) {
@@ -119,7 +140,7 @@ export class CompressComponent implements OnInit, OnDestroy {
         }
         if (isString(evt.data)) {
           try {
-            this._onMessage(JSON.parse(evt.data))
+            this._onMessage(websocket, JSON.parse(evt.data))
           } catch (e) {
             console.warn('ws-compress', e)
           }
@@ -135,7 +156,8 @@ export class CompressComponent implements OnInit, OnDestroy {
       // send names
       websocket.send(JSON.stringify({
         'cmd': CmdInit,
-        'name': `${this.name}.tar.gz`,
+        'algorithm': this.algorithm,
+        'name': this.name,
         'names': names,
       }))
     }
@@ -144,7 +166,7 @@ export class CompressComponent implements OnInit, OnDestroy {
     this.matDialogRef.close()
   }
   progress: string
-  _onMessage(msg: Message) {
+  _onMessage(websocket: WebSocket, msg: Message) {
     switch (msg.cmd) {
       case CmdError:
         this.toasterService.pop('error', undefined, msg.error)
@@ -158,9 +180,35 @@ export class CompressComponent implements OnInit, OnDestroy {
         this.toasterService.pop('success', undefined, this.i18nService.get('Compress done'))
         this.matDialogRef.close(new FileInfo(this.target.dir.root, this.target.dir.dir, msg.fileInfo))
         break
+      case CmdExist:
+        this._exist(websocket, msg.val)
+        break
       default:
         console.warn(`ws-compress unknow msg`, msg)
         break;
     }
+  }
+  private _exist(websocket: WebSocket, name: string) {
+    this.matDialog.open(ExistComponent, {
+      data: name,
+      disableClose: true,
+    }).afterClosed().toPromise().then((ok) => {
+      if (!websocket || websocket != this._websocket) {
+        return
+      }
+      if (ok) {
+        websocket.send(JSON.stringify({
+          cmd: CmdYes,
+        }))
+      } else {
+        websocket.send(JSON.stringify({
+          cmd: CmdNo,
+        }))
+        websocket.close()
+        if (websocket == this._websocket) {
+          this._websocket = null
+        }
+      }
+    })
   }
 }

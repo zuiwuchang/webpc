@@ -17,6 +17,12 @@ const (
 	CmdDone
 	// CmdInit 初始化
 	CmdInit
+	// CmdYes 確認操作
+	CmdYes
+	// CmdNo 取消操作
+	CmdNo
+	// CmdExist 檔案已經存在
+	CmdExist
 )
 
 var fs FileSystem
