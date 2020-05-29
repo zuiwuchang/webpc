@@ -261,6 +261,9 @@ func (c *_UncompressWorker) doneUncompressFile(dir, name string, r io.Reader, mo
 	if e != nil {
 		return
 	}
+	if f == nil {
+		return
+	}
 	_, e = io.Copy(f, r)
 	f.Close()
 	return
@@ -268,9 +271,10 @@ func (c *_UncompressWorker) doneUncompressFile(dir, name string, r io.Reader, mo
 func (c *_UncompressWorker) createFile(dir, name string, mode os.FileMode) (f *os.File, e error) {
 	filename := filepath.Clean(dir + name)
 	if c.style == CmdYesAll {
-		f, e = os.Create(filename)
+		f, e = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, mode)
 		return
 	}
+	f, e = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_EXCL, mode)
 	if !os.IsExist(e) {
 		return
 	}
@@ -279,7 +283,7 @@ func (c *_UncompressWorker) createFile(dir, name string, mode os.FileMode) (f *o
 		return
 	}
 
-	e0 := c.writeExist(c.Name)
+	e0 := c.writeExist(name)
 	if e0 != nil {
 		return
 	}
@@ -291,10 +295,10 @@ func (c *_UncompressWorker) createFile(dir, name string, mode os.FileMode) (f *o
 		e = context.Canceled
 		return
 	} else if msg.Cmd == CmdYes {
-		f, e = os.Create(filename)
+		f, e = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, mode)
 	} else if msg.Cmd == CmdYesAll {
-		c.style = CmdYes
-		f, e = os.Create(filename)
+		c.style = CmdYesAll
+		f, e = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, mode)
 	} else if msg.Cmd == CmdSkip {
 		e = nil
 		return

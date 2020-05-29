@@ -4,9 +4,10 @@ import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { FileInfo, Dir } from '../../fs';
-import { isString } from 'util';
+import { isString, isNumber } from 'util';
 import { interval, Subscription } from 'rxjs';
 import { ExistComponent } from '../exist/exist.component';
+import { ExistChoiceComponent } from '../exist-choice/exist-choice.component';
 
 interface Target {
   dir: Dir
@@ -84,6 +85,121 @@ export class UncompressComponent implements OnInit, OnDestroy {
     this.matDialogRef.close()
   }
   _init() {
-
+    const url = ServerAPI.v1.fs.websocketURL([
+      this.target.dir.root, this.target.dir.dir,
+      'uncompress',
+    ])
+    const websocket = new WebSocket(url)
+    this._websocket = websocket
+    websocket.onerror = (evt) => {
+      websocket.close()
+      console.warn(evt)
+      if (this._websocket != websocket) {
+        return
+      }
+      this.toasterService.pop('error', undefined, 'connect websocket error')
+      this._websocket = null
+      this.matDialogRef.close()
+    }
+    websocket.onopen = (evt) => {
+      if (this._websocket != websocket) {
+        websocket.close()
+        return
+      }
+      websocket.onclose = (evt) => {
+        websocket.close()
+        console.warn(evt, this._websocket != websocket)
+        if (this._websocket != websocket) {
+          return
+        }
+        this.toasterService.pop('error', undefined, 'websocket closed')
+        this._websocket = null
+        this.matDialogRef.close()
+      }
+      websocket.onmessage = (evt) => {
+        if (this._websocket != websocket) {
+          websocket.close()
+          return
+        }
+        if (isString(evt.data)) {
+          try {
+            this._onMessage(websocket, JSON.parse(evt.data))
+          } catch (e) {
+            console.warn('ws-compress', e)
+          }
+        } else {
+          console.warn(`ws-compress unknow type`, evt.data)
+        }
+      }
+      // send names
+      websocket.send(JSON.stringify({
+        'cmd': CmdInit,
+        'name': this.target.source.name,
+      }))
+    }
+  }
+  _onMessage(websocket: WebSocket, msg: Message) {
+    switch (msg.cmd) {
+      case CmdError:
+        this.toasterService.pop('error', undefined, msg.error)
+        websocket.close()
+        this._websocket = null
+        this.matDialogRef.close()
+        break;
+      case CmdProgress:
+        this.progress = msg.val
+        break;
+      case CmdDone:
+        this._websocket.close()
+        this._websocket = null
+        this.toasterService.pop('success', undefined, this.i18nService.get('Uncompress done'))
+        this.matDialogRef.close(true)
+        break
+      case CmdExist:
+        this._exist(websocket, msg.val)
+        break
+      default:
+        console.warn(`ws-compress unknow msg`, msg)
+        break;
+    }
+  }
+  private _exist(websocket: WebSocket, name: string) {
+    this.matDialog.open(ExistChoiceComponent, {
+      data: name,
+      disableClose: true,
+    }).afterClosed().toPromise().then((number) => {
+      if (!websocket || websocket != this._websocket || !isNumber(number)) {
+        websocket.close()
+        return
+      }
+      if (number == CmdYes) {
+        websocket.send(JSON.stringify({
+          cmd: number,
+        }))
+      } else if (number == CmdYesAll) {
+        websocket.send(JSON.stringify({
+          cmd: number,
+        }))
+      } else if (number == CmdSkip) {
+        websocket.send(JSON.stringify({
+          cmd: number,
+        }))
+      } else if (number == CmdSkipAll) {
+        websocket.send(JSON.stringify({
+          cmd: number,
+        }))
+      } else {
+        if (websocket != this._websocket) {
+          websocket.close()
+          return
+        }
+        this._websocket = null
+        websocket.send(JSON.stringify({
+          cmd: CmdNo,
+        }))
+        websocket.close()
+        this.matDialogRef.close()
+      }
+    })
   }
 }

@@ -53,6 +53,18 @@
           <context context-type="sourcefile">src/app/fs/dialog/rename/rename.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-file/new-file.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-folder/new-folder.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/compress/compress.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="5314f3960d1a662e977d8f0a5a3943120824255c" datatype="html">
         <source>Default Name : killer</source>
@@ -76,6 +88,22 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/edit/edit.component.html</context>
           <context context-type="linenumber">18</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/rename/rename.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-file/new-file.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-folder/new-folder.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/compress/compress.component.html</context>
+          <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
       <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
@@ -173,6 +201,18 @@
           <context context-type="sourcefile">src/app/fs/dialog/rename/rename.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-file/new-file.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-folder/new-folder.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/compress/compress.component.html</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
         <source>Close</source>
@@ -208,6 +248,26 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/dialog/rename/rename.component.html</context>
           <context context-type="linenumber">25</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-file/new-file.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-folder/new-folder.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/remove/remove.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/compress/compress.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/uncompress/uncompress.component.html</context>
+          <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5edf054f14aa57bc25a28cb7db01956fee53dac8" datatype="html">
@@ -325,6 +385,18 @@
           <context context-type="sourcefile">src/app/shared/dialog/confirm/confirm.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/remove/remove.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/exist/exist.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/exist-choice/exist-choice.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="6080b77234e92ad41bb52653b239c4c4f851317d" datatype="html">
         <source>Error</source>
@@ -438,6 +510,78 @@
           <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="79e4486927009b188bba3b697eb91c475495e639" datatype="html">
+        <source>New File</source>
+        <target>新档案</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-file/new-file.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c293be6125764337b3e53e59163ddf618519d22e" datatype="html">
+        <source>New File Success</source>
+        <target>档案已创建</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6b74467987623883f8365d202c2173d9e0271458" datatype="html">
+        <source>New Folder</source>
+        <target>新档案夹</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/new-folder/new-folder.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="959a91792868c9cac12f6c5ea6bae695cc20d2b1" datatype="html">
+        <source>New Folder Success</source>
+        <target>档案夹已创建</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="d8bcc9c4ee939429759fcf9c9633703096ad4d4a" datatype="html">
+        <source>File deleted</source>
+        <target>档案已删除</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dcd77ac18c575e2f0f354c0b231e78e83cbecc21" datatype="html">
+        <source>Compress done</source>
+        <target>压缩完成</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ad8669488cbb0bb2daa8e2bf7edfe6d1e020dc85" datatype="html">
+        <source>Uncompress done</source>
+        <target>解压完成</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="7c25ffdfdcbc340e0abe8ead8c8f9ca6a260e970" datatype="html">
         <source>File Management</source>
         <target>档案管理</target>
@@ -468,6 +612,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/list/list.component.html</context>
           <context context-type="linenumber">36</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3c3f9cfd423f4471c09dfc9caec089c4b1c92078" datatype="html">
@@ -611,23 +759,115 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">76</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="79e4486927009b188bba3b697eb91c475495e639" datatype="html">
-        <source>New File</source>
-        <target>新档案</target>
+      <trans-unit id="cf17e2f3737e74b8e3b874867ec9cf5fa46f2146" datatype="html">
+        <source>Property</source>
+        <target>属性</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/property/property.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">110</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="826b25211922a1b46436589233cb6f1a163d89b7" datatype="html">
+        <source>Delete</source>
+        <target>删除</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/remove/remove.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">105</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="12eee93d38b580cb50e7658edd9cad3eb035d898" datatype="html">
+        <source>File conflict</source>
+        <target>档案冲突</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/exist/exist.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/exist-choice/exist-choice.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="439c595f0fc3553a53e937e5ecee878ffc132996" datatype="html">
+        <source>Replace file</source>
+        <target>取代档案</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/exist/exist.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/exist-choice/exist-choice.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
+        <source>Cancel</source>
+        <target>取消</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/exist/exist.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/exist-choice/exist-choice.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6b74467987623883f8365d202c2173d9e0271458" datatype="html">
-        <source>New Folder</source>
-        <target>新档案夹</target>
+      <trans-unit id="f1aea024fc1f74582f6863f215ddc3438ca65956" datatype="html">
+        <source>Compress</source>
+        <target>压缩</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/compress/compress.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">95</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cb44d23a0e8b00e8ddb0f13cdc970f3d036073c6" datatype="html">
+        <source>Replace All</source>
+        <target>全部替换</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/exist-choice/exist-choice.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="eb075d0450deb6f381616f7da4b9244ced843053" datatype="html">
+        <source>Skip</source>
+        <target>跳过</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/exist-choice/exist-choice.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="34af55408b654ca513d7ba4f1c99935b93a8e80d" datatype="html">
+        <source>Skip All</source>
+        <target>全部跳过</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/exist-choice/exist-choice.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="eee748902e363090150f4fa84687f2ebe353eaac" datatype="html">
+        <source>Uncompress</source>
+        <target>解压</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/dialog/uncompress/uncompress.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
+          <context context-type="linenumber">100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="170919b6c28b7eb90fead8af3d10ce8f10dc041e" datatype="html">
@@ -651,7 +891,7 @@
         <target>打开</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">38</context>
+          <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1eb95103405c577cc75f3e2f77ba84fa497831ee" datatype="html">
@@ -659,7 +899,7 @@
         <target>打开为</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2d1ea268a6a9f483dbc2cbfe19bf4256a57a6af4" datatype="html">
@@ -667,7 +907,7 @@
         <target>视频</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">54</context>
         </context-group>
       </trans-unit>
       <trans-unit id="f0baeb8b69d120073b6d60d34785889b0c3232c8" datatype="html">
@@ -675,7 +915,7 @@
         <target>音频</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">60</context>
         </context-group>
       </trans-unit>
       <trans-unit id="a5f9ba9bb9faa8284bcadb1cdbc6aaf969e9c4bb" datatype="html">
@@ -683,7 +923,7 @@
         <target>图像</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8ba143716c2da6e4120c0c1a804f0bdd9a7e5f5b" datatype="html">
@@ -691,7 +931,7 @@
         <target>文档</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
       <trans-unit id="dc75033a5238fdc4f462212c847a45ba8018a3fd" datatype="html">
@@ -699,7 +939,7 @@
         <target>下载</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1979da7460819153e11d2078244645d94291b69c" datatype="html">
@@ -707,7 +947,7 @@
         <target>复制</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">86</context>
         </context-group>
       </trans-unit>
       <trans-unit id="393584cc19f5730acb6ca04a01d7b818e5cda8a4" datatype="html">
@@ -715,39 +955,7 @@
         <target>剪下</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">80</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="f1aea024fc1f74582f6863f215ddc3438ca65956" datatype="html">
-        <source>Compress</source>
-        <target>压缩</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">85</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="eee748902e363090150f4fa84687f2ebe353eaac" datatype="html">
-        <source>Uncompress</source>
-        <target>解压</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">89</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="826b25211922a1b46436589233cb6f1a163d89b7" datatype="html">
-        <source>Delete</source>
-        <target>删除</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">94</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="cf17e2f3737e74b8e3b874867ec9cf5fa46f2146" datatype="html">
-        <source>Property</source>
-        <target>属性</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/fs/manager/manager.component.html</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="linenumber">90</context>
         </context-group>
       </trans-unit>
       <trans-unit id="272fb7b69aa7689350d5785238419c2102934883" datatype="html">
