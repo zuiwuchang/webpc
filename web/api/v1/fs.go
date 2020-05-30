@@ -78,6 +78,7 @@ func (h FS) Register(router *gin.RouterGroup) {
 	r.GET(`:root/:path/compress/websocket`, h.CheckWebsocket, h.CheckSession, h.compress)
 	r.GET(`:root/:path/uncompress/websocket`, h.CheckWebsocket, h.CheckSession, h.uncompress)
 	r.GET(`:root/:path/cut/:srcroot/:srcpath/websocket`, h.CheckWebsocket, h.CheckSession, h.cut)
+	r.GET(`:root/:path/copy/:srcroot/:srcpath/websocket`, h.CheckWebsocket, h.CheckSession, h.copy)
 }
 func (h FS) ls(c *gin.Context) {
 	var obj struct {
@@ -761,6 +762,112 @@ func (h FS) cut(c *gin.Context) {
 	}
 
 	names, e := mount.Cut(ws, dir, srcDir, time.Second*10)
+	if e != nil {
+		if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.Error(e),
+				zap.String(`method`, c.Request.Method),
+				zap.String(`session`, session.String()),
+				zap.String(`root`, objURI.Root),
+				zap.String(`dir`, objURI.Path),
+				zap.String(`src root`, objURI.SrcRoot),
+				zap.String(`src dir`, objURI.SrcPath),
+				zap.Strings(`names`, names),
+			)
+		}
+		return
+	}
+	if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
+		ce.Write(
+			zap.String(`method`, c.Request.Method),
+			zap.String(`session`, session.String()),
+			zap.String(`root`, objURI.Root),
+			zap.String(`dir`, objURI.Path),
+			zap.String(`src root`, objURI.SrcPath),
+			zap.String(`src dir`, objURI.SrcPath),
+			zap.Strings(`names`, names),
+		)
+	}
+}
+func (h FS) copy(c *gin.Context) {
+	ws, e := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if e != nil {
+		h.NegotiateError(c, http.StatusBadRequest, e)
+		return
+	}
+	defer ws.Close()
+	session, _ := h.ShouldBindSession(c)
+	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `session nil`,
+		})
+		return
+	}
+	objURI, e := h.bind2URINormal(c)
+	if e != nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: e.Error(),
+		})
+		return
+	}
+	fs := mount.Single()
+	m := fs.Root(objURI.Root)
+	if m == nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `not found`,
+		})
+		return
+	}
+	if !h.canWirte(c, m) {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `Forbidden`,
+		})
+		return
+	}
+	dir, e := m.Filename(objURI.Path)
+	if e != nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: e.Error(),
+		})
+		return
+	}
+
+	srcM := fs.Root(objURI.SrcRoot)
+	if srcM == nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `not found`,
+		})
+		return
+	}
+	if !h.canRead(c, srcM) {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: `Forbidden`,
+		})
+		return
+	}
+	srcDir, e := srcM.Filename(objURI.SrcPath)
+	if e != nil {
+		h.WriteJSON(ws, gin.H{
+			`cmd`:   mount.CmdError,
+			`error`: e.Error(),
+		})
+		return
+	}
+
+	names, e := mount.Copy(ws, dir, srcDir, time.Second*10)
 	if e != nil {
 		if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 			ce.Write(
