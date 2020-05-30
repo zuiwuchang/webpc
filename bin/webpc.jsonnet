@@ -20,8 +20,9 @@ local GB=MB * 1024;
 	System:{
 		// 用戶數據庫
 		DB : "webpc.db",
-		// 用戶shell
-		Shell : ["/bin/bash","-l"], // linux bash
+		// 用戶 shell 啓動腳本
+		// linux 默認爲 GOOS
+		//Shell : "linux.sh",// linux bash		 
 		// 映射到web的目錄
 		Mount : [
 			{
