@@ -90,7 +90,8 @@ case $1 in
 			if [[ $GOARCH == 386 ]];then
 				dst=linux.386.tar.gz
 			fi
-			cd "$DirRoot/bin" && tar -zcvf $dst "$Target"
+			cd "$DirRoot/bin" && tar -zcvf $dst "$Target" "$Target".jsonnet \
+			shell-linux
 		fi
 	;;
 

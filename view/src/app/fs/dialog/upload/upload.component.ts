@@ -10,6 +10,12 @@ import { ExistChoiceComponent } from '../exist-choice/exist-choice.component';
 import { NetCommand } from '../command';
 import { sizeString } from 'src/app/core/core/utils';
 import { takeUntil } from 'rxjs/operators';
+enum Status {
+  Nil,
+  Working,
+  Ok,
+  Error,
+}
 interface Data {
   root: string
   dir: string
@@ -17,6 +23,7 @@ interface Data {
 class UploadFile {
   constructor(public file: File) {
   }
+  status = Status.Nil
   progress: number
   get sizeString(): string {
     return sizeString(this?.file?.size)
@@ -25,12 +32,19 @@ class UploadFile {
     const file = this.file
     return `${file.size}${file.lastModified}${file.name}`
   }
+  isOk(): boolean {
+    return this.status == Status.Ok
+  }
 }
 class Source {
   private _keys = new Set<string>()
   private _items = new Array<UploadFile>()
 
   push(uploadFile: UploadFile) {
+    if (!uploadFile.file.type) {
+      console.warn(`not support file type`, uploadFile.file)
+      return
+    }
     const key = uploadFile.key
     if (this._keys.has(key)) {
       return
@@ -43,6 +57,7 @@ class Source {
   }
   clear() {
     this._items.splice(0, this._items.length)
+    this._keys.clear()
   }
 }
 @Component({
@@ -68,6 +83,7 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   private _clsoeSubject = new Subject<boolean>()
   ngOnInit(): void {
+    // 禁用 瀏覽器 檔案拖動
     fromEvent(document, 'drop').pipe(
       takeUntil(this._clsoeSubject),
     ).subscribe((evt) => {
@@ -93,6 +109,13 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
       evt.stopPropagation()
       evt.preventDefault()
     })
+    fromEvent(this.drop.nativeElement, 'dragenter').pipe(
+      takeUntil(this._clsoeSubject),
+    ).subscribe((evt: Event) => {
+      this.dragover = true
+      evt.stopPropagation()
+      evt.preventDefault()
+    })
     fromEvent(this.drop.nativeElement, 'dragexit').pipe(
       takeUntil(this._clsoeSubject),
     ).subscribe((evt: Event) => {
@@ -107,8 +130,6 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
       evt.stopPropagation()
       evt.preventDefault()
       this._drop(evt)
-      const files = (evt as any).dataTransfer.files;
-      console.log(files)
     })
   }
   private _drop(evt) {
@@ -116,13 +137,19 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!dataTransfer) {
       if (evt.originalEvent) {
         dataTransfer = evt.originalEvent.dataTransfer
+        console.warn(`use evt.originalEvent`)
       }
     }
     if (!dataTransfer) {
-      console.log(`dataTransfer nil`)
+      console.warn(`dataTransfer nil`)
       return
     }
-    console.log(dataTransfer.files)
+    if (!dataTransfer.files) {
+      return
+    }
+    for (let i = 0; i < dataTransfer.files.length; i++) {
+      this._source.push(new UploadFile(dataTransfer.files[i]))
+    }
   }
   onClose() {
     this.matDialogRef.close(this._num)

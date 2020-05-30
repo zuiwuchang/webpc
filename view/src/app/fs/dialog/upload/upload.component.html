@@ -1,31 +1,32 @@
 <h1 mat-dialog-title i18n>Upload Files</h1>
 <div mat-dialog-content>
     <input #file type="file" name="files" multiple style="display: none;" (change)="onAdd($event)" />
-        <div #drop [class]="dragover?'drop-zone-over':'drop-zone'">
-            <ng-container i18n>Queue length</ng-container> : {{ source?.length }}
-            <ng-container *ngIf="source && source.length!=0;then listView;else emptyView;"></ng-container>
-            <ng-template #emptyView>
-                <p i18n style="color: green;">Drag files here to upload</p>
-            </ng-template>
-            <ng-template #listView>
-                <mat-list>
-                    <mat-list-item *ngFor="let item of source">
-                        <p matLine>
-                            {{item.file.name}}
-                        
-                        </p>
-                        <p matLine>{{item.sizeString}}</p>
-                        <p matLine>
+    <div #drop [class]="dragover?'drop-zone-over':'drop-zone'">
+        <ng-container i18n>Queue length</ng-container> : {{ source?.length }}
+        <ng-container *ngIf="source && source.length!=0;then listView;else emptyView;"></ng-container>
+        <ng-template #emptyView>
+            <p i18n style="color: green;">Drag files here to upload</p>
+        </ng-template>
+        <ng-template #listView>
+            <mat-list>
+                <mat-list-item *ngFor="let item of source">
+                    <p matLine>
+                        {{item.file.name}}
+
+
+                    </p>
+                    <p matLine>{{item.sizeString}}</p>
+                    <p matLine>
                         <mat-progress-bar mode="determinate" value="{{item.progress}}"></mat-progress-bar>
-                        </p>
-                
-                    </mat-list-item>
-                </mat-list>
-            </ng-template>
-        </div>
+                    </p>
+                    <mat-icon *ngIf='item.isOk()'>done</mat-icon>
+                </mat-list-item>
+            </mat-list>
+        </ng-template>
+    </div>
 </div>
 <div mat-dialog-actions>
-    <button mat-stroked-button  [disabled]="disabled"(click)="file.click()">
+    <button mat-stroked-button [disabled]="disabled" (click)="file.click()">
         <ng-container i18n>Add Files</ng-container>
     </button>
     <button mat-stroked-button [disabled]="disabled">
@@ -34,5 +35,5 @@
     <button mat-stroked-button [disabled]="disabled" (click)="onClickClear()">
         <ng-container i18n>Clear Queue</ng-container>
     </button>
-    <button mat-stroked-button (click)="onClose()"  i18n>Close</button>
+    <button mat-stroked-button (click)="onClose()" i18n>Close</button>
 </div>

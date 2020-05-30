@@ -17,15 +17,18 @@ import (
 
 var _sessionLock _SessionLock
 var errSessionLock = errors.New(`lock session error`)
+var errIPLock = errors.New(`lock ip error`)
 
 func init() {
 	_sessionLock.keys = make(map[string]int8)
+	_sessionLock.keysIP = make(map[string]int8)
 }
 
 // 防止暴力猜密碼
 type _SessionLock struct {
-	keys  map[string]int8
-	mutex sync.Mutex
+	keys   map[string]int8
+	keysIP map[string]int8
+	mutex  sync.Mutex
 }
 
 func (s *_SessionLock) Lock(key string) (e error) {
@@ -58,6 +61,33 @@ func (s *_SessionLock) Unlock(key string) {
 	}
 	s.mutex.Unlock()
 }
+func (s *_SessionLock) LockIP(key string) (e error) {
+	s.mutex.Lock()
+	num := s.keysIP[key]
+	if num < 90 {
+		num++
+		s.keysIP[key] = num
+	} else {
+		e = errIPLock
+	}
+	s.mutex.Unlock()
+	return
+}
+func (s *_SessionLock) UnlockIP(key string) {
+	s.mutex.Lock()
+	if num, ok := s.keysIP[key]; ok {
+		if num < 2 {
+			if len(s.keysIP) > 90 {
+				delete(s.keysIP, key)
+			} else {
+				s.keysIP[key] = 0
+			}
+		} else {
+			s.keysIP[key] = num - 1
+		}
+	}
+	s.mutex.Unlock()
+}
 
 // Session .
 type Session struct {
@@ -83,13 +113,20 @@ func (h Session) login(c *gin.Context) {
 	if e != nil {
 		return
 	}
-	key := c.ClientIP() + obj.Name
+	ip := c.ClientIP()
+	e = _sessionLock.LockIP(ip)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+	defer _sessionLock.UnlockIP(ip)
+	key := ip + obj.Name
 	e = _sessionLock.Lock(key)
 	if e != nil {
 		h.NegotiateError(c, http.StatusForbidden, e)
 		return
 	}
-	_sessionLock.Unlock(key)
+	defer _sessionLock.Unlock(key)
 
 	// 查詢用戶
 	var mUser manipulator.User
