@@ -18,6 +18,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { FsRoutingModule } from './fs-routing.module';
 import { ListComponent } from './list/list.component';
@@ -54,6 +55,7 @@ import { UploadComponent } from './dialog/upload/upload.component';
     MatFormFieldModule, MatInputModule, MatRippleModule,
     MatToolbarModule, MatCheckboxModule, MatMenuModule,
     MatDividerModule, MatDialogModule, MatRadioModule,
+    MatProgressBarModule,
     FsRoutingModule
   ],
   entryComponents: [

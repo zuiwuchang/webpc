@@ -21,8 +21,8 @@ local GB=MB * 1024;
 		// 用戶數據庫
 		DB : "webpc.db",
 		// 用戶 shell 啓動腳本
-		// linux 默認爲 GOOS
-		//Shell : "linux.sh",// linux bash		 
+		// linux 默認爲 shell-GOOS
+		//Shell : "shell-linux",
 		// 映射到web的目錄
 		Mount : [
 			{

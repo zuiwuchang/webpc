@@ -27,7 +27,7 @@ func (s *System) Format(basePath string) (e error) {
 	}
 	s.Shell = strings.TrimSpace(s.Shell)
 	if s.Shell == "" {
-		s.Shell = runtime.GOOS
+		s.Shell = `shell-` + runtime.GOOS
 	}
 	if filepath.IsAbs(s.Shell) {
 		s.Shell = filepath.Clean(s.Shell)

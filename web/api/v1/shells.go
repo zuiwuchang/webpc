@@ -151,6 +151,8 @@ func (h Shells) connect(c *gin.Context) {
 				s.SetSize(msg.Cols, msg.Rows)
 			} else if msg.Cmd == shell.CmdFontsize {
 				s.SetFontsize(msg.Val)
+			} else if msg.Cmd == shell.CmdHeart {
+				continue
 			} else {
 				if ce := logger.Logger.Check(zap.WarnLevel, c.FullPath()); ce != nil {
 					ce.Write(
