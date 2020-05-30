@@ -21,6 +21,7 @@ import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { CutComponent } from '../dialog/cut/cut.component';
 import { CopyComponent } from '../dialog/copy/copy.component';
+import { UploadComponent } from '../dialog/upload/upload.component';
 
 @Component({
   selector: 'fs-manager',
@@ -593,8 +594,14 @@ export class ManagerComponent implements OnInit, OnDestroy {
         }
       })
     }
-
-
-
+  }
+  onClickUpload() {
+    this.matDialog.open(UploadComponent, {
+      data: {
+        root: this.folder.root,
+        dir: this.folder.dir,
+      },
+      disableClose: true,
+    })
   }
 }

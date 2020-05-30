@@ -1,7 +1,10 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
+	"sync"
+	"time"
 
 	"go.uber.org/zap"
 
@@ -11,6 +14,50 @@ import (
 	"gitlab.com/king011/webpc/logger"
 	"gitlab.com/king011/webpc/web"
 )
+
+var _sessionLock _SessionLock
+var errSessionLock = errors.New(`lock session error`)
+
+func init() {
+	_sessionLock.keys = make(map[string]int8)
+}
+
+// 防止暴力猜密碼
+type _SessionLock struct {
+	keys  map[string]int8
+	mutex sync.Mutex
+}
+
+func (s *_SessionLock) Lock(key string) (e error) {
+	s.mutex.Lock()
+	num := s.keys[key]
+	if num < 2 {
+		num++
+		s.keys[key] = num
+	} else {
+		e = errSessionLock
+	}
+	s.mutex.Unlock()
+	if e == nil {
+		time.Sleep(time.Second)
+	}
+	return
+}
+func (s *_SessionLock) Unlock(key string) {
+	s.mutex.Lock()
+	if num, ok := s.keys[key]; ok {
+		if num < 2 {
+			if len(s.keys) > 30 {
+				delete(s.keys, key)
+			} else {
+				s.keys[key] = 0
+			}
+		} else {
+			s.keys[key] = num - 1
+		}
+	}
+	s.mutex.Unlock()
+}
 
 // Session .
 type Session struct {
@@ -36,6 +83,13 @@ func (h Session) login(c *gin.Context) {
 	if e != nil {
 		return
 	}
+	key := c.ClientIP() + obj.Name
+	e = _sessionLock.Lock(key)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+	_sessionLock.Unlock(key)
 
 	// 查詢用戶
 	var mUser manipulator.User

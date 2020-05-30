@@ -25,7 +25,7 @@
             <ng-container i18n>Paste</ng-container>
         </button>
         <mat-divider></mat-divider>
-        <button mat-menu-item [disabled]="isNotCanWrite">
+        <button mat-menu-item [disabled]="isNotCanWrite" (click)="onClickUpload()">
             <mat-icon>cloud_upload</mat-icon>
             <ng-container i18n>Upload</ng-container>
         </button>
