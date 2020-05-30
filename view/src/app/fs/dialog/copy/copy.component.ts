@@ -3,41 +3,24 @@ import { ServerAPI } from 'src/app/core/core/api';
 import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { FileInfo, Dir } from '../../fs';
 import { isString, isNumber } from 'util';
 import { interval, Subscription } from 'rxjs';
-import { ExistChoiceComponent } from '../exist-choice/exist-choice.component';
 import { NetCommand } from '../command';
-interface Target {
-  dir: Dir
-  source: FileInfo
-}
-interface Message {
-  cmd: number
-  error: string
-  val: string
-  fileInfo: FileInfo
-}
-
-
+import { Data, Message } from '../cut/cut.component';
+import { ExistChoiceComponent } from '../exist-choice/exist-choice.component';
 @Component({
-  selector: 'app-uncompress',
-  templateUrl: './uncompress.component.html',
-  styleUrls: ['./uncompress.component.scss']
+  selector: 'app-copy',
+  templateUrl: './copy.component.html',
+  styleUrls: ['./copy.component.scss']
 })
-export class UncompressComponent implements OnInit, OnDestroy {
+export class CopyComponent implements OnInit, OnDestroy {
   constructor(private toasterService: ToasterService,
     private i18nService: I18nService,
     private matDialog: MatDialog,
-    private matDialogRef: MatDialogRef<UncompressComponent>,
-    @Inject(MAT_DIALOG_DATA) public target: Target,
-  ) { }
+    private matDialogRef: MatDialogRef<CopyComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: Data, ) { }
   private _subscriptionPing: Subscription
   ngOnInit(): void {
-    if (!this.target || !this.target.source) {
-      this.matDialogRef.close()
-      return
-    }
     this._subscriptionPing = interval(1000 * 30).subscribe(() => {
       if (this._websocket) {
         this._websocket.send(JSON.stringify({
@@ -62,8 +45,9 @@ export class UncompressComponent implements OnInit, OnDestroy {
   }
   _init() {
     const url = ServerAPI.v1.fs.websocketURL([
-      this.target.dir.root, this.target.dir.dir,
-      'uncompress',
+      this.data.dst.root, this.data.dst.dir,
+      'copy',
+      this.data.src.root, this.data.src.dir,
     ])
     const websocket = new WebSocket(url)
     this._websocket = websocket
@@ -77,6 +61,7 @@ export class UncompressComponent implements OnInit, OnDestroy {
       this._websocket = null
       this.matDialogRef.close()
     }
+
     websocket.onopen = (evt) => {
       if (this._websocket != websocket) {
         websocket.close()
@@ -101,16 +86,16 @@ export class UncompressComponent implements OnInit, OnDestroy {
           try {
             this._onMessage(websocket, JSON.parse(evt.data))
           } catch (e) {
-            console.warn('ws-compress', e)
+            console.warn('ws-copy', e)
           }
         } else {
-          console.warn(`ws-compress unknow type`, evt.data)
+          console.warn(`ws-copy unknow type`, evt.data)
         }
       }
       // send names
       websocket.send(JSON.stringify({
         'cmd': NetCommand.Init,
-        'name': this.target.source.name,
+        'names': this.data.names,
       }))
     }
   }
@@ -128,14 +113,14 @@ export class UncompressComponent implements OnInit, OnDestroy {
       case NetCommand.Done:
         this._websocket.close()
         this._websocket = null
-        this.toasterService.pop('success', undefined, this.i18nService.get('Uncompress done'))
+        this.toasterService.pop('success', undefined, this.i18nService.get('Copy file done'))
         this.matDialogRef.close(true)
         break
       case NetCommand.Exist:
         this._exist(websocket, msg.val)
         break
       default:
-        console.warn(`ws-compress unknow msg`, msg)
+        console.warn(`ws-copy unknow msg`, msg)
         break;
     }
   }

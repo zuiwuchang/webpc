@@ -37,12 +37,14 @@ import { CompressComponent } from './dialog/compress/compress.component';
 import { ExistComponent } from './dialog/exist/exist.component';
 import { UncompressComponent } from './dialog/uncompress/uncompress.component';
 import { ExistChoiceComponent } from './dialog/exist-choice/exist-choice.component';
+import { CutComponent } from './dialog/cut/cut.component';
+import { CopyComponent } from './dialog/copy/copy.component';
 
 
 @NgModule({
   declarations: [ListComponent, ManagerComponent, PathComponent,
     FileComponent, ImageComponent, TextComponent,
-    AudioComponent, VideoComponent, RenameComponent, NewFileComponent, NewFolderComponent, PropertyComponent, RemoveComponent, CompressComponent, ExistComponent, UncompressComponent, ExistChoiceComponent
+    AudioComponent, VideoComponent, RenameComponent, NewFileComponent, NewFolderComponent, PropertyComponent, RemoveComponent, CompressComponent, ExistComponent, UncompressComponent, ExistChoiceComponent, CutComponent, CopyComponent
   ],
   imports: [
     CommonModule, RouterModule, FormsModule,
@@ -57,6 +59,7 @@ import { ExistChoiceComponent } from './dialog/exist-choice/exist-choice.compone
     RenameComponent, NewFileComponent, NewFolderComponent,
     PropertyComponent, RemoveComponent, CompressComponent,
     ExistComponent, UncompressComponent, ExistChoiceComponent,
+    CutComponent, CopyComponent,
   ]
 })
 export class FsModule { }

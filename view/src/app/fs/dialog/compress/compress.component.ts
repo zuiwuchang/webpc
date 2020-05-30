@@ -7,7 +7,7 @@ import { FileInfo, Dir } from '../../fs';
 import { isString } from 'util';
 import { interval, Subscription } from 'rxjs';
 import { ExistComponent } from '../exist/exist.component';
-
+import { NetCommand } from '../command';
 interface Target {
   dir: Dir
   source: Array<FileInfo>
@@ -21,22 +21,6 @@ interface Message {
 const AlgorithmTarGZ = 0
 const AlgorithmTar = 1
 const AlgorithmZip = 2
-// CmdError 錯誤
-const CmdError = 1
-// CmdHeart websocket 心跳防止瀏覽器 關閉不獲取 websocket
-const CmdHeart = 2
-// CmdProgress 更新進度
-const CmdProgress = 3
-// CmdDone 操作完成
-const CmdDone = 4
-// CmdInit 初始化
-const CmdInit = 5
-// CmdYes 確認操作
-const CmdYes = 6
-// CmdNo 取消操作
-const CmdNo = 7
-// CmdExist 檔案已經存在
-const CmdExist = 8
 
 @Component({
   selector: 'app-compress',
@@ -66,7 +50,7 @@ export class CompressComponent implements OnInit, OnDestroy {
     this._subscriptionPing = interval(1000 * 30).subscribe(() => {
       if (this._websocket) {
         this._websocket.send(JSON.stringify({
-          cmd: CmdHeart,
+          cmd: NetCommand.Heart,
         }))
       }
     })
@@ -155,7 +139,7 @@ export class CompressComponent implements OnInit, OnDestroy {
       }
       // send names
       websocket.send(JSON.stringify({
-        'cmd': CmdInit,
+        'cmd': NetCommand.Init,
         'algorithm': this.algorithm,
         'name': this.name,
         'names': names,
@@ -168,19 +152,19 @@ export class CompressComponent implements OnInit, OnDestroy {
   progress: string
   _onMessage(websocket: WebSocket, msg: Message) {
     switch (msg.cmd) {
-      case CmdError:
+      case NetCommand.Error:
         this.toasterService.pop('error', undefined, msg.error)
         break;
-      case CmdProgress:
+      case NetCommand.Progress:
         this.progress = msg.val
         break;
-      case CmdDone:
+      case NetCommand.Done:
         this._websocket.close()
         this._websocket = null
         this.toasterService.pop('success', undefined, this.i18nService.get('Compress done'))
         this.matDialogRef.close(new FileInfo(this.target.dir.root, this.target.dir.dir, msg.fileInfo))
         break
-      case CmdExist:
+      case NetCommand.Exist:
         this._exist(websocket, msg.val)
         break
       default:
@@ -198,11 +182,11 @@ export class CompressComponent implements OnInit, OnDestroy {
       }
       if (ok) {
         websocket.send(JSON.stringify({
-          cmd: CmdYes,
+          cmd: NetCommand.Yes,
         }))
       } else {
         websocket.send(JSON.stringify({
-          cmd: CmdNo,
+          cmd: NetCommand.No,
         }))
         websocket.close()
         if (websocket == this._websocket) {

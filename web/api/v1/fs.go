@@ -769,7 +769,7 @@ func (h FS) cut(c *gin.Context) {
 				zap.String(`session`, session.String()),
 				zap.String(`root`, objURI.Root),
 				zap.String(`dir`, objURI.Path),
-				zap.String(`src root`, objURI.SrcPath),
+				zap.String(`src root`, objURI.SrcRoot),
 				zap.String(`src dir`, objURI.SrcPath),
 				zap.Strings(`names`, names),
 			)

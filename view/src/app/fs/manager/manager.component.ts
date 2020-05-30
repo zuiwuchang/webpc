@@ -19,6 +19,8 @@ import { UncompressComponent } from '../dialog/uncompress/uncompress.component';
 import { FileService } from 'src/app/core/fs/file.service';
 import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
+import { CutComponent } from '../dialog/cut/cut.component';
+import { CopyComponent } from '../dialog/copy/copy.component';
 
 @Component({
   selector: 'fs-manager',
@@ -552,6 +554,47 @@ export class ManagerComponent implements OnInit, OnDestroy {
     if (!files || !isObject(files.names) || !isArray(files.names)) {
       return
     }
-    console.log(files)
+    if (files.copy) {
+      this.matDialog.open(CopyComponent, {
+        data: {
+          names: files.names,
+          src: {
+            root: files.root,
+            dir: files.dir,
+          },
+          dst: {
+            root: this.folder.root,
+            dir: this.folder.dir,
+          },
+        },
+        disableClose: true,
+      }).afterClosed().toPromise().then(() => {
+        if (!this._closed) {
+          this.onClickRefresh()
+        }
+      })
+    } else {
+      this.matDialog.open(CutComponent, {
+        data: {
+          names: files.names,
+          src: {
+            root: files.root,
+            dir: files.dir,
+          },
+          dst: {
+            root: this.folder.root,
+            dir: this.folder.dir,
+          },
+        },
+        disableClose: true,
+      }).afterClosed().toPromise().then(() => {
+        if (!this._closed) {
+          this.onClickRefresh()
+        }
+      })
+    }
+
+
+
   }
 }

@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>
+    <ng-container i18n>Move File</ng-container>
+    <mat-spinner color="accent" diameter='32'></mat-spinner>
+</h1>
+
+<div mat-dialog-content>
+    <div *ngIf="progress">{{progress}}</div>
+</div>
+<div mat-dialog-actions>
+    <button type="button" mat-stroked-button i18n (click)="onClose()">Close</button>
+</div>
