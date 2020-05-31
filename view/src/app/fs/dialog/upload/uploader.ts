@@ -53,9 +53,14 @@ export class UploadFile {
     get chunks(): Array<Chunk> {
         return this._chunks
     }
-    async _webWorkers(): Promise<number> {
-        const worker = new Worker('./md5.worker', { type: 'module' });
-        worker.postMessage(this.file)
+    async _webWorkers(count: number): Promise<number> {
+        const workers = new Array<Worker>()
+        for (let i = 0; i < count; i++) {
+            const worker = new Worker('./md5.worker', { type: 'module' })
+            workers.push(worker)
+            worker.postMessage(this.file)
+        }
+
         return 0
     }
     async crc32(): Promise<number> {
@@ -63,16 +68,6 @@ export class UploadFile {
             return new Promise(function (resolve, reject) {
                 resolve(this._crc32)
             })
-        }
-
-        let cpus = 4
-        if (isObject(navigator) && isNumber(navigator.hardwareConcurrency) && navigator.hardwareConcurrency > 1) {
-            cpus = navigator.hardwareConcurrency
-        }
-        if (typeof Worker !== 'undefined'
-            //&& cpus > 1 && this.file.size > ChunkSize
-        ) {
-            return this._webWorkers()
         }
         const file = this.file
         const size = file.size
@@ -87,16 +82,28 @@ export class UploadFile {
                 end = size
             }
             ++index
-            const chunk = new Chunk(index, start, end, seed, 0)
-            const arrayBuffer = await file.slice(start, end).arrayBuffer()
-            seed = buf(new Uint8Array(arrayBuffer), seed)
-            chunk.crc32 = seed
+            const chunk = new Chunk(file, index, start, end)
+            chunks.push(chunk)
             start = end
+        }
+
+        let count = 4
+        if (isObject(navigator) && isNumber(navigator.hardwareConcurrency) && navigator.hardwareConcurrency > 1) {
+            count = navigator.hardwareConcurrency
+        }
+        if (typeof Worker !== 'undefined') {
+
+            //            return this._webWorkers(count)
+        } else {
+            for (let i = 0; i < chunks.length; i++) {
+                chunks[i].run()
+            }
         }
         this._chunks = chunks
         this._crc32 = seed
         return seed
     }
+
 }
 
 export class Uploader {
@@ -199,6 +206,9 @@ export class Uploader {
     }
 }
 export class Chunk {
-    constructor(public index: number, public start: number, public end: number, public seed: number, public crc32: number) {
+    constructor(public file: File, public index: number, public start: number, public end: number) {
+    }
+    run() {
+
     }
 }
