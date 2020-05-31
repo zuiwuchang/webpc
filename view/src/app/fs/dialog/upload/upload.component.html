@@ -12,14 +12,20 @@
                 <mat-list-item *ngFor="let item of source">
                     <p matLine>
                         {{item.file.name}}
-
-
                     </p>
-                    <p matLine>{{item.sizeString}}</p>
+                    <p matLine>
+                        {{item.sizeString}}
+                        <ng-container *ngIf="item.error">{{item.error}}</ng-container>
+                    </p>
                     <p matLine>
                         <mat-progress-bar mode="determinate" value="{{item.progress}}"></mat-progress-bar>
                     </p>
-                    <mat-icon *ngIf='item.isOk()'>done</mat-icon>
+                    <mat-spinner color="accent" diameter='24' *ngIf="item.isWorking()"></mat-spinner>
+                    <mat-icon *ngIf="item.isOk()" color="primary">done</mat-icon>
+                    <mat-icon *ngIf="item.isError()" color="warn">error</mat-icon>
+                    <button mat-icon-button [disabled]="item.isWorking()" (click)="onClickDelete(item)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
                 </mat-list-item>
             </mat-list>
         </ng-template>
@@ -29,10 +35,10 @@
     <button mat-stroked-button [disabled]="disabled" (click)="file.click()">
         <ng-container i18n>Add Files</ng-container>
     </button>
-    <button mat-stroked-button [disabled]="disabled">
+    <button mat-stroked-button [disabled]="disabled" (click)="onClickStart()">
         <ng-container i18n>Start Upload</ng-container>
     </button>
-    <button mat-stroked-button [disabled]="disabled" (click)="onClickClear()">
+    <button mat-stroked-button (click)="onClickClear()">
         <ng-container i18n>Clear Queue</ng-container>
     </button>
     <button mat-stroked-button (click)="onClose()" i18n>Close</button>

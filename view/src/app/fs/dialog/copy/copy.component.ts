@@ -5,7 +5,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { isString, isNumber } from 'util';
 import { interval, Subscription } from 'rxjs';
-import { NetCommand } from '../command';
+import { NetCommand, NetHeartMessage } from '../command';
 import { Data, Message } from '../cut/cut.component';
 import { ExistChoiceComponent } from '../exist-choice/exist-choice.component';
 @Component({
@@ -23,9 +23,7 @@ export class CopyComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._subscriptionPing = interval(1000 * 30).subscribe(() => {
       if (this._websocket) {
-        this._websocket.send(JSON.stringify({
-          cmd: NetCommand.Heart,
-        }))
+        this._websocket.send(NetHeartMessage)
       }
     })
 

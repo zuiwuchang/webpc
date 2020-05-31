@@ -22,3 +22,6 @@ export enum NetCommand {
     // 跳過全部 重複檔案
     SkipAll = 11,
 }
+export const NetHeartMessage = JSON.stringify({
+    'cmd': NetCommand.Heart,
+})

@@ -19,7 +19,9 @@ const CmdInfo = 3
 const CmdHeart = 4
 // CmdFontsize 設置字體大小
 const CmdFontsize = 5
-
+const HeartMessage = JSON.stringify({
+  'cmd': CmdHeart,
+})
 interface Info {
   cmd: number
   id: number
@@ -84,9 +86,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     })
     this._subscriptionPing = interval(1000 * 30).subscribe(() => {
       if (this._websocket) {
-        this._websocket.send(JSON.stringify({
-          cmd: CmdHeart,
-        }))
+        this._websocket.send(HeartMessage)
       }
     })
   }

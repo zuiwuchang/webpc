@@ -602,6 +602,11 @@ export class ManagerComponent implements OnInit, OnDestroy {
         dir: this.folder.dir,
       },
       disableClose: true,
+    }).afterClosed().toPromise().then(() => {
+      if (this._closed) {
+        return
+      }
+      this.onClickRefresh()
     })
   }
 }

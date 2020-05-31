@@ -40,7 +40,6 @@ type _CopyWorker struct {
 	ch      chan _CopyMessage
 	cancel  chan struct{}
 	closed  int32
-	keys    map[string]bool
 	Names   []string
 	style   int
 	srcRoot string

@@ -5,7 +5,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { isString } from 'util';
 import { interval, Subscription } from 'rxjs';
-import { NetCommand } from '../command';
+import { NetCommand, NetHeartMessage } from '../command';
 export interface Dir {
   root: string
   dir: string
@@ -34,9 +34,7 @@ export class CutComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._subscriptionPing = interval(1000 * 30).subscribe(() => {
       if (this._websocket) {
-        this._websocket.send(JSON.stringify({
-          cmd: NetCommand.Heart,
-        }))
+        this._websocket.send(NetHeartMessage)
       }
     })
 

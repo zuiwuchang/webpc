@@ -1,48 +1,20 @@
 import { Component, OnInit, Inject, OnDestroy, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
-import { ServerAPI } from 'src/app/core/core/api';
 import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { FileInfo, Dir } from '../../fs';
-import { isString, isNumber, isArray } from 'util';
-import { interval, Subscription, fromEvent, Subject } from 'rxjs';
-import { ExistChoiceComponent } from '../exist-choice/exist-choice.component';
-import { NetCommand } from '../command';
-import { sizeString } from 'src/app/core/core/utils';
+import { fromEvent, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-enum Status {
-  Nil,
-  Working,
-  Ok,
-  Error,
-}
-interface Data {
-  root: string
-  dir: string
-}
-class UploadFile {
-  constructor(public file: File) {
-  }
-  status = Status.Nil
-  progress: number
-  get sizeString(): string {
-    return sizeString(this?.file?.size)
-  }
-  get key(): string {
-    const file = this.file
-    return `${file.size}${file.lastModified}${file.name}`
-  }
-  isOk(): boolean {
-    return this.status == Status.Ok
-  }
-}
+import { HttpClient } from '@angular/common/http';
+import { Status, UploadFile, Uploader, Data } from './uploader';
+
+
 class Source {
   private _keys = new Set<string>()
   private _items = new Array<UploadFile>()
 
   push(uploadFile: UploadFile) {
-    if (!uploadFile.file.type) {
-      console.warn(`not support file type`, uploadFile.file)
+    if (!uploadFile.file.size) {
+      console.warn(`not support size 0`, uploadFile.file)
       return
     }
     const key = uploadFile.key
@@ -56,8 +28,46 @@ class Source {
     return this._items
   }
   clear() {
-    this._items.splice(0, this._items.length)
-    this._keys.clear()
+    const arrs = this._items
+    for (let i = arrs.length - 1; i >= 0; i--) {
+      const node = arrs[i]
+      if (node.isWorking()) {
+        continue
+      }
+      arrs.splice(i, 1)
+      this._keys.delete(node.key)
+    }
+  }
+  delete(uploadFile: UploadFile) {
+    if (!uploadFile || uploadFile.isWorking()) {
+      return
+    }
+    const index = this._items.indexOf(uploadFile)
+    if (index == -1) {
+      return
+    }
+    this._items.splice(index, 1)
+    this._keys.delete(uploadFile.key)
+  }
+  get(): UploadFile {
+    const arrs = this._items
+    let find: UploadFile
+    for (let i = 0; i < arrs.length; i++) {
+      const element = arrs[i]
+      if (element.status == Status.Nil) {
+        find = element
+        break
+      }
+    }
+    return find
+  }
+  prepare() {
+    for (let i = 0; i < this._items.length; i++) {
+      const element = this._items[i]
+      if (element.status == Status.Error) {
+        element.status = Status.Nil
+      }
+    }
   }
 }
 @Component({
@@ -71,6 +81,7 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
     private matDialog: MatDialog,
     private matDialogRef: MatDialogRef<UploadComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Data,
+    private httpClient: HttpClient,
   ) { }
   private _num = 0
   private _source = new Source()
@@ -96,8 +107,14 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
     })
   }
   dragover: boolean
+  private _closed: boolean
   ngOnDestroy() {
+    this._closed = true
     this._clsoeSubject.next(true)
+    if (this._uploader) {
+      this._uploader.close()
+      this._uploader = null
+    }
   }
   @ViewChild("drop")
   private drop: ElementRef
@@ -155,9 +172,6 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
     this.matDialogRef.close(this._num)
   }
   onClickClear() {
-    if (this._disabled) {
-      return
-    }
     this._source.clear()
   }
   onAdd(evt) {
@@ -168,4 +182,36 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
+  onClickDelete(uploadFile: UploadFile) {
+    this._source.delete(uploadFile)
+  }
+  onClickStart() {
+    if (this._disabled) {
+      return
+    }
+    this._disabled = true
+    this._run().finally(() => {
+      this._disabled = false
+    })
+  }
+  private async _run() {
+    this._source.prepare()
+    let style: number
+    while (!this._closed) {
+      const uploadFile = this._source.get()
+      if (!uploadFile) {
+        break
+      }
+      const uploader = new Uploader(
+        this.data, uploadFile,
+        this.httpClient,
+        this.matDialog,
+        style,
+      )
+      this._uploader = uploader
+      await uploader.done()
+      style = uploader.style
+    }
+  }
+  private _uploader: Uploader
 }

@@ -32,7 +32,6 @@ type _UncompressWorker struct {
 	ch     chan _UncompressMessage
 	cancel chan struct{}
 	closed int32
-	keys   map[string]bool
 	Names  []string
 	style  int
 }

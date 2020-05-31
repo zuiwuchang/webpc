@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"hash/crc32"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -79,6 +80,7 @@ func (h FS) Register(router *gin.RouterGroup) {
 	r.GET(`:root/:path/uncompress/websocket`, h.CheckWebsocket, h.CheckSession, h.uncompress)
 	r.GET(`:root/:path/cut/:srcroot/:srcpath/websocket`, h.CheckWebsocket, h.CheckSession, h.cut)
 	r.GET(`:root/:path/copy/:srcroot/:srcpath/websocket`, h.CheckWebsocket, h.CheckSession, h.copy)
+	r.GET(`:root/:path/wcrc32`, h.CheckSession, h.wcrc32)
 }
 func (h FS) ls(c *gin.Context) {
 	var obj struct {
@@ -894,4 +896,52 @@ func (h FS) copy(c *gin.Context) {
 			zap.Strings(`names`, names),
 		)
 	}
+}
+
+func (h FS) wcrc32(c *gin.Context) {
+	session := h.BindSession(c)
+	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
+		return
+	}
+	objURI, e := h.bindURI(c)
+	if e != nil {
+		return
+	}
+	fs := mount.Single()
+	m := fs.Root(objURI.Root)
+	if m == nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+	if !h.checkWirte(c, m) {
+		return
+	}
+	filename, e := m.Filename(objURI.Path)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+	f, e := os.Open(filename)
+	if e != nil {
+		if os.IsNotExist(e) {
+			c.Status(http.StatusNoContent)
+			return
+		}
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+	hash := crc32.NewIEEE()
+	_, e = io.Copy(hash, f)
+	f.Close()
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+	h.NegotiateData(c, http.StatusOK, int32(hash.Sum32()))
 }

@@ -39,7 +39,6 @@ type _CutWorker struct {
 	ch     chan _CutMessage
 	cancel chan struct{}
 	closed int32
-	keys   map[string]bool
 	Names  []string
 }
 

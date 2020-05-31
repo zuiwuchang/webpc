@@ -7,7 +7,7 @@ import { FileInfo, Dir } from '../../fs';
 import { isString } from 'util';
 import { interval, Subscription } from 'rxjs';
 import { ExistComponent } from '../exist/exist.component';
-import { NetCommand } from '../command';
+import { NetCommand, NetHeartMessage } from '../command';
 interface Target {
   dir: Dir
   source: Array<FileInfo>
@@ -49,9 +49,7 @@ export class CompressComponent implements OnInit, OnDestroy {
     }
     this._subscriptionPing = interval(1000 * 30).subscribe(() => {
       if (this._websocket) {
-        this._websocket.send(JSON.stringify({
-          cmd: NetCommand.Heart,
-        }))
+        this._websocket.send(NetHeartMessage)
       }
     })
   }
