@@ -54,7 +54,8 @@ export class UploadFile {
         return this._chunks
     }
     async _webWorkers(): Promise<number> {
-
+        const worker = new Worker('./md5.worker', { type: 'module' });
+        worker.postMessage(this.file)
         return 0
     }
     async crc32(): Promise<number> {
@@ -68,7 +69,9 @@ export class UploadFile {
         if (isObject(navigator) && isNumber(navigator.hardwareConcurrency) && navigator.hardwareConcurrency > 1) {
             cpus = navigator.hardwareConcurrency
         }
-        if (typeof Worker !== 'undefined' && cpus > 1 && this.file.size > ChunkSize) {
+        if (typeof Worker !== 'undefined'
+            //&& cpus > 1 && this.file.size > ChunkSize
+        ) {
             return this._webWorkers()
         }
         const file = this.file
