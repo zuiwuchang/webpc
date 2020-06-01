@@ -52,7 +52,7 @@ export class Completers {
         }, (e) => {
             this._results[i] = null
             this._errors[i] = e
-            if (this._index != -1) {
+            if (this._index == -1) {
                 this._error = e
                 this._index = i
             }

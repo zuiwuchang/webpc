@@ -50,63 +50,12 @@ export class UploadFile {
     chunks: Array<Chunk>
 }
 export class Workers {
-    private _workers = new Array<Worker>()
-    private _idle = new Array<boolean>()
-    constructor(count: number) {
-        const workers = new Array<Worker>()
-
-        let worker = new Worker('./hash.worker', { type: 'module' })
-        workers.push(worker)
-        this._idle.push(true)
-
-        // worker = new Worker('./hash.worker', { type: 'module' })
-        // workers.push(worker)
-        // this._idle.push(true)
-
-        this._workers = workers
+    private _worker: Worker
+    constructor() {
+        this._worker = new Worker('./hash.worker', { type: 'module' })
     }
-    done(chunks: Array<Chunk>): Promise<undefined> | null {
-        const count = this._workers.length
-        for (let i = 0; i < count; i++) {
-            if (this._idle[i]) {
-                return this._done(chunks, i)
-            }
-        }
-        this._wait = new Completer<undefined>()
-        return null
-    }
-    private _wait: Completer<undefined>
-    wait() {
-        const wait = this._wait
-        if (wait) {
-            return wait.promise
-        }
-        throw `wait nil`
-    }
-    private _done(chunks: Array<Chunk>, i: number): Promise<undefined> {
-        this._idle[i] = false
-        const worker = this._workers[i]
-        const completer = new Completer<undefined>()
-        this._calculate(chunks, worker).then((ok) => {
-            this._idle[i] = true
-            const wait = this._wait
-            if (wait) {
-                wait.resolve()
-                this._wait = null
-            }
-            completer.resolve()
-        }, (e) => {
-            this._idle[i] = true
-            const wait = this._wait
-            if (wait) {
-                wait.resolve()
-                this._wait = null
-            }
-            completer.reject(e)
-        })
-        return completer.promise
-    }
-    private _calculate(chunks: Array<Chunk>, worker: Worker): Promise<undefined> {
+    done(chunks: Array<Chunk>): Promise<undefined> {
+        const worker = this._worker
         return new Promise((resolve, reject) => {
             try {
                 worker.postMessage(
@@ -276,66 +225,14 @@ export class Uploader {
     }
     async _webWorkers(chunks: Array<Chunk>): Promise<undefined> {
         const workers = this._getWorkers()
-        let arrs: Array<Promise<undefined>>
-        const count = ChunkCount
-        let index = 0
-        while (true) {
-            const tasks = this._getTasks(chunks, index, count)
-            if (!tasks) {
-                // 沒有任務
-                break
-            }
-            index += tasks.length
-
-            const promise = workers.done(chunks)
-            if (promise) {
-                // 添加到 arrs
-                if (!arrs) {
-                    arrs = new Array<Promise<undefined>>()
-                }
-                arrs.push(promise)
-                continue
-            }
-
-            // 執行 任務
-            if (arrs.length == 1) {
-                await arrs[0]
-            } else {
-                const completers = new Completers(...arrs)
-                await completers.done()
-            }
-
-            // 投遞 緩存任務
-            while (true) {
-                await workers.wait()
-                const promise = workers.done(tasks)
-                if (promise) {
-                    arrs = new Array<Promise<undefined>>()
-                    arrs.push(promise)
-                    break
-                }
-            }
-        }
-        if (arrs) {
-            if (arrs.length == 1) {
-                await arrs[0]
-            } else {
-                const completers = new Completers(...arrs)
-                await completers.done()
-            }
-        }
-        return
+        return workers.done(chunks)
     }
     workers: Workers
     private _getWorkers(): Workers {
         if (this.workers) {
             return this.workers
         }
-        let count = 1
-        if (isObject(navigator) && isNumber(navigator.hardwareConcurrency) && navigator.hardwareConcurrency > 1) {
-            //count = navigator.hardwareConcurrency
-        }
-        this.workers = new Workers(count)
+        this.workers = new Workers()
         return this.workers
     }
     private async _upload() {
