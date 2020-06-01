@@ -1,4 +1,5 @@
 import { Exception } from './exception';
+import { isUndefined } from 'util';
 export class Completer<T>{
     private _promise: Promise<T>
     private _resolve: any
@@ -19,6 +20,62 @@ export class Completer<T>{
         this._reject(reason);
     }
 }
+export class Completers {
+    private _results: Array<any>
+    private _errors: Array<any>
+    private _promises: Array<Promise<any>>
+    private _wait: number
+    private _error
+    private _index
+    constructor(...promises: Array<Promise<any>>) {
+        const count = promises.length
+        this._wait = count
+        this._results = new Array<any>(count)
+        this._promises = promises
+        this._errors = new Array<any>(count)
+        this._index = -1
+    }
+    done(): Promise<Array<any>> {
+        const completer = new Completer<Array<any>>()
+        const promises = this._promises
+        const count = promises.length
+        for (let i = 0; i < count; i++) {
+            this._done(completer, i)
+        }
+        return completer.promise
+    }
+    private _done(completer: Completer<Array<any>>, i: number) {
+        const promise = this._promises[i]
+        promise.then((data) => {
+            this._results[i] = data
+            this._errors[i] = null
+        }, (e) => {
+            this._results[i] = null
+            this._errors[i] = e
+            if (this._index != -1) {
+                this._error = e
+                this._index = i
+            }
+        }).finally(() => {
+            this._wait--
+            if (this._wait) {
+                return
+            }
+            if (this._index == -1) {
+                completer.resolve(this._results)
+            } else {
+                completer.reject(this._error)
+            }
+        })
+    }
+    get results(): Array<any> {
+        return this._results
+    }
+    get errors(): Array<any> {
+        return this._errors
+    }
+}
+
 export class Mutex {
     private _completer: Completer<void>
     async lock(): Promise<void> {

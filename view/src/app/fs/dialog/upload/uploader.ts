@@ -1,12 +1,14 @@
-import { Completer } from 'src/app/core/core/completer';
+import { Completer, Completers } from 'src/app/core/core/completer';
 import { sizeString, MB } from 'src/app/core/core/utils';
 import { HttpClient } from '@angular/common/http';
-import { isNumber, isObject } from 'util';
+import { isNumber, isObject, isString } from 'util';
 import { NetCommand } from '../command';
 import { buf } from 'crc-32';
 import { ServerAPI } from 'src/app/core/core/api';
 import { MatDialog } from '@angular/material/dialog';
 import { ExistChoiceComponent } from '../exist-choice/exist-choice.component';
+import * as md5 from "js-md5";
+
 const ChunkSize = 5 * MB
 export interface Data {
     root: string
@@ -20,12 +22,7 @@ export enum Status {
     Error,
     Skip,
 }
-interface Message {
-    cmd: number
-    error: string
-    val: string
-    progress: number
-}
+
 export class UploadFile {
     constructor(public file: File) {
     }
@@ -48,62 +45,92 @@ export class UploadFile {
     isError(): boolean {
         return this.status == Status.Error
     }
-    private _crc32: number
-    private _chunks: Array<Chunk>
-    get chunks(): Array<Chunk> {
-        return this._chunks
-    }
-    async _webWorkers(count: number): Promise<number> {
+    hash: string
+    chunks: Array<Chunk>
+}
+export class Workers {
+    private _workers = new Array<Worker>()
+    private _idle = new Array<boolean>()
+    constructor(count: number) {
         const workers = new Array<Worker>()
         for (let i = 0; i < count; i++) {
-            const worker = new Worker('./md5.worker', { type: 'module' })
+            const worker = new Worker('./hash.worker', { type: 'module' })
             workers.push(worker)
-            worker.postMessage(this.file)
+            this._idle.push(true)
         }
-
-        return 0
+        this._workers = workers
     }
-    async crc32(): Promise<number> {
-        if (isNumber(this._crc32)) {
-            return new Promise(function (resolve, reject) {
-                resolve(this._crc32)
-            })
-        }
-        const file = this.file
-        const size = file.size
-        const chunks = new Array<Chunk>()
-
-        let start = 0
-        let seed = 0
-        let index = -1
-        while (start != size) {
-            let end = start + ChunkSize
-            if (end > size) {
-                end = size
-            }
-            ++index
-            const chunk = new Chunk(file, index, start, end)
-            chunks.push(chunk)
-            start = end
-        }
-
-        let count = 4
-        if (isObject(navigator) && isNumber(navigator.hardwareConcurrency) && navigator.hardwareConcurrency > 1) {
-            count = navigator.hardwareConcurrency
-        }
-        if (typeof Worker !== 'undefined') {
-
-            //            return this._webWorkers(count)
-        } else {
-            for (let i = 0; i < chunks.length; i++) {
-                chunks[i].run()
+    done(chunk: Chunk): Promise<undefined> | null {
+        const count = this._workers.length
+        for (let i = 0; i < count; i++) {
+            if (this._idle[i]) {
+                return this._done(chunk, i)
             }
         }
-        this._chunks = chunks
-        this._crc32 = seed
-        return seed
+        this._wait = new Completer<undefined>()
+        return null
     }
-
+    private _wait: Completer<undefined>
+    wait() {
+        const wait = this._wait
+        if (wait) {
+            return wait.promise
+        }
+        throw `wait nil`
+    }
+    private _done(chunk: Chunk, i: number): Promise<undefined> {
+        this._idle[i] = false
+        const worker = this._workers[i]
+        const completer = new Completer<undefined>()
+        this._calculate(chunk, worker).then((ok) => {
+            this._idle[i] = true
+            const wait = this._wait
+            if (wait) {
+                wait.resolve()
+                this._wait = null
+            }
+            completer.resolve()
+        }, (e) => {
+            this._idle[i] = true
+            const wait = this._wait
+            if (wait) {
+                wait.resolve()
+                this._wait = null
+            }
+            completer.reject(e)
+        })
+        return completer.promise
+    }
+    private _calculate(chunk: Chunk, worker: Worker): Promise<undefined> {
+        return new Promise((resolve, reject) => {
+            try {
+                worker.postMessage({
+                    file: chunk.file,
+                    start: chunk.start,
+                    end: chunk.end,
+                })
+            } catch (e) {
+                reject(e)
+                return
+            }
+            worker.onmessage = ({ data }) => {
+                if (data) {
+                    if (data.error) {
+                        reject(data.error)
+                    } else if (isNumber(data.val)) {
+                        chunk.hash = data.val
+                        resolve()
+                    } else {
+                        console.warn('unknow worker result', data)
+                        reject(`unknow worker result`)
+                    }
+                } else {
+                    console.warn('unknow worker result', data)
+                    reject(`unknow worker result`)
+                }
+            }
+        })
+    }
 }
 
 export class Uploader {
@@ -119,14 +146,14 @@ export class Uploader {
         if (this._completer) {
             const completer = this._completer
             this._completer = null
-            completer.resolve(true)
+            completer.resolve()
         }
     }
-    private _completer = new Completer<boolean>()
+    private _completer = new Completer<undefined>()
     get isClosed(): boolean {
         return this._completer ? false : true
     }
-    done(): Promise<boolean> {
+    done(): Promise<undefined> {
         const promise = this._completer.promise
         this._run().then(() => {
             if (this.isClosed) {
@@ -149,14 +176,19 @@ export class Uploader {
     async _run() {
         this.file.status = Status.Working
         this.file.error = null
-        const results = await Promise.all([
-            ServerAPI.v1.fs.getOne(this.httpClient, [this.root.root, this.root.dir + `/${this.file.file.name}`, `wcrc32`]),
-            this.file.crc32(),
-        ])
+        const completers = new Completers(
+            ServerAPI.v1.fs.getOne(this.httpClient, [this.root.root, this.root.dir + `/${this.file.file.name}`, `whash`]),
+            this._hash(),
+        )
+        const results = await completers.done()
         if (this.isClosed) {
             return
         }
         if (results[0] == results[1]) {
+            return
+        } else if (!results[0]) {
+            // 服務器 不存在 直接上傳
+            this._upload()
             return
         }
         if (this.style == NetCommand.YesAll) {
@@ -187,28 +219,108 @@ export class Uploader {
         }
         this.file.status = Status.Skip
     }
-    private async _upload() {
+    private async _hash(): Promise<string> {
+        if (this.file.hash) {
+            return this.file.hash
+        }
         const file = this.file.file
         const size = file.size
-        // 計算分塊
         const chunks = new Array<Chunk>()
+
         let start = 0
-        let end: number
         let index = -1
         while (start != size) {
-            end = start + ChunkSize
+            let end = start + ChunkSize
             if (end > size) {
                 end = size
             }
-
+            ++index
+            const chunk = new Chunk(file, index, start, end)
+            chunks.push(chunk)
+            start = end
         }
+        const last = new Date()
+        if (typeof Worker !== 'undefined') {
+            await this._webWorkers(chunks)
+        } else {
+            for (let i = 0; i < chunks.length; i++) {
+                await chunks[i].calculate()
+            }
+        }
+        this.file.chunks = chunks
+        const hash = md5(chunks.map((chunk => chunk.hash)).join(","))
+        this.file.hash = hash
+        console.log(`calculate hash`, hash, (new Date().getTime() - last.getTime()) / 1000)
+        return hash
+    }
+    async _webWorkers(chunks: Array<Chunk>): Promise<undefined> {
+        const workers = this._getWorkers()
+        let arrs = new Array<Promise<undefined>>()
+        for (let i = 0; i < chunks.length; i++) {
+            const chunk = chunks[i]
+            const promise = workers.done(chunk)
+            if (promise) {
+                if (!arrs) {
+                    arrs = new Array<Promise<undefined>>()
+                }
+                arrs.push(promise)
+                continue
+            }
+            if (arrs) {
+                if (arrs.length == 1) {
+                    await arrs[0]
+                } else {
+                    const completers = new Completers(...arrs)
+                    await completers.done()
+                }
+                arrs = null
+            } else {
+                while (true) {
+                    await workers.wait()
+                    const promise = workers.done(chunk)
+                    if (promise) {
+                        if (!arrs) {
+                            arrs = new Array<Promise<undefined>>()
+                        }
+                        arrs.push(promise)
+                        break
+                    }
+                }
+            }
+        }
+        if (arrs) {
+            if (arrs.length == 1) {
+                await arrs[0]
+            } else {
+                const completers = new Completers(...arrs)
+                await completers.done()
+            }
+        }
+        return
+    }
+    workers: Workers
+    private _getWorkers(): Workers {
+        if (this.workers) {
+            return this.workers
+        }
+        let count = 4
+        if (isObject(navigator) && isNumber(navigator.hardwareConcurrency) && navigator.hardwareConcurrency > 1) {
+            count = navigator.hardwareConcurrency
+        }
+        this.workers = new Workers(count)
+        return this.workers
+    }
+    private async _upload() {
+        const chunks = this.file.chunks
         console.log(chunks)
     }
 }
 export class Chunk {
+    hash: number
     constructor(public file: File, public index: number, public start: number, public end: number) {
     }
-    run() {
-
+    async calculate() {
+        const data = await this.file.slice(this.start, this.end).arrayBuffer()
+        this.hash = buf(new Uint8Array(data), 0)
     }
 }

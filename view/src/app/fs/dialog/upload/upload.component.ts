@@ -197,20 +197,27 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
   private async _run() {
     this._source.prepare()
     let style: number
-    while (!this._closed) {
-      const uploadFile = this._source.get()
-      if (!uploadFile) {
-        break
+    try {
+      while (!this._closed) {
+        const uploadFile = this._source.get()
+        if (!uploadFile) {
+          break
+        }
+        const uploader = new Uploader(
+          this.data, uploadFile,
+          this.httpClient,
+          this.matDialog,
+          style,
+        )
+        this._uploader = uploader
+        await uploader.done()
+        style = uploader.style
       }
-      const uploader = new Uploader(
-        this.data, uploadFile,
-        this.httpClient,
-        this.matDialog,
-        style,
-      )
-      this._uploader = uploader
-      await uploader.done()
-      style = uploader.style
+    }
+    catch (e) {
+      throw e
+    } finally {
+
     }
   }
   private _uploader: Uploader
