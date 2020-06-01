@@ -1,7 +1,7 @@
 import { Completer, Completers } from 'src/app/core/core/completer';
 import { sizeString, MB } from 'src/app/core/core/utils';
 import { HttpClient } from '@angular/common/http';
-import { isNumber, isObject, isString } from 'util';
+import { isNumber, isObject, isArray } from 'util';
 import { NetCommand } from '../command';
 import { buf } from 'crc-32';
 import { ServerAPI } from 'src/app/core/core/api';
@@ -10,6 +10,7 @@ import { ExistChoiceComponent } from '../exist-choice/exist-choice.component';
 import * as md5 from "js-md5";
 
 const ChunkSize = 5 * MB
+const ChunkCount = 10 * 2
 export interface Data {
     root: string
     dir: string
@@ -53,18 +54,22 @@ export class Workers {
     private _idle = new Array<boolean>()
     constructor(count: number) {
         const workers = new Array<Worker>()
-        for (let i = 0; i < count; i++) {
-            const worker = new Worker('./hash.worker', { type: 'module' })
-            workers.push(worker)
-            this._idle.push(true)
-        }
+
+        let worker = new Worker('./hash.worker', { type: 'module' })
+        workers.push(worker)
+        this._idle.push(true)
+
+        // worker = new Worker('./hash.worker', { type: 'module' })
+        // workers.push(worker)
+        // this._idle.push(true)
+
         this._workers = workers
     }
-    done(chunk: Chunk): Promise<undefined> | null {
+    done(chunks: Array<Chunk>): Promise<undefined> | null {
         const count = this._workers.length
         for (let i = 0; i < count; i++) {
             if (this._idle[i]) {
-                return this._done(chunk, i)
+                return this._done(chunks, i)
             }
         }
         this._wait = new Completer<undefined>()
@@ -78,11 +83,11 @@ export class Workers {
         }
         throw `wait nil`
     }
-    private _done(chunk: Chunk, i: number): Promise<undefined> {
+    private _done(chunks: Array<Chunk>, i: number): Promise<undefined> {
         this._idle[i] = false
         const worker = this._workers[i]
         const completer = new Completer<undefined>()
-        this._calculate(chunk, worker).then((ok) => {
+        this._calculate(chunks, worker).then((ok) => {
             this._idle[i] = true
             const wait = this._wait
             if (wait) {
@@ -101,14 +106,18 @@ export class Workers {
         })
         return completer.promise
     }
-    private _calculate(chunk: Chunk, worker: Worker): Promise<undefined> {
+    private _calculate(chunks: Array<Chunk>, worker: Worker): Promise<undefined> {
         return new Promise((resolve, reject) => {
             try {
-                worker.postMessage({
-                    file: chunk.file,
-                    start: chunk.start,
-                    end: chunk.end,
-                })
+                worker.postMessage(
+                    chunks.map((chunk) => {
+                        return {
+                            file: chunk.file,
+                            start: chunk.start,
+                            end: chunk.end,
+                        }
+                    })
+                )
             } catch (e) {
                 reject(e)
                 return
@@ -117,8 +126,10 @@ export class Workers {
                 if (data) {
                     if (data.error) {
                         reject(data.error)
-                    } else if (isNumber(data.val)) {
-                        chunk.hash = data.val
+                    } else if (isArray(data.val)) {
+                        for (let i = 0; i < data.val.length; i++) {
+                            chunks[i].hash = data.val[i]
+                        }
                         resolve()
                     } else {
                         console.warn('unknow worker result', data)
@@ -253,38 +264,55 @@ export class Uploader {
         console.log(`calculate hash`, hash, (new Date().getTime() - last.getTime()) / 1000)
         return hash
     }
+    private _getTasks(chunks: Array<Chunk>, index: number, count: number): Array<Chunk> {
+        if (index >= chunks.length) {
+            return null
+        }
+        const results = new Array<Chunk>()
+        for (let i = index; i < chunks.length; i++) {
+            results.push(chunks[i])
+        }
+        return results
+    }
     async _webWorkers(chunks: Array<Chunk>): Promise<undefined> {
         const workers = this._getWorkers()
-        let arrs = new Array<Promise<undefined>>()
-        for (let i = 0; i < chunks.length; i++) {
-            const chunk = chunks[i]
-            const promise = workers.done(chunk)
+        let arrs: Array<Promise<undefined>>
+        const count = ChunkCount
+        let index = 0
+        while (true) {
+            const tasks = this._getTasks(chunks, index, count)
+            if (!tasks) {
+                // 沒有任務
+                break
+            }
+            index += tasks.length
+
+            const promise = workers.done(chunks)
             if (promise) {
+                // 添加到 arrs
                 if (!arrs) {
                     arrs = new Array<Promise<undefined>>()
                 }
                 arrs.push(promise)
                 continue
             }
-            if (arrs) {
-                if (arrs.length == 1) {
-                    await arrs[0]
-                } else {
-                    const completers = new Completers(...arrs)
-                    await completers.done()
-                }
-                arrs = null
+
+            // 執行 任務
+            if (arrs.length == 1) {
+                await arrs[0]
             } else {
-                while (true) {
-                    await workers.wait()
-                    const promise = workers.done(chunk)
-                    if (promise) {
-                        if (!arrs) {
-                            arrs = new Array<Promise<undefined>>()
-                        }
-                        arrs.push(promise)
-                        break
-                    }
+                const completers = new Completers(...arrs)
+                await completers.done()
+            }
+
+            // 投遞 緩存任務
+            while (true) {
+                await workers.wait()
+                const promise = workers.done(tasks)
+                if (promise) {
+                    arrs = new Array<Promise<undefined>>()
+                    arrs.push(promise)
+                    break
                 }
             }
         }
@@ -303,9 +331,9 @@ export class Uploader {
         if (this.workers) {
             return this.workers
         }
-        let count = 4
+        let count = 1
         if (isObject(navigator) && isNumber(navigator.hardwareConcurrency) && navigator.hardwareConcurrency > 1) {
-            count = navigator.hardwareConcurrency
+            //count = navigator.hardwareConcurrency
         }
         this.workers = new Workers(count)
         return this.workers

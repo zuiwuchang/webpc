@@ -5,7 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dial
 import { fromEvent, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { Status, UploadFile, Uploader, Data } from './uploader';
+import { Status, UploadFile, Uploader, Data, Workers } from './uploader';
 
 
 class Source {
@@ -209,8 +209,10 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
           this.matDialog,
           style,
         )
+        uploader.workers = this._workers
         this._uploader = uploader
         await uploader.done()
+        this._workers = uploader.workers
         style = uploader.style
       }
     }
@@ -220,5 +222,6 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
 
     }
   }
+  private _workers: Workers
   private _uploader: Uploader
 }

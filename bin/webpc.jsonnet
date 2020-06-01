@@ -15,7 +15,7 @@ local GB=MB * 1024;
 		// 設定 http 請求 body 最大尺寸
 		// 如果 == 0 使用默認值 32 KB
 		// 如果 < 0 不限制
-		MaxBytesReader: 10 * MB,
+		MaxBytesReader: 5 * MB,
 	},
 	System:{
 		// 用戶數據庫
