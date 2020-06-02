@@ -1,9 +1,8 @@
 import { Completer, Completers, Channel, WriteChannel, ReadChannel } from 'src/app/core/core/completer';
 import { sizeString, MB } from 'src/app/core/core/utils';
 import { HttpClient } from '@angular/common/http';
-import { isNumber, isArray } from 'util';
+import { isNumber, isArray, isString } from 'util';
 import { NetCommand } from '../command';
-import { buf } from 'crc-32';
 import { ServerAPI } from 'src/app/core/core/api';
 import { MatDialog } from '@angular/material/dialog';
 import { ExistChoiceComponent } from '../exist-choice/exist-choice.component';
@@ -53,9 +52,9 @@ export class Workers {
     constructor() {
         this._worker = new Worker('./hash.worker', { type: 'module' })
     }
-    done(chunks: Array<Chunk>): Promise<undefined> {
+    done(chunks: Array<Chunk>): Promise<string> {
         const worker = this._worker
-        return new Promise((resolve, reject) => {
+        return new Promise<string>((resolve, reject) => {
             try {
                 worker.postMessage(
                     chunks.map((chunk) => {
@@ -74,11 +73,11 @@ export class Workers {
                 if (data) {
                     if (data.error) {
                         reject(data.error)
-                    } else if (isArray(data.vals)) {
+                    } else if (isArray(data.vals) && isString(data.hash)) {
                         for (let i = 0; i < data.vals.length; i++) {
                             chunks[i].hash = data.vals[i]
                         }
-                        resolve()
+                        resolve(data.hash)
                     } else {
                         console.warn('unknow worker result', data)
                         reject(`unknow worker result`)
@@ -207,20 +206,23 @@ export class Uploader {
             start = end
         }
         const last = new Date()
+        let hash: string
         if (typeof Worker !== 'undefined') {
-            await this._webWorkers(chunks)
+            hash = await this._webWorkers(chunks)
         } else {
+            const spark = new SparkMD5()
             for (let i = 0; i < chunks.length; i++) {
                 await chunks[i].calculate()
+                spark.append(chunks[i].hash)
             }
+            hash = spark.end()
         }
         this.file.chunks = chunks
-        const hash = SparkMD5.hash(chunks.map((chunk => chunk.hash)).join(","))
         this.file.hash = hash
         console.log(`calculate hash`, hash, (new Date().getTime() - last.getTime()) / 1000)
         return hash
     }
-    async _webWorkers(chunks: Array<Chunk>): Promise<undefined> {
+    async _webWorkers(chunks: Array<Chunk>): Promise<string> {
         const workers = this._getWorkers()
         return workers.done(chunks)
     }
@@ -255,7 +257,6 @@ class Upload {
     private _closed: boolean
     private _num = 0
     constructor(private root: Data, private file: UploadFile, private httpClient: HttpClient) {
-
     }
     close(): boolean {
         if (this._closed) {
@@ -367,9 +368,11 @@ class Upload {
     }
     private async _put(chunk: Chunk, hash: string) {
         if (chunk.hash == hash) {
+            console.log(`${chunk.file.name} chunk match`, chunk.index)
             await this._update()
             return
         }
+        console.log(`${chunk.file.name} chunk put`, chunk.index)
         const body = await chunk.file.slice(chunk.start, chunk.end).arrayBuffer()
         if (this.isClosed) {
             return
@@ -397,15 +400,21 @@ class Upload {
         }
     }
     private async _merge() {
-        await ServerAPI.v1.fs.putOne(this.httpClient,
-            [this.root.root, this.root.dir + `/${this.file.file.name}`, `merge`],
-            {
-                hash: this.file.hash,
-                count: this.file.chunks.length,
-            },
-        )
-        if (this.isClosed) {
-            return
+        try {
+            await ServerAPI.v1.fs.putOne(this.httpClient,
+                [this.root.root, this.root.dir + `/${this.file.file.name}`, `merge`],
+                {
+                    hash: this.file.hash,
+                    count: this.file.chunks.length,
+                },
+            )
+            if (this.isClosed) {
+                return
+            }
+            this.file.status = Status.Ok
+            this._resolve()
+        } catch (e) {
+            this._reject(e)
         }
     }
 }

@@ -11,13 +11,16 @@ addEventListener('message', ({ data }) => {
   const requests: Array<Data> = data
   const fileReader = new FileReader()
   let index = 0
-  const vals = new Array<string>()
+  const vals = new Array<number>()
+  const hash = new SparkMD5()
   fileReader.onload = function (e) {
     try {
-      // vals.push(buf(new Uint8Array(e.target.result as ArrayBuffer)))
       const spark = new SparkMD5.ArrayBuffer()
       spark.append(e.target.result);
-      vals.push(spark.end())
+      const val = spark.end()
+      vals.push(val)
+
+      hash.append(val)
 
       index++
       if (index < requests.length) {
@@ -25,6 +28,7 @@ addEventListener('message', ({ data }) => {
       } else {
         postMessage({
           vals: vals,
+          hash: hash.end(),
         })
       }
     } catch (e) {

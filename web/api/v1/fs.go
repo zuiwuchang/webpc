@@ -91,6 +91,8 @@ func (h FS) Register(router *gin.RouterGroup) {
 	r.GET(`:root/:path/whash`, h.CheckSession, h.whash)
 	r.GET(`:root/:path/wchunk`, h.CheckSession, h.wchunk)
 	r.PUT(`:root/:path/wchunk/:index`, h.CheckSession, h.putChunk)
+	r.PUT(`:root/:path/merge`, h.CheckSession, h.merge)
+
 }
 func (h FS) ls(c *gin.Context) {
 	var obj struct {
@@ -993,22 +995,12 @@ func (h FS) whash(c *gin.Context) {
 	hash := md5.New()
 	b := make([]byte, params.Chunk)
 	var n int
-	first := true
 	buffer := make([]byte, 32)
 	for {
 		n, e = f.Read(b)
 		if n != 0 {
 			val := md5.Sum(b[:n])
 			hex.Encode(buffer, val[:])
-			if first {
-				first = false
-			} else {
-				_, e = hash.Write([]byte(`,`))
-				if e != nil {
-					h.NegotiateError(c, http.StatusInternalServerError, e)
-					return
-				}
-			}
 			_, e = hash.Write(buffer)
 			if e != nil {
 				h.NegotiateError(c, http.StatusInternalServerError, e)
@@ -1074,6 +1066,7 @@ func (h FS) wchunk(c *gin.Context) {
 	dir = filepath.Clean(dir + `/.chunks_` + name)
 	results := make([]string, params.Count)
 	var f *os.File
+	chunk := md5.New()
 	for i := 0; i < params.Count; i++ {
 		filename := dir + `/` + fmt.Sprint(params.Start+i)
 		f, e = os.Open(filename)
@@ -1084,14 +1077,15 @@ func (h FS) wchunk(c *gin.Context) {
 			h.NegotiateError(c, http.StatusInternalServerError, e)
 			return
 		}
-		hash := md5.New()
-		_, e = io.Copy(hash, f)
+		chunk.Reset()
+		_, e = io.Copy(chunk, f)
 		f.Close()
 		if e != nil {
 			h.NegotiateError(c, http.StatusInternalServerError, e)
 			return
 		}
-		results[i] = hex.EncodeToString(hash.Sum(nil))
+		val := chunk.Sum(nil)
+		results[i] = hex.EncodeToString(val[:])
 	}
 	h.NegotiateData(c, http.StatusOK, results)
 }
@@ -1142,5 +1136,91 @@ func (h FS) putChunk(c *gin.Context) {
 		return
 	}
 	c.Request.Body.Close()
+	c.Status(http.StatusCreated)
+}
+func (h FS) merge(c *gin.Context) {
+	session := h.BindSession(c)
+	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
+		return
+	}
+	objURI, e := h.bindURI(c)
+	if e != nil {
+		return
+	}
+	fs := mount.Single()
+	m := fs.Root(objURI.Root)
+	if m == nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+	if !h.checkWirte(c, m) {
+		return
+	}
+	filename, e := m.Filename(objURI.Path)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+	var params struct {
+		Hash  string `uri:"hash" form:"hash" json:"hash" xml:"hash" yaml:"hash" binding:"required"`
+		Count int    `uri:"count" form:"count" json:"count" xml:"count" yaml:"count" binding:"required"`
+	}
+	e = h.Bind(c, &params)
+	if e != nil {
+		return
+	}
+	if params.Count < 1 {
+		h.NegotiateErrorString(c, http.StatusBadRequest, `not support count`)
+		return
+	}
+	dir, name := filepath.Split(filename)
+	dir = filepath.Clean(dir + `/.chunks_` + name)
+	f, e := os.Create(filename)
+	if e != nil {
+		h.NegotiateError(c, http.StatusInternalServerError, e)
+		return
+	}
+	var s *os.File
+	hash := md5.New()
+	chunk := md5.New()
+	buffer := make([]byte, 32)
+	for i := 0; i < params.Count; i++ {
+		s, e = os.Open(dir + `/` + fmt.Sprint(i))
+		if e != nil {
+			break
+		}
+		chunk.Reset()
+		_, e = io.Copy(io.MultiWriter(chunk, f), s)
+		s.Close()
+		if e != nil {
+			break
+		}
+		val := chunk.Sum(nil)
+		hex.Encode(buffer, val)
+		_, e = hash.Write(buffer)
+		if e != nil {
+			break
+		}
+	}
+	f.Close()
+	if e != nil {
+		os.Remove(filename)
+		h.NegotiateError(c, http.StatusInternalServerError, e)
+		return
+	}
+	str := hex.EncodeToString(hash.Sum(nil))
+	if str != params.Hash {
+		os.Remove(filename)
+		h.NegotiateErrorString(c, http.StatusInternalServerError, `hash not match`)
+		return
+	}
+
+	os.RemoveAll(dir)
 	c.Status(http.StatusCreated)
 }
