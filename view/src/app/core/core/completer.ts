@@ -1,5 +1,7 @@
 import { Exception } from './exception';
-import { isUndefined } from 'util';
+import { Subject, from } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { isNumber } from 'util';
 export class Completer<T>{
     private _promise: Promise<T>
     private _resolve: any
@@ -157,5 +159,148 @@ export class BlobReader {
             this._seek += result.byteLength
         }
         return result
+    }
+}
+
+export interface ChannelResult<T> {
+    ok: boolean
+    data: T
+}
+export interface WriteChannel<T> {
+    close()
+    write(data: T): Promise<undefined>
+}
+export interface ReadChannel<T> {
+    read(): Promise<ChannelResult<T>>
+}
+
+export class Channel<T> implements WriteChannel<T>, ReadChannel<T>{
+    private _signalWrite = new Subject<boolean>()
+    private _signalRead = new Subject<boolean>()
+    private _closed: boolean
+    private _datas: Array<T>
+    private _index: number
+    private _length: number
+
+    /**
+     * 緩衝節點數量 最小爲1
+     * @param size 
+     */
+    constructor(size?: number) {
+        if (!isNumber(size) || isNaN(size) || size < 1) {
+            size = 1
+        } else {
+            size = Math.floor(size)
+        }
+        this._datas = new Array<T>(size)
+        this._index = 0
+        this._length = 0
+    }
+    close(): boolean {
+        if (this._closed) {
+            return true
+        }
+        this._closed = true
+        this._signalWrite.complete()
+        this._signalRead.complete()
+        return false
+    }
+    private _write(data: T): boolean {
+        const datas = this._datas
+        const length = this._length
+        if (length == datas.length) {
+            return false
+        }
+        let i = this._index + length
+        if (i >= datas.length) {
+            i -= datas.length
+        }
+        datas[i] = data
+        this._length++
+        return true
+    }
+    write(data: T): Promise<undefined> {
+        return new Promise<undefined>((resolve, reject) => {
+            if (this._closed) {
+                reject(`channel closed`)
+                return
+            }
+            if (this._write(data)) {
+                this._signalWrite.next(true)
+                resolve()
+                return
+            }
+            const completer = new Completer<undefined>()
+            this._signalRead.pipe(
+                takeUntil(from(completer.promise))
+            ).subscribe({
+                next: () => {
+                    if (this._write(data)) {
+                        completer.resolve()
+                        this._signalWrite.next(true)
+                        resolve()
+                        return
+                    }
+                },
+                complete: () => {
+                    completer.resolve()
+                    reject(`send to closed channel`)
+                },
+            })
+
+        })
+    }
+    private _read(): ChannelResult<T> {
+        if (!this._length) {
+            return {
+                ok: false,
+                data: null,
+            }
+        }
+        const datas = this._datas
+        const data = datas[this._index]
+        const result = {
+            ok: true,
+            data: data,
+        }
+        this._length--
+        this._index++
+        if (this._index == datas.length) {
+            this._index = 0
+        }
+        return result
+    }
+    read(): Promise<ChannelResult<T>> {
+        return new Promise<ChannelResult<T>>((resolve, reject) => {
+            const result = this._read()
+            if (result.ok) {
+                this._signalRead.next(true)
+                resolve(result)
+                return
+            }
+            if (this._closed) {
+                this._signalRead.next(true)
+                resolve(result)
+                return
+            }
+            const completer = new Completer<boolean>()
+            this._signalWrite.pipe(
+                takeUntil(from(completer.promise))
+            ).subscribe({
+                next: () => {
+                    const result = this._read()
+                    if (result.ok) {
+                        this._signalRead.next(true)
+                        completer.resolve(true)
+                        resolve(result)
+                        return
+                    }
+                },
+                complete: () => {
+                    completer.resolve(true)
+                    resolve(this._read())
+                },
+            })
+        })
     }
 }

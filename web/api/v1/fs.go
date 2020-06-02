@@ -1,9 +1,12 @@
 package v1
 
 import (
-	"hash/crc32"
+	"crypto/md5"
+	"encoding/hex"
+	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"net/url"
 	"os"
@@ -65,6 +68,11 @@ func (f *fsURI2) Unescape() (e error) {
 	return
 }
 
+type fsChunkURI struct {
+	fsURI
+	Index int `uri:"index" form:"index" json:"index" xml:"index" yaml:"index"`
+}
+
 // Register impl IHelper
 func (h FS) Register(router *gin.RouterGroup) {
 	r := router.Group(`fs`)
@@ -80,7 +88,9 @@ func (h FS) Register(router *gin.RouterGroup) {
 	r.GET(`:root/:path/uncompress/websocket`, h.CheckWebsocket, h.CheckSession, h.uncompress)
 	r.GET(`:root/:path/cut/:srcroot/:srcpath/websocket`, h.CheckWebsocket, h.CheckSession, h.cut)
 	r.GET(`:root/:path/copy/:srcroot/:srcpath/websocket`, h.CheckWebsocket, h.CheckSession, h.copy)
-	r.GET(`:root/:path/wcrc32`, h.CheckSession, h.wcrc32)
+	r.GET(`:root/:path/whash`, h.CheckSession, h.whash)
+	r.GET(`:root/:path/wchunk`, h.CheckSession, h.wchunk)
+	r.PUT(`:root/:path/wchunk/:index`, h.CheckSession, h.putChunk)
 }
 func (h FS) ls(c *gin.Context) {
 	var obj struct {
@@ -191,6 +201,18 @@ func (h FS) bind2URINormal(c *gin.Context) (obj fsURI2, e error) {
 	return
 }
 func (h FS) bindURI(c *gin.Context) (obj fsURI, e error) {
+	e = h.BindURI(c, &obj)
+	if e != nil {
+		return
+	}
+	e = obj.Unescape()
+	if e != nil {
+		h.NegotiateError(c, http.StatusBadRequest, e)
+		return
+	}
+	return
+}
+func (h FS) bindChunkURI(c *gin.Context) (obj fsChunkURI, e error) {
 	e = h.BindURI(c, &obj)
 	if e != nil {
 		return
@@ -898,7 +920,7 @@ func (h FS) copy(c *gin.Context) {
 	}
 }
 
-func (h FS) wcrc32(c *gin.Context) {
+func (h FS) whash(c *gin.Context) {
 	session := h.BindSession(c)
 	if session == nil {
 		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
@@ -927,6 +949,23 @@ func (h FS) wcrc32(c *gin.Context) {
 		h.NegotiateError(c, http.StatusForbidden, e)
 		return
 	}
+	var params struct {
+		Chunk int64 `uri:"chunk" form:"chunk" json:"chunk" xml:"chunk" yaml:"chunk" binding:"required"`
+		Size  int64 `uri:"size" form:"size" json:"size" xml:"size" yaml:"size" binding:"required"`
+	}
+	e = h.BindQuery(c, &params)
+	if e != nil {
+		return
+	}
+	if params.Size < 1 {
+		h.NegotiateErrorString(c, http.StatusBadRequest, `not support size`)
+		return
+	}
+	if params.Chunk < 1024*1024 && params.Chunk > 1024*1024*50 {
+		h.NegotiateErrorString(c, http.StatusBadRequest, `not support chunk size`)
+		return
+	}
+
 	f, e := os.Open(filename)
 	if e != nil {
 		if os.IsNotExist(e) {
@@ -936,12 +975,172 @@ func (h FS) wcrc32(c *gin.Context) {
 		h.NegotiateError(c, http.StatusForbidden, e)
 		return
 	}
-	hash := crc32.NewIEEE()
-	_, e = io.Copy(hash, f)
-	f.Close()
+	defer f.Close()
+	size, e := f.Seek(0, os.SEEK_END)
 	if e != nil {
 		h.NegotiateError(c, http.StatusForbidden, e)
 		return
 	}
-	h.NegotiateData(c, http.StatusOK, int32(hash.Sum32()))
+	f.Seek(0, os.SEEK_SET)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+	if size != params.Size {
+		h.NegotiateData(c, http.StatusOK, `size not match`)
+		return
+	}
+	hash := md5.New()
+	b := make([]byte, params.Chunk)
+	var n int
+	first := true
+	buffer := make([]byte, 32)
+	for {
+		n, e = f.Read(b)
+		if n != 0 {
+			val := md5.Sum(b[:n])
+			hex.Encode(buffer, val[:])
+			if first {
+				first = false
+			} else {
+				_, e = hash.Write([]byte(`,`))
+				if e != nil {
+					h.NegotiateError(c, http.StatusInternalServerError, e)
+					return
+				}
+			}
+			_, e = hash.Write(buffer)
+			if e != nil {
+				h.NegotiateError(c, http.StatusInternalServerError, e)
+				return
+			}
+		}
+		if e == io.EOF {
+			break
+		}
+		if e != nil {
+			h.NegotiateError(c, http.StatusInternalServerError, e)
+			return
+		}
+	}
+	h.NegotiateData(c, http.StatusOK, hex.EncodeToString(hash.Sum(nil)))
+}
+func (h FS) wchunk(c *gin.Context) {
+	session := h.BindSession(c)
+	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
+		return
+	}
+	objURI, e := h.bindURI(c)
+	if e != nil {
+		return
+	}
+	fs := mount.Single()
+	m := fs.Root(objURI.Root)
+	if m == nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+	if !h.checkWirte(c, m) {
+		return
+	}
+	filename, e := m.Filename(objURI.Path)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+	var params struct {
+		Start int `uri:"start" form:"start" json:"start" xml:"start" yaml:"start" `
+		Count int `uri:"count" form:"count" json:"count" xml:"count" yaml:"count" binding:"required"`
+	}
+	e = h.BindQuery(c, &params)
+	if e != nil {
+		return
+	}
+	if params.Start < 0 || params.Start > math.MaxInt32-1000 {
+		h.NegotiateErrorString(c, http.StatusBadRequest, `not support start`)
+		return
+	}
+	if params.Count < 1 || params.Count > 1000 {
+		h.NegotiateErrorString(c, http.StatusBadRequest, `not support count`)
+		return
+	}
+	dir, name := filepath.Split(filename)
+	dir = filepath.Clean(dir + `/.chunks_` + name)
+	results := make([]string, params.Count)
+	var f *os.File
+	for i := 0; i < params.Count; i++ {
+		filename := dir + `/` + fmt.Sprint(params.Start+i)
+		f, e = os.Open(filename)
+		if e != nil {
+			if os.IsNotExist(e) {
+				continue
+			}
+			h.NegotiateError(c, http.StatusInternalServerError, e)
+			return
+		}
+		hash := md5.New()
+		_, e = io.Copy(hash, f)
+		f.Close()
+		if e != nil {
+			h.NegotiateError(c, http.StatusInternalServerError, e)
+			return
+		}
+		results[i] = hex.EncodeToString(hash.Sum(nil))
+	}
+	h.NegotiateData(c, http.StatusOK, results)
+}
+func (h FS) putChunk(c *gin.Context) {
+	session := h.BindSession(c)
+	if session == nil {
+		if ce := logger.Logger.Check(zap.ErrorLevel, c.FullPath()); ce != nil {
+			ce.Write(
+				zap.String(`method`, c.Request.Method),
+				zap.String(`error`, `session nil`),
+			)
+		}
+		return
+	}
+	objURI, e := h.bindChunkURI(c)
+	if e != nil {
+		return
+	}
+	fs := mount.Single()
+	m := fs.Root(objURI.Root)
+	if m == nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+	if !h.checkWirte(c, m) {
+		return
+	}
+	filename, e := m.Filename(objURI.Path)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+	if c.Request.Body == nil {
+		h.NegotiateErrorString(c, http.StatusBadRequest, `body nil`)
+		return
+	}
+	dir, name := filepath.Split(filename)
+	dir = filepath.Clean(dir + `/.chunks_` + name)
+	os.Mkdir(dir, 0775)
+	f, e := os.Create(dir + `/` + fmt.Sprint(objURI.Index))
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+	_, e = io.Copy(f, c.Request.Body)
+	if e != nil {
+		h.NegotiateError(c, http.StatusForbidden, e)
+		return
+	}
+	c.Request.Body.Close()
+	c.Status(http.StatusCreated)
 }

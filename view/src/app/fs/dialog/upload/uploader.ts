@@ -1,16 +1,15 @@
-import { Completer, Completers } from 'src/app/core/core/completer';
+import { Completer, Completers, Channel, WriteChannel, ReadChannel } from 'src/app/core/core/completer';
 import { sizeString, MB } from 'src/app/core/core/utils';
 import { HttpClient } from '@angular/common/http';
-import { isNumber, isObject, isArray } from 'util';
+import { isNumber, isArray } from 'util';
 import { NetCommand } from '../command';
 import { buf } from 'crc-32';
 import { ServerAPI } from 'src/app/core/core/api';
 import { MatDialog } from '@angular/material/dialog';
 import { ExistChoiceComponent } from '../exist-choice/exist-choice.component';
-import * as md5 from "js-md5";
+import * as SparkMD5 from 'spark-md5';
 
 const ChunkSize = 5 * MB
-const ChunkCount = 10 * 2
 export interface Data {
     root: string
     dir: string
@@ -75,9 +74,9 @@ export class Workers {
                 if (data) {
                     if (data.error) {
                         reject(data.error)
-                    } else if (isArray(data.val)) {
-                        for (let i = 0; i < data.val.length; i++) {
-                            chunks[i].hash = data.val[i]
+                    } else if (isArray(data.vals)) {
+                        for (let i = 0; i < data.vals.length; i++) {
+                            chunks[i].hash = data.vals[i]
                         }
                         resolve()
                     } else {
@@ -103,6 +102,10 @@ export class Uploader {
     ) {
     }
     close() {
+        if (this.upload) {
+            this.upload.close()
+            this.upload = null
+        }
         if (this._completer) {
             const completer = this._completer
             this._completer = null
@@ -137,7 +140,13 @@ export class Uploader {
         this.file.status = Status.Working
         this.file.error = null
         const completers = new Completers(
-            ServerAPI.v1.fs.getOne(this.httpClient, [this.root.root, this.root.dir + `/${this.file.file.name}`, `whash`]),
+            ServerAPI.v1.fs.getOne(this.httpClient, [this.root.root, this.root.dir + `/${this.file.file.name}`, `whash`], {
+                params: {
+                    'chunk': ChunkSize.toString(),
+                    'size': this.file.file.size.toString(),
+                },
+                responseType: 'json',
+            }),
             this._hash(),
         )
         const results = await completers.done()
@@ -148,12 +157,10 @@ export class Uploader {
             return
         } else if (!results[0]) {
             // 服務器 不存在 直接上傳
-            this._upload()
-            return
+            return this._upload()
         }
         if (this.style == NetCommand.YesAll) {
-            this._upload()
-            return
+            return this._upload()
         }
         if (this.style == NetCommand.SkipAll) {
             this.file.status = Status.Skip
@@ -163,18 +170,18 @@ export class Uploader {
             data: this.file.file.name,
             disableClose: true,
         }).afterClosed().toPromise()
+        if (this.isClosed) {
+            return
+        }
         if (isNumber(style)) {
             switch (style) {
                 case NetCommand.Yes:
-                    await this._upload()
-                    return
+                    return this._upload()
                 case NetCommand.YesAll:
                     this.style = style
-                    await this._upload()
-                    return
+                    return this._upload()
                 case NetCommand.SkipAll:
                     this.style = style
-                    return
             }
         }
         this.file.status = Status.Skip
@@ -208,20 +215,10 @@ export class Uploader {
             }
         }
         this.file.chunks = chunks
-        const hash = md5(chunks.map((chunk => chunk.hash)).join(","))
+        const hash = SparkMD5.hash(chunks.map((chunk => chunk.hash)).join(","))
         this.file.hash = hash
         console.log(`calculate hash`, hash, (new Date().getTime() - last.getTime()) / 1000)
         return hash
-    }
-    private _getTasks(chunks: Array<Chunk>, index: number, count: number): Array<Chunk> {
-        if (index >= chunks.length) {
-            return null
-        }
-        const results = new Array<Chunk>()
-        for (let i = index; i < chunks.length; i++) {
-            results.push(chunks[i])
-        }
-        return results
     }
     async _webWorkers(chunks: Array<Chunk>): Promise<undefined> {
         const workers = this._getWorkers()
@@ -236,16 +233,183 @@ export class Uploader {
         return this.workers
     }
     private async _upload() {
-        const chunks = this.file.chunks
-        console.log(chunks)
+        const upload = new Upload(this.root, this.file, this.httpClient)
+        this.upload = upload
+        return upload.done()
     }
+    private upload: Upload
 }
 export class Chunk {
-    hash: number
+    hash: string
     constructor(public file: File, public index: number, public start: number, public end: number) {
     }
     async calculate() {
         const data = await this.file.slice(this.start, this.end).arrayBuffer()
-        this.hash = buf(new Uint8Array(data), 0)
+        const spark = new SparkMD5.ArrayBuffer()
+        spark.append(data)
+        this.hash = spark.end()
     }
+}
+class Upload {
+    private _chCheck = new Channel<ICheck>()
+    private _closed: boolean
+    private _num = 0
+    constructor(private root: Data, private file: UploadFile, private httpClient: HttpClient) {
+
+    }
+    close(): boolean {
+        if (this._closed) {
+            return false
+        }
+        this._closed = true
+        this._close()
+        this._resolve()
+        return true
+    }
+    get isClosed(): boolean {
+        return this._closed
+    }
+    get isNotClosed(): boolean {
+        return !this._closed
+    }
+    private _close() {
+        if (this._chCheck) {
+            this._chCheck.close()
+            this._chCheck = null
+        }
+    }
+    private _resolve() {
+        if (this._completer) {
+            const completer = this._completer
+            this._completer = null
+            completer.resolve()
+        }
+    }
+    private _reject(e) {
+        if (this._completer) {
+            const completer = this._completer
+            this._completer = null
+            completer.reject(e)
+        }
+        this._close()
+    }
+    private _completer: Completer<undefined>
+    done(): Promise<undefined> {
+        const completer = new Completer<undefined>()
+
+        const check = this._chCheck
+        // 同時 3 個 併發 驗證 chunks
+        for (let i = 0; i < 3; i++) {
+            this._readCheck(check)
+        }
+        this._writeCheck(check)
+
+        this._completer = completer
+        return completer.promise
+    }
+    private async _readCheck(ch: ReadChannel<ICheck>) {
+        try {
+            while (this.isNotClosed) {
+                const check = await ch.read()
+                if (!check.ok || this.isClosed) {
+                    break
+                }
+                await this._check(check.data)
+            }
+        } catch (e) {
+            console.warn(e)
+            this._reject(e)
+        }
+    }
+    private async _check(ch: ICheck) {
+        const results = await ServerAPI.v1.fs.getOne<Array<string>>(this.httpClient, [this.root.root, this.root.dir + `/${this.file.file.name}`, `wchunk`], {
+            params: {
+                start: ch.start.toString(),
+                count: ch.count.toString(),
+            },
+        })
+        if (this.isClosed) {
+            return
+        }
+        if (!isArray(results) || results.length != ch.count) {
+            console.warn('check chunks unknow results', results)
+            throw 'check chunks unknow results'
+        }
+        for (let i = 0; i < results.length; i++) {
+            const hash = results[i]
+            const index = ch.start + i
+            const chunk = this.file.chunks[index]
+            await this._put(chunk, hash)
+        }
+    }
+    private async _writeCheck(ch: WriteChannel<ICheck>) {
+        try {
+            const chunks = this.file.chunks
+            const length = chunks.length
+            let start = 0
+            const count = 100
+            while (start != length) {
+                let end = start + count
+                if (end > length) {
+                    end = length
+                }
+                await ch.write({
+                    start: start,
+                    count: end - start,
+                })
+                start = end
+            }
+        } catch (e) {
+            this._reject(e)
+        } finally {
+            ch.close()
+        }
+    }
+    private async _put(chunk: Chunk, hash: string) {
+        if (chunk.hash == hash) {
+            await this._update()
+            return
+        }
+        const body = await chunk.file.slice(chunk.start, chunk.end).arrayBuffer()
+        if (this.isClosed) {
+            return
+        }
+        await ServerAPI.v1.fs.putOne(this.httpClient,
+            [this.root.root, this.root.dir + `/${this.file.file.name}`, `wchunk`, chunk.index],
+            body,
+        )
+        if (this.isClosed) {
+            return
+        }
+        await this._update()
+    }
+    private async _update() {
+        this._num++
+        const file = this.file
+        const chunks = file.chunks
+        const val = Math.floor(this._num * 100 / chunks.length)
+        if (file.progress != val) {
+            file.progress = val
+        }
+
+        if (this._num == chunks.length) {
+            await this._merge()
+        }
+    }
+    private async _merge() {
+        await ServerAPI.v1.fs.putOne(this.httpClient,
+            [this.root.root, this.root.dir + `/${this.file.file.name}`, `merge`],
+            {
+                hash: this.file.hash,
+                count: this.file.chunks.length,
+            },
+        )
+        if (this.isClosed) {
+            return
+        }
+    }
+}
+interface ICheck {
+    start: number
+    count: number
 }
