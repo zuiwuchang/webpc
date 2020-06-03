@@ -1,4 +1,5 @@
 #!/bin/bash
+export TERM=xterm
 cd ~
 
 declare -i x
@@ -20,4 +21,4 @@ do
     done
 done
 
-echo "bye $1"
+echo "bye $1 of $USER"
