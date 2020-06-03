@@ -24,12 +24,15 @@ const CmdFontFamily = 6
 const HeartMessage = JSON.stringify({
   'cmd': CmdHeart,
 })
+
+const DefaultFontFamily = "monospace"
 interface Info {
   cmd: number
   id: number
   name: string
   started: number
   fontSize: number
+  fontFamily: string
 }
 const Second = 1
 const Minute = 60 * Second
@@ -68,7 +71,10 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   private _closeSubject = new Subject<boolean>()
   duration: string = ''
   fontSize = 15
-  fontFamily: string
+  fontFamily = DefaultFontFamily
+  options = [
+    `sans-serif `, `serif`, `monospace`, `cursive`, `fantasy`,
+  ]
   ctrl: boolean
   shift: boolean
   alt: boolean
@@ -114,6 +120,12 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   xterm: ElementRef
   @ViewChild("view")
   view: ElementRef
+  private _getFontFamily(name: string) {
+    if (isString(name) && name != '') {
+      return name
+    }
+    return DefaultFontFamily
+  }
   ngAfterViewInit() {
     // 屏蔽瀏覽器快捷鍵
     fromEvent(this.view.nativeElement, 'keydown').pipe(
@@ -239,7 +251,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
         websocket.send(new TextEncoder().encode(data))
       })
       this._xterm.onResize((evt) => {
-        console.log(evt)
+        console.log(`onResize`, evt)
         if (this._websocket != websocket) {
           return
         }
@@ -301,6 +313,13 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
       case CmdInfo:
         this.info = obj
         this._onFontsize(this.info.fontSize)
+        if (this.info.fontFamily && this.info.fontFamily != this.fontFamily) {
+          this.fontFamily = this.info.fontFamily
+          console.log(`set font`, this.fontFamily)
+          this._xterm.setOption("fontFamily", this.fontFamily)
+          this._xterm.resize(1, 1)
+          this._fitAddon.fit()
+        }
         break
       case CmdError:
         this._xterm.writeln("\n" + obj.error)
@@ -338,8 +357,14 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this._xterm || !this._fitAddon || !this._websocket) {
       return
     }
-    console.log(`fontFamily`, this.fontFamily)
-    this._xterm.setOption("fontFamily", this.fontFamily)
+    const l = this._getFontFamily(this.fontFamily)
+    const r = this._getFontFamily(this._xterm.getOption("fontFamily"))
+    if (l == r) {
+      return
+    }
+    this._xterm.setOption("fontFamily", l)
+    this._xterm.resize(1, 1)
+    this._xterm.clear()
     this._fitAddon.fit()
     this._websocket.send(JSON.stringify({
       cmd: CmdFontFamily,

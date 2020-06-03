@@ -141,11 +141,12 @@ func (m *Manager) restore(username string, bucket *bolt.Bucket) {
 			continue
 		}
 		s := &Shell{
-			term:     newTerm(),
-			username: username,
-			shellid:  shell.ID,
-			name:     shell.Name,
-			fontSize: shell.FontSize,
+			term:       newTerm(),
+			username:   username,
+			shellid:    shell.ID,
+			name:       shell.Name,
+			fontSize:   shell.FontSize,
+			fontFamily: shell.FontFamily,
 		}
 		e = s.Run(nil, 24, 10)
 		if e != nil {

@@ -15,9 +15,10 @@ const ShellBucket = "shell"
 
 // Shell 启动的 shell 用于 重启服务时 恢复shell
 type Shell struct {
-	ID       int64  `json:"id,omitempty"`
-	Name     string `json:"name,omitempty"`
-	FontSize int    `json:"fontSize,omitempty"`
+	ID         int64  `json:"id,omitempty"`
+	Name       string `json:"name,omitempty"`
+	FontSize   int    `json:"fontSize,omitempty"`
+	FontFamily string `json:"fontFamily,omitempty"`
 }
 
 // EncoderID .

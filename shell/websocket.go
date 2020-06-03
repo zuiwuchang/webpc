@@ -21,7 +21,7 @@ func (m *Message) Unmarshal(data []byte) error {
 }
 
 // WriteInfo .
-func WriteInfo(ws *websocket.Conn, id int64, name string, started int64, fontSize int) (e error) {
+func WriteInfo(ws *websocket.Conn, id int64, name string, started int64, fontSize int, fontFamily string) (e error) {
 	m := gin.H{
 		`cmd`:     CmdInfo,
 		`id`:      id,
@@ -30,6 +30,9 @@ func WriteInfo(ws *websocket.Conn, id int64, name string, started int64, fontSiz
 	}
 	if fontSize >= 5 {
 		m[`fontSize`] = fontSize
+	}
+	if fontFamily != "" {
+		m[`fontFamily`] = fontFamily
 	}
 	b, e := helper.Marshal(m)
 	if e != nil {

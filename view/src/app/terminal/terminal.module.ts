@@ -16,6 +16,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
@@ -31,7 +32,7 @@ import { EditComponent } from './edit/edit.component';
     MatTooltipModule, MatFormFieldModule, MatInputModule,
     MatCardModule, MatProgressSpinnerModule, MatDialogModule,
     MatProgressBarModule, MatCheckboxModule, MatToolbarModule,
-    MatMenuModule,
+    MatMenuModule, MatAutocompleteModule,
 
     TerminalRoutingModule,
   ],

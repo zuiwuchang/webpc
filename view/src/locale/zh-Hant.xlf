@@ -279,7 +279,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/dialog/upload/upload.component.html</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5edf054f14aa57bc25a28cb7db01956fee53dac8" datatype="html">
@@ -759,7 +759,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
-          <context context-type="linenumber">13</context>
+          <context context-type="linenumber">11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2d64c5ec475afbe35d9309b8405d6654441b386b" datatype="html">
@@ -770,20 +770,12 @@
           <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="0bd1b7ca428a0c47d189e1f26194062b13a0aa6c" datatype="html">
-        <source>Font Size</source>
-        <target>字體大小</target>
+      <trans-unit id="19aa1a8b38d58eefa14cf82146f7165bf8acac71" datatype="html">
+        <source>Font Family</source>
+        <target>字體家族</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
-          <context context-type="linenumber">26</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="450d56b40f37bf040e7eb84e2668903ddf020e7a" datatype="html">
-        <source>Font Size Invalid</source>
-        <target>無效的字體大小</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
-          <context context-type="linenumber">28</context>
+          <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="a36cbf882f4d743c19a2dfdd899ec6ba44006289" datatype="html">
@@ -791,7 +783,27 @@
         <target>設置屬性</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="0bd1b7ca428a0c47d189e1f26194062b13a0aa6c" datatype="html">
+        <source>Font Size</source>
+        <target>字體大小</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="450d56b40f37bf040e7eb84e2668903ddf020e7a" datatype="html">
+        <source>Font Size Invalid</source>
+        <target>無效的字體大小</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
+          <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e26f9cf3666aace4e524b1505c9795d76d87738d" datatype="html">
@@ -951,7 +963,7 @@
         <target>將檔案拖到此處上傳</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/dialog/upload/upload.component.html</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
       <trans-unit id="aa0e7b4db68e2c0683d29a313d473c8436e2b5bf" datatype="html">
@@ -959,7 +971,7 @@
         <target>添加檔案</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/dialog/upload/upload.component.html</context>
-          <context context-type="linenumber">32</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="f3a53562e5590b56eba115f35467621184c51845" datatype="html">
@@ -967,7 +979,7 @@
         <target>開始上傳</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/dialog/upload/upload.component.html</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7c0ea667ba0515aa5c087882529bf7add7d6c0e6" datatype="html">
@@ -975,7 +987,7 @@
         <target>清空隊列</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/fs/dialog/upload/upload.component.html</context>
-          <context context-type="linenumber">38</context>
+          <context context-type="linenumber">54</context>
         </context-group>
       </trans-unit>
       <trans-unit id="170919b6c28b7eb90fead8af3d10ce8f10dc041e" datatype="html">

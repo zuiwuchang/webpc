@@ -147,3 +147,41 @@ func (m Shell) SetFontSize(username string, id int64, fontSize int) (e error) {
 	})
 	return
 }
+
+// SetFontFamily 更改字體
+func (m Shell) SetFontFamily(username string, id int64, fontFamily string) (e error) {
+	e = _db.Update(func(t *bolt.Tx) (e error) {
+		bucket := t.Bucket([]byte(data.ShellBucket))
+		if bucket == nil {
+			e = fmt.Errorf("bucket not exist : %s", data.ShellBucket)
+			return
+		}
+		key := utils.StringToBytes(username)
+		bucket = bucket.Bucket(key)
+		if bucket == nil {
+			return
+		}
+		keyID := data.EncoderID(uint64(id))
+		val := bucket.Get(keyID)
+		if val == nil {
+			e = fmt.Errorf(`shell not exist : %s %v`, username, id)
+			return
+		}
+		var msg data.Shell
+		e = msg.Decode(val)
+		if e != nil {
+			return
+		}
+		if msg.FontFamily == fontFamily {
+			return
+		}
+		msg.FontFamily = fontFamily
+		val, e = msg.Encoder()
+		if e != nil {
+			return
+		}
+		e = bucket.Put(keyID, val)
+		return
+	})
+	return
+}

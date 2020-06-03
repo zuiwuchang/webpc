@@ -151,7 +151,7 @@ func (h Shells) connect(c *gin.Context) {
 				s.SetSize(msg.Cols, msg.Rows)
 			} else if msg.Cmd == shell.CmdFontSize {
 				s.SetFontSize(msg.Val)
-			} else if msg.Cmd == shell.CmdFontSize {
+			} else if msg.Cmd == shell.CmdFontFamily {
 				s.SetFontFamily(msg.Str)
 			} else if msg.Cmd == shell.CmdHeart {
 				continue

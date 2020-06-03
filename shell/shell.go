@@ -60,7 +60,7 @@ func (s *Shell) Run(ws *websocket.Conn, cols, rows uint16) (e error) {
 	if ws != nil {
 		ws.WriteMessage(websocket.BinaryMessage, []byte("\r\nwelcome guys, more info at https://gitlab.com/king011/webpc\r\n\r\n"))
 
-		WriteInfo(ws, s.shellid, s.name, s.started, s.fontSize)
+		WriteInfo(ws, s.shellid, s.name, s.started, s.fontSize, s.fontFamily)
 	}
 
 	// 等待進程結束
@@ -109,7 +109,7 @@ func (s *Shell) Attack(ws *websocket.Conn, cols, rows uint16) (e error) {
 			s.rows = rows
 		}
 		if e == nil {
-			WriteInfo(ws, s.shellid, s.name, s.started, s.fontSize)
+			WriteInfo(ws, s.shellid, s.name, s.started, s.fontSize, s.fontFamily)
 		}
 	} else {
 		e = ErrAlreadyAttach
@@ -182,10 +182,8 @@ func (s *Shell) SetFontFamily(val string) (e error) {
 	s.mutex.Lock()
 	if s.fontFamily != val {
 		s.fontFamily = val
-		//var mShell manipulator.Shell
-		//mShell.SetFontFamily(s.username, s.shellid, val)
-		s.term.SetSize(1, 1)
-		s.term.SetSize(s.cols, s.rows)
+		var mShell manipulator.Shell
+		mShell.SetFontFamily(s.username, s.shellid, val)
 	}
 	s.mutex.Unlock()
 	return
@@ -202,7 +200,7 @@ func (s *Shell) Rename(name string) {
 	if s.name != name {
 		s.name = name
 		if s.conn != nil {
-			WriteInfo(s.conn, s.shellid, name, s.started, s.fontSize)
+			WriteInfo(s.conn, s.shellid, name, s.started, s.fontSize, s.fontFamily)
 		}
 	}
 	s.mutex.Unlock()
