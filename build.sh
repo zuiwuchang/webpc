@@ -91,7 +91,8 @@ case $1 in
 				dst=linux.386.tar.gz
 			fi
 			cd "$DirRoot/bin" && tar -zcvf $dst "$Target" "$Target".jsonnet \
-			shell-linux
+			shell-linux \
+			webpc.service useradd.sh
 		fi
 	;;
 

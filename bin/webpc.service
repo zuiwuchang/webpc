@@ -1,0 +1,13 @@
+[Unit]
+Description=Web PC Service
+After=network.target
+ 
+[Service]
+#User=webpc
+Type=simple
+ExecStart=/opt/webpc/webpc daemon
+KillMode=control-group
+Restart=on-failure
+ 
+[Install]
+WantedBy=multi-user.target
