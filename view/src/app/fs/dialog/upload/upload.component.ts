@@ -111,6 +111,7 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this._closed = true
     this._clsoeSubject.next(true)
+    this._clsoeSubject.complete()
     if (this._uploader) {
       this._uploader.close()
       this._uploader = null

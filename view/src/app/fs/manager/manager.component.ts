@@ -588,7 +588,10 @@ export class ManagerComponent implements OnInit, OnDestroy {
           },
         },
         disableClose: true,
-      }).afterClosed().toPromise().then(() => {
+      }).afterClosed().toPromise().then((ok) => {
+        if (ok) {
+          this.fileService.clear(files)
+        }
         if (!this._closed) {
           this.onClickRefresh()
         }

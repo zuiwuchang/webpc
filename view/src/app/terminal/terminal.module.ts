@@ -14,6 +14,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
@@ -28,7 +30,8 @@ import { EditComponent } from './edit/edit.component';
     MatListModule, MatButtonModule, MatIconModule,
     MatTooltipModule, MatFormFieldModule, MatInputModule,
     MatCardModule, MatProgressSpinnerModule, MatDialogModule,
-    MatProgressBarModule, MatCheckboxModule,
+    MatProgressBarModule, MatCheckboxModule, MatToolbarModule,
+    MatMenuModule,
 
     TerminalRoutingModule,
   ],

@@ -1,33 +1,139 @@
-<mat-card>
-    <mat-card-content>
-        <ng-container *ngIf="info;then infoView"></ng-container>
-        <ng-template #infoView>
-            <p>
-                <button mat-icon-button [disabled]="true">
-                    <mat-icon color="accent">{{ok ? 'done':'close'}}</mat-icon>
-                </button>
-                {{info.id}}
-                {{info.name}}
-                {{this.duration}}
+<ng-container *ngIf="info;then infoView"></ng-container>
+<ng-template #infoView>
+    <p>
+        <button mat-icon-button [disabled]="true">
+            <mat-icon color="accent">{{ok ? 'done':'close'}}</mat-icon>
+        </button>
+        {{info.id}}
+        {{info.name}}
+        {{this.duration}}
 
-                <button *ngIf="!ok" (click)="onClickConnect()" mat-icon-button i18n-matTooltip matTooltip="Connect">
-                    <mat-icon>settings_ethernet</mat-icon>
-                </button>
-            </p>
-        </ng-template>
+        <button *ngIf="!ok" (click)="onClickConnect()" mat-icon-button i18n-matTooltip matTooltip="Connect">
+            <mat-icon>settings_ethernet</mat-icon>
+        </button>
+    </p>
+</ng-template>
 
-        <mat-spinner *ngIf="connect" color="accent" diameter='32'></mat-spinner>
+<mat-spinner *ngIf="connect" color="accent" diameter='32'></mat-spinner>
+<div #view (window:resize)="onResize()" class="view">
+    <div #xterm style="height: 100%;" contentEditable="true"></div>
+</div>
+<p *ngIf="ok">
+    <mat-form-field>
+        <mat-label i18n>Font Size</mat-label>
+        <input type="number" matInput required [(ngModel)]="fontSize" name="fontSize" [min]="10">
+        <mat-error i18n>Font Size Invalid</mat-error>
+    </mat-form-field>
+    <button class="setbtn" mat-stroked-button (click)="onClickFontSize()" i18n>Set Option</button>
+</p>
 
-        <div (window:resize)="onResize()" class="view">
-            <div #xterm style="height: 100%;"></div>
-        </div>
-        <p *ngIf="ok">
-            <mat-form-field>
-                <mat-label i18n>Font Size</mat-label>
-                <input type="number" matInput required [(ngModel)]="fontSize" name="fontSize" [min]="10">
-                <mat-error i18n>Font Size Invalid</mat-error>
-            </mat-form-field>
-            <button class="setbtn" mat-stroked-button (click)="onClickFontSize()" i18n>Set Option</button>
-        </p>
-    </mat-card-content>
-</mat-card>
+<div class="fill"></div>
+<mat-toolbar class="footer" color="primary">
+    <button mat-icon-button [matMenuTriggerFor]="keyboard">
+        <mat-icon>keyboard</mat-icon>
+    </button>
+
+    <button mat-button (click)="onClickTab($event)">
+        <span>TAB</span>
+    </button>
+    <button mat-button (click)="onClickCDHome($event)">
+        <span>~</span>
+    </button>
+    <button mat-button (click)="onClickESC($event)">
+        <span>ESC</span>
+    </button>
+    <button mat-icon-button (click)="onClickArrowUp($event)">
+        <mat-icon>keyboard_arrow_up</mat-icon>
+    </button>
+    <button mat-icon-button (click)="onClickArrowDown($event)">
+        <mat-icon>keyboard_arrow_down</mat-icon>
+    </button>
+    <button mat-icon-button (click)="onClickArrowLeft($event)">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+    </button>
+    <button mat-icon-button (click)="onClickArrowRight($event)">
+        <mat-icon>keyboard_arrow_right</mat-icon>
+    </button>
+</mat-toolbar>
+
+<mat-menu #keyboard="matMenu">
+    <button mat-menu-item (click)="toggleCtrl()">
+        <mat-icon>{{ctrl?'check_box':'check_box_outline_blank'}}</mat-icon>
+        <span>CTRL</span>
+    </button>
+    <button mat-menu-item (click)="toggleShift()">
+        <mat-icon>{{shift?'check_box':'check_box_outline_blank'}}</mat-icon>
+        <span>SHIFT</span>
+    </button>
+    <button mat-menu-item (click)="toggleAlt()">
+        <mat-icon>{{alt?'check_box':'check_box_outline_blank'}}</mat-icon>
+        <span>ALT</span>
+    </button>
+    <button mat-menu-item [matMenuTriggerFor]="input">
+        <mat-icon>input</mat-icon>
+        <span>F1~F6</span>
+    </button>
+    <button mat-menu-item [matMenuTriggerFor]="input2">
+        <mat-icon>input</mat-icon>
+        <span>F7~F12</span>
+    </button>
+    <button mat-menu-item [matMenuTriggerFor]="start">
+        <mat-icon>start</mat-icon>
+        <span>Start</span>
+    </button>
+</mat-menu>
+
+<mat-menu #input="matMenu">
+    <button mat-menu-item (click)="onClickF1($event)">
+        <span>F1</span>
+    </button>
+    <button mat-menu-item (click)="onClickF2($event)">
+        <span>F2</span>
+    </button>
+    <button mat-menu-item (click)="onClickF3($event)">
+        <span>F3</span>
+    </button>
+    <button mat-menu-item (click)="onClickF4($event)">
+        <span>F4</span>
+    </button>
+    <button mat-menu-item (click)="onClickF5($event)">
+        <span>F5</span>
+    </button>
+    <button mat-menu-item (click)="onClickF6($event)">
+        <span>F6</span>
+    </button>
+</mat-menu>
+<mat-menu #input2="matMenu">
+    <button mat-menu-item (click)="onClickF7($event)">
+        <span>F7</span>
+    </button>
+    <button mat-menu-item (click)="onClickF8($event)">
+        <span>F8</span>
+    </button>
+    <button mat-menu-item (click)="onClickF9($event)">
+        <span>F9</span>
+    </button>
+    <button mat-menu-item (click)="onClickF10($event)">
+        <span>F10</span>
+    </button>
+    <button mat-menu-item (click)="onClickF11($event)">
+        <span>F11</span>
+    </button>
+    <button mat-menu-item (click)="onClickF12($event)">
+        <span>F12</span>
+    </button>
+</mat-menu>
+<mat-menu #start="matMenu">
+    <button mat-menu-item (click)="onClickInsert($event)">
+        <span>Insert</span>
+    </button>
+    <button mat-menu-item (click)="onClickPause($event)">
+        <span>Pause</span>
+    </button>
+    <button mat-menu-item (click)="onClickPageUp($event)">
+        <span>Page Up</span>
+    </button>
+    <button mat-menu-item (click)="onClickPageDown($event)">
+        <span>Page Down</span>
+    </button>
+</mat-menu>

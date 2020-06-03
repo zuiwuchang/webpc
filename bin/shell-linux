@@ -1,4 +1,23 @@
 #!/bin/bash
 cd ~
-echo "Welcome ${USER}"
-bash -l
+
+declare -i x
+x=0
+while [ $x -lt 1 ]
+do
+    echo "Welcome $1 shell as $USER"
+    bash -l
+    while true
+    do 
+        echo ''
+        read -p "Are you sure you want to close the shell <yes/no> : " quit
+        if [ "$quit" == 'y' -o "$quit" == 'yes' ];then
+            x=1
+            break
+        elif [ "$quit" == 'n' -o "$quit" == 'no' ];then
+            break
+        fi
+    done
+done
+
+echo "bye $1"

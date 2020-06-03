@@ -3,8 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { WebLinksAddon } from 'xterm-addon-web-links';
-import { Subject, Subscription } from 'rxjs'
-import { debounceTime } from 'rxjs/operators';
+import { Subject, Subscription, fromEvent } from 'rxjs'
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ServerAPI } from 'src/app/core/core/api';
 import { isString, isNumber } from 'util';
 import { interval } from 'rxjs';
@@ -59,15 +59,16 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   ) { }
   private _closed = false
   private _subject = new Subject()
-  private _subscription: Subscription
   private _xterm: Terminal
   private _fitAddon: FitAddon
   private _websocket: WebSocket
   info: Info
-  private _subscriptionInterval: Subscription
-  private _subscriptionPing: Subscription
+  private _closeSubject = new Subject<boolean>()
   duration: string = ''
   fontSize = 15
+  ctrl: boolean
+  shift: boolean
+  alt: boolean
   get ok(): boolean {
     if (this._websocket) {
       return true
@@ -75,7 +76,9 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     return false
   }
   ngOnInit(): void {
-    this._subscriptionInterval = interval(1000).subscribe(() => {
+    interval(1000).pipe(
+      takeUntil(this._closeSubject),
+    ).subscribe(() => {
       if (!this._websocket) {
         return
       }
@@ -84,7 +87,9 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
         this.duration = durationToString(val / 1000)
       }
     })
-    this._subscriptionPing = interval(1000 * 30).subscribe(() => {
+    interval(1000 * 30).pipe(
+      takeUntil(this._closeSubject),
+    ).subscribe(() => {
       if (this._websocket) {
         this._websocket.send(HeartMessage)
       }
@@ -92,14 +97,11 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   ngOnDestroy() {
     this._closed = true
-    this._subscriptionInterval.unsubscribe()
-    this._subscriptionPing.unsubscribe()
+    this._closeSubject.next(true)
+    this._closeSubject.complete()
     if (this._websocket) {
       this._websocket.close()
       this._websocket = null
-    }
-    if (this._subscription) {
-      this._subscription.unsubscribe()
     }
     if (this._xterm) {
       this._xterm.dispose()
@@ -107,7 +109,21 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   @ViewChild("xterm")
   xterm: ElementRef
+  @ViewChild("view")
+  view: ElementRef
   ngAfterViewInit() {
+    // 屏蔽瀏覽器快捷鍵
+    fromEvent(this.view.nativeElement, 'keydown').pipe(
+      takeUntil(this._closeSubject)
+    ).subscribe((evt: KeyboardEvent) => {
+      // console.log('document', evt.keyCode, '****', evt)
+      if (evt.ctrlKey || evt.shiftKey || evt.altKey) {
+        if (evt.keyCode != 45) {
+          evt.returnValue = false
+        }
+      }
+    })
+
     // 創建 xterm
     const xterm = new Terminal({
       cursorBlink: true,
@@ -123,11 +139,13 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     xterm.loadAddon(new WebLinksAddon())
 
     xterm.open(this.xterm.nativeElement)
+    this._textarea = this.xterm.nativeElement.querySelector('textarea')
     fitAddon.fit()
 
     // 訂閱 窗口大小 改變
-    this._subscription = this._subject.pipe(
-      debounceTime(100)
+    this._subject.pipe(
+      debounceTime(100),
+      takeUntil(this._closeSubject),
     ).subscribe((_) => {
       if (this._closed) {
         return
@@ -182,7 +200,33 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
         return
       }
       this.connect = false
-
+      this._xterm.attachCustomKeyEventHandler((evt: any) => {
+        const opt: any = {}
+        let ok = true
+        if (!evt.ctrlKey && this.ctrl) {
+          opt.ctrlKey = true
+          ok = false
+        }
+        if (!evt.shiftKey && this.shift) {
+          opt.shiftKey = true
+          ok = false
+        }
+        if (!evt.altKey && this.alt) {
+          opt.altKey = true
+          ok = false
+        }
+        if (!ok) {
+          opt.keyCode = evt.keyCode
+          opt.key = evt.key
+          opt.code = evt.code
+          this.alt = false
+          this.shift = false
+          this.ctrl = false
+          const textarea = this.xterm?.nativeElement?.querySelector('textarea')
+          textarea.dispatchEvent(new KeyboardEvent('keydown', opt))
+        }
+        return ok
+      })
       this._xterm.onData((data) => {
         if (this._websocket != websocket) {
           return
@@ -283,5 +327,113 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
       cmd: CmdFontsize,
       val: this.fontSize,
     }))
+  }
+
+  onClickTab(evt: MouseEvent) {
+    this._keyboardKeyDown(9, 'Tab', evt)
+  }
+  onClickCDHome(evt: MouseEvent) {
+    this._keyboardKeyDown(192, '~', evt)
+  }
+  onClickESC(evt: MouseEvent) {
+    this._keyboardKeyDown(27, 'Escape', evt)
+  }
+  onClickArrowUp(evt: MouseEvent) {
+    this._keyboardKeyDown(38, 'ArrowUp', evt)
+  }
+  onClickArrowDown(evt: MouseEvent) {
+    this._keyboardKeyDown(40, 'ArrowDown', evt)
+  }
+  onClickArrowLeft(evt: MouseEvent) {
+    this._keyboardKeyDown(37, 'ArrowLeft', evt)
+  }
+  onClickArrowRight(evt: MouseEvent) {
+    this._keyboardKeyDown(39, 'ArrowRight', evt)
+  }
+  onClickF1(evt: MouseEvent) {
+    this._keyboardKeyDown(112, 'F1', evt)
+  }
+  onClickF2(evt: MouseEvent) {
+    this._keyboardKeyDown(113, 'F2', evt)
+  }
+  onClickF3(evt: MouseEvent) {
+    this._keyboardKeyDown(114, 'F3', evt)
+  }
+  onClickF4(evt: MouseEvent) {
+    this._keyboardKeyDown(115, 'F4', evt)
+  }
+  onClickF5(evt: MouseEvent) {
+    this._keyboardKeyDown(116, 'F5', evt)
+  }
+  onClickF6(evt: MouseEvent) {
+    this._keyboardKeyDown(117, 'F6', evt)
+  }
+  onClickF7(evt: MouseEvent) {
+    this._keyboardKeyDown(118, 'F7', evt)
+  }
+  onClickF8(evt: MouseEvent) {
+    this._keyboardKeyDown(119, 'F8', evt)
+  }
+  onClickF9(evt: MouseEvent) {
+    this._keyboardKeyDown(120, 'F9', evt)
+  }
+  onClickF10(evt: MouseEvent) {
+    this._keyboardKeyDown(121, 'F10', evt)
+  }
+  onClickF11(evt: MouseEvent) {
+    this._keyboardKeyDown(122, 'F11', evt)
+  }
+  onClickF12(evt: MouseEvent) {
+    this._keyboardKeyDown(123, 'F12', evt)
+  }
+  onClickInsert(evt: MouseEvent) {
+    this._keyboardKeyDown(45, 'Insert', evt)
+  }
+  onClickPause(evt: MouseEvent) {
+    this._keyboardKeyDown(19, 'Pause', evt)
+  }
+  onClickPageUp(evt: MouseEvent) {
+    this._keyboardKeyDown(33, 'PageUp', evt)
+  }
+  onClickPageDown(evt: MouseEvent) {
+    this._keyboardKeyDown(34, 'PageDown', evt)
+  }
+  private _textarea: Document
+  private _keyboardKeyDown(keyCode: number, key: string, evt: any) {
+    if (!this._textarea) {
+      return
+    }
+    this._textarea.dispatchEvent(new KeyboardEvent('keydown', {
+      keyCode: keyCode,
+      key: key,
+      code: key,
+      altKey: evt.altKey || this.alt ? true : false,
+      shiftKey: evt.shiftKey || this.shift ? true : false,
+      ctrlKey: evt.ctrlKey || this.ctrl ? true : false,
+    } as any))
+    this.alt = false
+    this.shift = false
+    this.ctrl = false
+    setTimeout(() => {
+      this._xterm.focus()
+    }, 0)
+  }
+  toggleAlt() {
+    this.alt = !this.alt
+    setTimeout(() => {
+      this._xterm.focus()
+    }, 0)
+  }
+  toggleShift() {
+    this.shift = !this.shift
+    setTimeout(() => {
+      this._xterm.focus()
+    }, 0)
+  }
+  toggleCtrl() {
+    this.ctrl = !this.ctrl
+    setTimeout(() => {
+      this._xterm.focus()
+    }, 0)
   }
 }
