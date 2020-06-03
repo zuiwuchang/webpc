@@ -19,8 +19,10 @@ const (
 	CmdInfo
 	// CmdHeart websocket 心跳防止瀏覽器 關閉不獲取 websocket
 	CmdHeart
-	// CmdFontsize 設置字體大小
-	CmdFontsize
+	// CmdFontSize 設置字體大小
+	CmdFontSize
+	// CmdFontFamily 設置字體
+	CmdFontFamily
 )
 
 // ErrAlreadyAttach .
@@ -31,13 +33,14 @@ type Shell struct {
 	term *term.Term
 	conn *websocket.Conn
 
-	username string
-	shellid  int64
-	name     string
-	cols     uint16
-	rows     uint16
-	started  int64
-	fontSize int
+	username   string
+	shellid    int64
+	name       string
+	cols       uint16
+	rows       uint16
+	started    int64
+	fontSize   int
+	fontFamily string
 
 	mutex sync.Mutex
 }
@@ -162,13 +165,27 @@ func (s *Shell) SetSize(cols, rows uint16) (e error) {
 	return
 }
 
-// SetFontsize .
-func (s *Shell) SetFontsize(val int) (e error) {
+// SetFontSize .
+func (s *Shell) SetFontSize(val int) (e error) {
 	s.mutex.Lock()
 	if s.fontSize != val {
 		s.fontSize = val
 		var mShell manipulator.Shell
 		mShell.SetFontSize(s.username, s.shellid, val)
+	}
+	s.mutex.Unlock()
+	return
+}
+
+// SetFontFamily .
+func (s *Shell) SetFontFamily(val string) (e error) {
+	s.mutex.Lock()
+	if s.fontFamily != val {
+		s.fontFamily = val
+		//var mShell manipulator.Shell
+		//mShell.SetFontFamily(s.username, s.shellid, val)
+		s.term.SetSize(1, 1)
+		s.term.SetSize(s.cols, s.rows)
 	}
 	s.mutex.Unlock()
 	return

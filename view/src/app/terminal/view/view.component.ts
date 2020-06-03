@@ -17,8 +17,10 @@ const CmdResize = 2
 const CmdInfo = 3
 // CmdHeart websocket 心跳防止瀏覽器 關閉不獲取 websocket
 const CmdHeart = 4
-// CmdFontsize 設置字體大小
-const CmdFontsize = 5
+// CmdFontSize 設置字體大小
+const CmdFontSize = 5
+// CmdFontFamily 設置字體
+const CmdFontFamily = 6
 const HeartMessage = JSON.stringify({
   'cmd': CmdHeart,
 })
@@ -66,6 +68,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   private _closeSubject = new Subject<boolean>()
   duration: string = ''
   fontSize = 15
+  fontFamily: string
   ctrl: boolean
   shift: boolean
   alt: boolean
@@ -128,6 +131,8 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     const xterm = new Terminal({
       cursorBlink: true,
       screenReaderMode: true,
+      fontFamily: this.fontFamily,
+      rendererType: 'canvas',
     })
     this._xterm = xterm
     this.fontSize = xterm.getOption("fontSize")
@@ -234,6 +239,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
         websocket.send(new TextEncoder().encode(data))
       })
       this._xterm.onResize((evt) => {
+        console.log(evt)
         if (this._websocket != websocket) {
           return
         }
@@ -324,11 +330,22 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     this._xterm.setOption("fontSize", this.fontSize)
     this._fitAddon.fit()
     this._websocket.send(JSON.stringify({
-      cmd: CmdFontsize,
+      cmd: CmdFontSize,
       val: this.fontSize,
     }))
   }
-
+  onClickFontFamily() {
+    if (!this._xterm || !this._fitAddon || !this._websocket) {
+      return
+    }
+    console.log(`fontFamily`, this.fontFamily)
+    this._xterm.setOption("fontFamily", this.fontFamily)
+    this._fitAddon.fit()
+    this._websocket.send(JSON.stringify({
+      cmd: CmdFontFamily,
+      str: this.fontFamily,
+    }))
+  }
   onClickTab(evt: MouseEvent) {
     this._keyboardKeyDown(9, 'Tab', evt)
   }

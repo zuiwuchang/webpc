@@ -149,8 +149,10 @@ func (h Shells) connect(c *gin.Context) {
 			}
 			if msg.Cmd == shell.CmdResize {
 				s.SetSize(msg.Cols, msg.Rows)
-			} else if msg.Cmd == shell.CmdFontsize {
-				s.SetFontsize(msg.Val)
+			} else if msg.Cmd == shell.CmdFontSize {
+				s.SetFontSize(msg.Val)
+			} else if msg.Cmd == shell.CmdFontSize {
+				s.SetFontFamily(msg.Str)
 			} else if msg.Cmd == shell.CmdHeart {
 				continue
 			} else {

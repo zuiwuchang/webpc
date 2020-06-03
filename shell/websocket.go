@@ -12,6 +12,7 @@ type Message struct {
 	Cols uint16 `json:"cols,omitempty"`
 	Rows uint16 `json:"rows,omitempty"`
 	Val  int    `json:"val,omitempty"`
+	Str  string `json:"str,omitempty"`
 }
 
 // Unmarshal .
