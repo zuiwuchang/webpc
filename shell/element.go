@@ -21,7 +21,7 @@ func (element *Element) Attach(ws *websocket.Conn, username string, shellid int6
 			return
 		}
 		shell := &Shell{
-			term:     newTerm(),
+			term:     newTerm(username),
 			username: username,
 			shellid:  shellid,
 			name:     time.Unix(shellid, 0).Local().Format(`2006/01/02 15:04:05`),

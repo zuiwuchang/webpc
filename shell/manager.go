@@ -2,6 +2,7 @@ package shell
 
 import (
 	"errors"
+	"runtime"
 	"sync"
 
 	"github.com/boltdb/bolt"
@@ -121,9 +122,9 @@ func (m *Manager) Restore() {
 	})
 	return
 }
-func newTerm() *term.Term {
+func newTerm(username string) *term.Term {
 	cnf := configure.Single()
-	return term.New(cnf.System.Shell)
+	return term.New(cnf.System.Shell, username, runtime.GOOS, runtime.GOARCH)
 }
 func (m *Manager) restore(username string, bucket *bolt.Bucket) {
 	cursor := bucket.Cursor()
@@ -141,7 +142,7 @@ func (m *Manager) restore(username string, bucket *bolt.Bucket) {
 			continue
 		}
 		s := &Shell{
-			term:       newTerm(),
+			term:       newTerm(username),
 			username:   username,
 			shellid:    shell.ID,
 			name:       shell.Name,
