@@ -44,6 +44,9 @@ export class UploadFile {
     isError(): boolean {
         return this.status == Status.Error
     }
+    isSkip(): boolean {
+        return this.status == Status.Skip
+    }
     hash: string
     chunks: Array<Chunk>
 }
@@ -122,6 +125,7 @@ export class Uploader {
                 return
             }
             if (this.file.status == Status.Working) {
+                this.file.progress = 100
                 this.file.status = Status.Ok
             }
             this.close()

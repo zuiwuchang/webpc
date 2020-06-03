@@ -185,6 +185,11 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
   onClickDelete(uploadFile: UploadFile) {
     this._source.delete(uploadFile)
   }
+  onClickReset(uploadFile: UploadFile) {
+    if (uploadFile.isSkip()) {
+      uploadFile.status = Status.Nil
+    }
+  }
   onClickStart() {
     if (this._disabled) {
       return
@@ -218,8 +223,6 @@ export class UploadComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     catch (e) {
       throw e
-    } finally {
-
     }
   }
   private _workers: Workers
