@@ -86,11 +86,11 @@ case $1 in
 		check $?
 
 		if [[ $3 == tar || $3 == t ]]; then
-			dst=linux.amd64.tar.gz
+			dst=linux.amd64.7z
 			if [[ $GOARCH == 386 ]];then
-				dst=linux.386.tar.gz
+				dst=linux.386.7z
 			fi
-			cd "$DirRoot/bin" && tar -zcvf $dst "$Target" "$Target".jsonnet \
+			cd "$DirRoot/bin" && 7z a $dst "$Target" "$Target".jsonnet \
 			shell-linux \
 			webpc.service useradd.sh
 		fi
@@ -111,11 +111,11 @@ case $1 in
 		check $?
 
 		if [[ $3 == tar || $3 == t ]]; then
-			dst=darwin.amd64.tar.gz
+			dst=darwin.amd64.7z
 			if [[ $GOARCH == 386 ]];then
-				dst=darwin.386.tar.gz
+				dst=darwin.386.7z
 			fi
-			cd "$DirRoot/bin" && tar -zcvf $dst "$Target"
+			cd "$DirRoot/bin" && 7z a $dst "$Target"
 		fi
 	;;
 
@@ -134,11 +134,11 @@ case $1 in
 		check $?
 
 		if [[ $3 == tar || $3 == t ]]; then
-			dst=windows.amd64.tar.gz
+			dst=windows.amd64.7z
 			if [[ $GOARCH == 386 ]];then
-				dst=windows.386.tar.gz
+				dst=windows.386.7z
 			fi
-			cd "$DirRoot/bin" && tar -zcvf $dst "$Target.exe"
+			cd "$DirRoot/bin" && 7z a $dst "$Target.exe"
 		fi
 	;;
 
