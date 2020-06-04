@@ -1,0 +1,10 @@
+<configuration>
+	<id>webpc-service</id>
+	<name>Web PC Service</name>
+	<description>內網穿透 客戶端</description>
+	<workingdirectory>%BASE%</workingdirectory>
+	<executable>%BASE%\webpc-service</executable>
+	<startargument>daemon</startargument>
+	<startargument>-r</startargument>
+	<log mode="none"/>
+</configuration>

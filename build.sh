@@ -138,7 +138,11 @@ case $1 in
 			if [[ $GOARCH == 386 ]];then
 				dst=windows.386.7z
 			fi
-			cd "$DirRoot/bin" && 7z a $dst "$Target.exe"
+			cd "$DirRoot/bin" && 7z a $dst "$Target.exe" "$Target".jsonnet \
+			shell-windows.bat \
+			webpc-service.xml webpc-service.exe \
+			winpty.dll winpty-agent.exe
+
 		fi
 	;;
 
