@@ -28,13 +28,15 @@ func (s *System) Format(basePath string) (e error) {
 	s.Shell = strings.TrimSpace(s.Shell)
 	if s.Shell == "" {
 		s.Shell = `shell-` + runtime.GOOS
+		if runtime.GOOS == "windows" {
+			s.Shell += `.bat`
+		}
 	}
 	if filepath.IsAbs(s.Shell) {
 		s.Shell = filepath.Clean(s.Shell)
 	} else {
 		s.Shell = filepath.Clean(basePath + "/" + s.Shell)
 	}
-
 	for i := 0; i < len(s.Mount); i++ {
 		e = s.Mount[i].Format(basePath)
 		if e != nil {

@@ -15,6 +15,7 @@
 /version/version.go
 *.tar.gz
 *.7z
+*.db.lock
 
 /webpc
 /webpcd

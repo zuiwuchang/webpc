@@ -23,6 +23,7 @@ local GB=MB * 1024;
 		// 用戶 shell 啓動腳本
 		// linux 默認爲 shell-GOOS
 		//Shell : "shell-linux",
+		//Shell : "shell-windows.bat",
 		// 映射到web的目錄
 		Mount : [
 			{
