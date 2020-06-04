@@ -239,7 +239,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
           this.alt = false
           this.shift = false
           this.ctrl = false
-          const textarea = this.xterm?.nativeElement?.querySelector('textarea')
+          const textarea = this._textarea
           textarea.dispatchEvent(new KeyboardEvent('keydown', opt))
         }
         return ok
