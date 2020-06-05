@@ -78,7 +78,7 @@ func (h FS) Register(router *gin.RouterGroup) {
 	r := router.Group(`fs`)
 
 	r.GET(``, h.ls)
-	r.GET(`:root/:path`, h.CheckSession, h.get)
+	r.GET(`:root/:path`, h.get)
 	r.PUT(`:root/:path`, h.CheckSession, h.put)
 	r.PATCH(`:root/:path/name`, h.CheckSession, h.rename)
 	r.POST(`:root/:path`, h.CheckSession, h.post)
