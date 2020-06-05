@@ -1,10 +1,11 @@
 <configuration>
 	<id>webpc-service</id>
 	<name>Web PC Service</name>
-	<description>內網穿透 客戶端</description>
+	<description>Web PC Service</description>
 	<workingdirectory>%BASE%</workingdirectory>
 	<executable>%BASE%\webpc-service</executable>
 	<startargument>daemon</startargument>
 	<startargument>-r</startargument>
 	<log mode="none"/>
+	<onfailure action="restart" delay="10 sec"/>
 </configuration>
