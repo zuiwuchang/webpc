@@ -21,10 +21,11 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { EditComponent } from './edit/edit.component';
+import { SettingsComponent } from './dialog/settings/settings.component';
 
 
 @NgModule({
-  declarations: [ListComponent, ViewComponent, EditComponent],
+  declarations: [ListComponent, ViewComponent, EditComponent, SettingsComponent],
   imports: [
     CommonModule, FormsModule,
 
@@ -36,6 +37,6 @@ import { EditComponent } from './edit/edit.component';
 
     TerminalRoutingModule,
   ],
-  entryComponents: [EditComponent],
+  entryComponents: [EditComponent, SettingsComponent],
 })
 export class TerminalModule { }

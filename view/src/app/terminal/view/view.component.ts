@@ -8,6 +8,8 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ServerAPI } from 'src/app/core/core/api';
 import { isString, isNumber } from 'util';
 import { interval } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { SettingsComponent } from '../dialog/settings/settings.component';
 
 // CmdError 錯誤
 const CmdError = 1
@@ -61,6 +63,7 @@ function durationToString(v: number): string {
 })
 export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private route: ActivatedRoute,
+    private matDialog: MatDialog,
   ) { }
   private _closed = false
   private _subject = new Subject()
@@ -72,9 +75,6 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   duration: string = ''
   fontSize = 15
   fontFamily = DefaultFontFamily
-  options = [
-    `sans-serif `, `serif`, `monospace`, `cursive`, `fantasy`,
-  ]
   ctrl: boolean
   shift: boolean
   alt: boolean
@@ -236,9 +236,9 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
           opt.keyCode = evt.keyCode
           opt.key = evt.key
           opt.code = evt.code
-          this.alt = false
-          this.shift = false
-          this.ctrl = false
+          // this.alt = false
+          // this.shift = false
+          // this.ctrl = false
           const textarea = this._textarea
           textarea.dispatchEvent(new KeyboardEvent('keydown', opt))
         }
@@ -453,9 +453,9 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
       shiftKey: evt.shiftKey || this.shift ? true : false,
       ctrlKey: evt.ctrlKey || this.ctrl ? true : false,
     } as any))
-    this.alt = false
-    this.shift = false
-    this.ctrl = false
+    // this.alt = false
+    // this.shift = false
+    // this.ctrl = false
     setTimeout(() => {
       this._xterm.focus()
     }, 0)
@@ -477,5 +477,21 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => {
       this._xterm.focus()
     }, 0)
+  }
+  onClickSettings() {
+    this.matDialog.open(SettingsComponent, {
+      data: {
+        fontFamily: this.fontFamily,
+        onFontFamily: (str: string) => {
+          this.fontFamily = str
+          this.onClickFontFamily()
+        },
+        fontSize: this.fontSize,
+        onFontSize: (size: number) => {
+          this.fontSize = size
+          this.onClickFontSize()
+        },
+      },
+    })
   }
 }
