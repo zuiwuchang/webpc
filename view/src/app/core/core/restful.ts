@@ -63,7 +63,8 @@ export class RESTful {
     websocketURL(id: string | number | boolean | Array<any>): string {
         const location = document.location
         let addr: string
-        if (location.protocol == "https") {
+        console.log(location.protocol)
+        if (location.protocol == "https:") {
             addr = `wss://${location.hostname}`
             if (location.port == "") {
                 addr += ":443"
