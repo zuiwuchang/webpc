@@ -3,13 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { WebLinksAddon } from 'xterm-addon-web-links';
-import { Subject, Subscription, fromEvent } from 'rxjs'
+import { Subject, fromEvent } from 'rxjs'
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ServerAPI } from 'src/app/core/core/api';
 import { isString, isNumber } from 'util';
 import { interval } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { SettingsComponent } from '../dialog/settings/settings.component';
+import { FullscreenService } from 'src/app/core/fullscreen/fullscreen.service';
 
 // CmdError 錯誤
 const CmdError = 1
@@ -64,7 +65,10 @@ function durationToString(v: number): string {
 export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private route: ActivatedRoute,
     private matDialog: MatDialog,
-  ) { }
+    private fullscreenService: FullscreenService,
+  ) {
+    this.fullscreen = false
+  }
   private _closed = false
   private _subject = new Subject()
   private _xterm: Terminal
@@ -78,6 +82,19 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   ctrl: boolean
   shift: boolean
   alt: boolean
+  private _fullscreen: boolean
+  set fullscreen(val: boolean) {
+    this._fullscreen = val
+    this.fullscreenService.fullscreen = val
+  }
+  get fullscreen(): boolean {
+    return this._fullscreen
+  }
+  onClickFullscreen(val: boolean) {
+    this._fullscreen = val
+    this.fullscreenService.fullscreen = val
+    this.onResize()
+  }
   get ok(): boolean {
     if (this._websocket) {
       return true
@@ -115,6 +132,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this._xterm) {
       this._xterm.dispose()
     }
+    this.fullscreen = false
   }
   @ViewChild("xterm")
   xterm: ElementRef

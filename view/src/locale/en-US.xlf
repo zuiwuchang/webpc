@@ -759,7 +759,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
-          <context context-type="linenumber">11</context>
+          <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2d64c5ec475afbe35d9309b8405d6654441b386b" datatype="html">
@@ -812,6 +812,22 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/terminal/dialog/settings/settings.component.html</context>
           <context context-type="linenumber">24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="fa2e968f224776e4ade5a06b83428389435bef2b" datatype="html">
+        <source>fullscreen exit</source>
+        <target>fullscreen exit</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="839a318fc31740d6982ef9eb4b073a62a34cdeff" datatype="html">
+        <source>fullscreen</source>
+        <target>fullscreen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/terminal/view/view.component.html</context>
+          <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e26f9cf3666aace4e524b1505c9795d76d87738d" datatype="html">

@@ -1,5 +1,9 @@
 .view{
-    height: calc(100vh - 220px);
+    height: calc(100vh - 225px);
+    min-height: 200px;
+}
+.fullview{
+    height: calc(100vh - 80px);
     min-height: 200px;
 }
 .mat-spinner{

@@ -1,4 +1,4 @@
-<mat-toolbar class="header" color="primary">
+<mat-toolbar *ngIf="!fullscreen" class="header" color="primary">
     <a routerLink="/">
         <button mat-icon-button i18n-matTooltip matTooltip="Home Tooltip">
             <mat-icon>home</mat-icon>

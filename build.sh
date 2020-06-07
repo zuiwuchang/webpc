@@ -91,7 +91,7 @@ case $1 in
 				dst=linux.386.7z
 			fi
 			cd "$DirRoot/bin" && 7z a $dst "$Target" "$Target".jsonnet \
-			shell-linux \
+			shell-linux shell-as\
 			webpc.service useradd.sh
 		fi
 	;;

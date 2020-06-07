@@ -6,12 +6,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"go.uber.org/zap"
-
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/rakyll/statik/fs"
 	"gitlab.com/king011/webpc/logger"
 	"gitlab.com/king011/webpc/web"
+	"go.uber.org/zap"
 )
 
 // BaseURL request base url
@@ -67,6 +67,7 @@ func (h Helper) Register(router *gin.RouterGroup) {
 	router.GET(`/view/`, h.redirect)
 
 	r := router.Group(BaseURL)
+	r.Use(gzip.Gzip(gzip.DefaultCompression))
 	r.GET(`/:locale`, h.viewOrRedirect)
 	r.GET(`/:locale/*path`, h.view)
 }

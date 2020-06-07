@@ -2,6 +2,8 @@ import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { ToasterConfig } from 'angular2-toaster';
 import { I18nService } from './core/i18n/i18n.service';
+import { FullscreenService } from './core/fullscreen/fullscreen.service';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -10,6 +12,7 @@ import { I18nService } from './core/i18n/i18n.service';
 export class AppComponent implements AfterViewInit {
   constructor(private matIconRegistry: MatIconRegistry,
     private i18nService: I18nService,
+    private fullscreenService: FullscreenService,
   ) {
     this.matIconRegistry.registerFontClassAlias(
       'fontawesome-fa', // 為此 Icon Font 定義一個 別名

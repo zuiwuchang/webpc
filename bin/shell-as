@@ -1,0 +1,3 @@
+#!/bin/bash
+DirRoot=`cd $(dirname $BASH_SOURCE) && pwd`
+sudo -u "$1" "$DirRoot/shell-linux" "$1"
