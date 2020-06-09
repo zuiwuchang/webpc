@@ -1,6 +1,6 @@
 <ng-container *ngIf="info;then infoView"></ng-container>
 <ng-template #infoView>
-    <p [style]="fullscreen?'margin-top: -64px;':''">
+    <p>
         <button mat-icon-button [disabled]="true">
             <mat-icon color="accent">{{ok ? 'done':'close'}}</mat-icon>
         </button>

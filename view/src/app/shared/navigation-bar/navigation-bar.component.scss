@@ -2,6 +2,7 @@ a{
     color: #fafafa;
 }
 .header{
+    height: 64px;
     position: fixed;
     top: 0;
     right: 0;
@@ -15,4 +16,7 @@ a{
 .mat-spinner{
     display: inline-block;
     margin-left: 8px;
+}
+.fill{
+    height: 64px;
 }

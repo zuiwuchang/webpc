@@ -1,10 +1,12 @@
 .view{
     height: calc(100vh - 225px);
-    min-height: 200px;
+    height: calc(var(--vh, 1vh) * 100 - 225px);
+    min-height: 100px;
 }
 .fullview{
     height: calc(100vh - 80px);
-    min-height: 200px;
+    height: calc(var(--vh, 1vh) * 100 - 80px);
+    min-height: 100px;
 }
 .mat-spinner{
     display: inline-block;

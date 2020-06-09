@@ -120,6 +120,15 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
         this._websocket.send(HeartMessage)
       }
     })
+    fromEvent(window, 'resize').pipe(
+    ).subscribe(() => {
+      this._setvh()
+    })
+    this._setvh()
+  }
+  private _setvh() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
   }
   ngOnDestroy() {
     this._closed = true
