@@ -41,8 +41,7 @@ type Shell struct {
 	started    int64
 	fontSize   int
 	fontFamily string
-
-	mutex sync.Mutex
+	mutex      sync.Mutex
 }
 
 // Run 运行 shell
@@ -147,7 +146,6 @@ func (s *Shell) readTTY() {
 }
 func (s *Shell) closeWebsocket() {
 	s.conn.Close()
-	s.conn = nil
 }
 
 // Kill 關閉 進程
