@@ -253,6 +253,16 @@ func (c *_UncompressWorker) uncompressTar(r *tar.Reader, dir string) (e error) {
 func (c *_UncompressWorker) uncompressDir(dir, name string, mode os.FileMode) (e error) {
 	filename := filepath.Clean(dir + name)
 	e = os.MkdirAll(filename, mode)
+	stat, e := os.Stat(filename)
+	if e != nil {
+		return
+	}
+	if !stat.IsDir() {
+		return
+	}
+	if stat.Mode() != mode {
+		os.Chmod(filename, mode)
+	}
 	return
 }
 func (c *_UncompressWorker) doneUncompressFile(dir, name string, r io.Reader, mode os.FileMode) (e error) {
@@ -269,6 +279,7 @@ func (c *_UncompressWorker) doneUncompressFile(dir, name string, r io.Reader, mo
 }
 func (c *_UncompressWorker) createFile(dir, name string, mode os.FileMode) (f *os.File, e error) {
 	filename := filepath.Clean(dir + name)
+	os.Mkdir(filepath.Dir(filename), 0775)
 	if c.style == CmdYesAll {
 		f, e = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, mode)
 		return
