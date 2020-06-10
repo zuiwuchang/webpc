@@ -1,31 +1,32 @@
 # WebApp
+English [中文](README-zh-Hant.md)
 <table>
 <tr>
 <td>
-  一個webapp程式，幫助通過web獲取服務器shell，同時這是一個http檔案服務器允許你管理服務器上的檔案 編輯 上傳 下載 分享 ，得益於 html5 你也可在在線播放服務器上的 視頻 音頻。 
+  A webapp program to help get the server shell through the web, and at the same time this is an http file server allows you to manage the files on the server edit upload download share, thanks to html5 you can also play online video and audio on the server.
 </td>
 </tr>
 </table>
 
-## 遠程shell
+## Remote shell
 
 ![](document/shell.gif)
 
-## 檔案管理
+## File management
 ![](document/filesystem.gif)
 
 ## Usage
 
-1. 配置你的服務器 **webpc.jsonnet**
-2. 運行服務器 `webpc daemon -r`
-3. 使用瀏覽器 訪問你的 webpc [http://127.0.0.1:9000](http://127.0.0.1:9000)
+1. Configure your server **webpc.jsonnet**
+2. Run the server `webpc daemon -r`
+3. Use a browser to access your webpc [http://127.0.0.1:9000](http://127.0.0.1:9000)
 
 ## Linux Service
 
-1. 編輯 **webpc.service** 修改裏面的程式啓動路徑 爲webpc安裝路徑
-2. 將 **webpc.service** 拷貝到 服務定義目錄
+1. Edit **webpc.service** Modify the startup path of the program to be the webpc installation path
+2. Copy **webpc.service** to the service definition directory
 
 ## Sindows Service
 
-1. 執行 `webpc-service install` 安裝服務
-2. 使用 windows 服務管理器 啓動 webpc-service 服務
+1. Run `webpc-service install` to install the service
+2. Use the windows service manager to start the webpc-service service
