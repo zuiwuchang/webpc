@@ -1,4 +1,4 @@
-# WebApp
+# WebPC
 English [中文](README-zh-Hant.md)
 <table>
 <tr>
