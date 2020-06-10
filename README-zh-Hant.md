@@ -1,6 +1,6 @@
 # WebApp
 
-English(README.md) 中文
+[English](README.md) 中文
 
 <table>
 <tr>
