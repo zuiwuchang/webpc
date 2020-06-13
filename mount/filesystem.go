@@ -106,7 +106,7 @@ func (m *Mount) LS(path string) (dir string, results []FileInfo, e error) {
 	if Separator != `/` {
 		dir = strings.ReplaceAll(path, Separator, `/`)
 	}
-	if !strings.HasPrefix(dir, Separator) {
+	if !strings.HasPrefix(dir, `/`) {
 		dir = `/` + dir
 	}
 	results = make([]FileInfo, count)
