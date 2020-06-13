@@ -1220,6 +1220,10 @@ func (h FS) merge(c *gin.Context) {
 		return
 	}
 
-	os.RemoveAll(dir)
+	for i := 0; i < params.Count; i++ {
+		os.Remove(dir + `/` + fmt.Sprint(i))
+	}
+	os.Remove(dir)
+	// os.RemoveAll(dir)
 	c.Status(http.StatusCreated)
 }
