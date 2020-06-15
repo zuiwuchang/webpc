@@ -1130,6 +1130,7 @@ func (h FS) putChunk(c *gin.Context) {
 		return
 	}
 	_, e = io.Copy(f, c.Request.Body)
+	f.Close()
 	if e != nil {
 		h.NegotiateError(c, http.StatusForbidden, e)
 		return
