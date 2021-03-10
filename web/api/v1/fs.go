@@ -245,6 +245,7 @@ func (h FS) get(c *gin.Context) {
 		h.NegotiateError(c, http.StatusForbidden, e)
 		return
 	}
+	c.Header(`Cache-Control`, `max-age=0`)
 	c.FileAttachment(filename, filepath.Base(filename))
 }
 func (h FS) put(c *gin.Context) {

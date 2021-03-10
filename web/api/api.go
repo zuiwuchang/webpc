@@ -10,7 +10,7 @@ import (
 )
 
 // BaseURL request base url
-const BaseURL = `/api`
+const BaseURL = `api`
 
 // Helper path of /app
 type Helper struct {
@@ -23,7 +23,9 @@ var maxBytesReader int64
 func (h Helper) Register(router *gin.RouterGroup) {
 	maxBytesReader = configure.Single().HTTP.MaxBytesReader
 	r := router.Group(BaseURL)
-
+	if maxBytesReader > 0 {
+		r.Use(h.CheckBodySize)
+	}
 	ms := []web.IHelper{
 		v1.Helper{},
 	}

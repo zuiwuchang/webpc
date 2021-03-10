@@ -6,7 +6,7 @@ import (
 )
 
 // BaseURL .
-const BaseURL = `/v1`
+const BaseURL = `v1`
 
 // Helper 一些其它的 api
 type Helper struct {
