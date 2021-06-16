@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { isString } from 'util';
 interface Dir {
   name: string
   path: string
@@ -19,7 +18,7 @@ export class PathComponent implements OnInit {
   disabled: boolean
   @Input()
   set path(val: string) {
-    if (!isString(val)) {
+    if (typeof val !== "string") {
       val = ''
     }
     if (val == this._path) {

@@ -5,7 +5,6 @@ import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Shell } from '../shell';
-import { isString } from 'util';
 
 @Component({
   selector: 'app-edit',
@@ -34,11 +33,11 @@ export class EditComponent implements OnInit, OnDestroy {
   }
   get isNotChanged(): boolean {
     let l = ''
-    if (isString(this.name)) {
+    if (typeof this.name === "string") {
       l = this.name.trim()
     }
     let r = ''
-    if (isString(this.data.name)) {
+    if (typeof this.data.name === "string") {
       r = this.data.name.trim()
     }
     return l == r

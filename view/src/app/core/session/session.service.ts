@@ -3,7 +3,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Mutex, Completer } from '../core/completer';
 import { HttpClient } from '@angular/common/http';
 import { ServerAPI } from '../core/api';
-import { isString } from 'util';
 import { Exception } from '../core/exception';
 
 export class Session {
@@ -35,7 +34,7 @@ export class SessionService {
     await this._mutex.lock()
     try {
       const response = await ServerAPI.v1.session.get<Session>(this.httpClient)
-      if (response && isString(response.name)) {
+      if (response && typeof response.name === "string") {
         console.info(`session restore`, response)
         this._subject.next(response)
       }

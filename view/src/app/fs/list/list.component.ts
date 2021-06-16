@@ -6,7 +6,6 @@ import { ToasterService } from 'angular2-toaster';
 import { SessionService } from 'src/app/core/session/session.service';
 import { Subscription } from 'rxjs';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
-import { isArray } from 'util';
 import { FileInfo, Dir } from '../fs';
 
 
@@ -65,7 +64,7 @@ export class ListComponent implements OnInit, OnDestroy {
           }
 
           this.dir = response.dir
-          if (isArray(response.items) && response.items.length > 0) {
+          if (Array.isArray(response.items) && response.items.length > 0) {
             this.source = new Array<FileInfo>()
             for (let i = 0; i < response.items.length; i++) {
               this.source.push(new FileInfo(this.dir.root, this.dir.dir, response.items[i]))

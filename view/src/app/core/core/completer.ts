@@ -1,7 +1,7 @@
 import { Exception } from './exception';
 import { Subject, from } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { isNumber } from 'util';
+
 export class Completer<T>{
     private _promise: Promise<T>
     private _resolve: any
@@ -187,7 +187,7 @@ export class Channel<T> implements WriteChannel<T>, ReadChannel<T>{
      * @param size 
      */
     constructor(size?: number) {
-        if (!isNumber(size) || isNaN(size) || size < 1) {
+        if (typeof size != "number" || isNaN(size) || size < 1) {
             size = 1
         } else {
             size = Math.floor(size)
@@ -227,7 +227,7 @@ export class Channel<T> implements WriteChannel<T>, ReadChannel<T>{
             }
             if (this._write(data)) {
                 this._signalWrite.next(true)
-                resolve()
+                resolve(undefined)
                 return
             }
             const completer = new Completer<undefined>()
@@ -238,7 +238,7 @@ export class Channel<T> implements WriteChannel<T>, ReadChannel<T>{
                     if (this._write(data)) {
                         completer.resolve()
                         this._signalWrite.next(true)
-                        resolve()
+                        resolve(undefined)
                         return
                     }
                 },

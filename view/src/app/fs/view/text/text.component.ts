@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SessionService, Session } from 'src/app/core/session/session.service';
 import { ServerAPI } from 'src/app/core/core/api';
-import { isString } from 'util';
 import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { HttpClient } from '@angular/common/http';
@@ -67,7 +66,7 @@ export class TextComponent implements OnInit, OnDestroy {
     }
   }
   onPathChange(path: string) {
-    if (!isString(path)) {
+    if (typeof path !== "string") {
       path = '/'
     }
     if (!path.startsWith('/')) {

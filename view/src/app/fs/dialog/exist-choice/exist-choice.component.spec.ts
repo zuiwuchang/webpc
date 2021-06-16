@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ExistChoiceComponent } from './exist-choice.component';
 
@@ -6,7 +6,7 @@ describe('ExistChoiceComponent', () => {
   let component: ExistChoiceComponent;
   let fixture: ComponentFixture<ExistChoiceComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ExistChoiceComponent ]
     })

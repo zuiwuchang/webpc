@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SessionService } from 'src/app/core/session/session.service';
 import { ServerAPI } from 'src/app/core/core/api';
-import { isString } from 'util';
 
 @Component({
   selector: 'app-image',
@@ -43,7 +42,7 @@ export class ImageComponent implements OnInit, OnDestroy {
     this._closed = true
   }
   onPathChange(path: string) {
-    if (!isString(path)) {
+    if (typeof path !== "string") {
       path = '/'
     }
     if (!path.startsWith('/')) {

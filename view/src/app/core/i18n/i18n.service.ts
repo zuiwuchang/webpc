@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { isString } from 'util';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +28,7 @@ export class I18nService {
   }
   get(key: string) {
     const val = this._keys.get(key)
-    if (isString(val)) {
+    if (typeof val === "string") {
       return val
     }
     return key

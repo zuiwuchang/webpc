@@ -3,7 +3,6 @@ import { ServerAPI } from 'src/app/core/core/api';
 import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { isString, isNumber } from 'util';
 import { interval, Subscription } from 'rxjs';
 import { NetCommand, NetHeartMessage } from '../command';
 import { Data, Message } from '../cut/cut.component';
@@ -18,7 +17,7 @@ export class CopyComponent implements OnInit, OnDestroy {
     private i18nService: I18nService,
     private matDialog: MatDialog,
     private matDialogRef: MatDialogRef<CopyComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Data, ) { }
+    @Inject(MAT_DIALOG_DATA) public data: Data,) { }
   private _subscriptionPing: Subscription
   ngOnInit(): void {
     this._subscriptionPing = interval(1000 * 30).subscribe(() => {
@@ -80,7 +79,7 @@ export class CopyComponent implements OnInit, OnDestroy {
           websocket.close()
           return
         }
-        if (isString(evt.data)) {
+        if (typeof evt.data === "string") {
           try {
             this._onMessage(websocket, JSON.parse(evt.data))
           } catch (e) {
@@ -127,7 +126,7 @@ export class CopyComponent implements OnInit, OnDestroy {
       data: name,
       disableClose: true,
     }).afterClosed().toPromise().then((number) => {
-      if (!websocket || websocket != this._websocket || !isNumber(number)) {
+      if (!websocket || websocket != this._websocket || typeof number !== "number") {
         websocket.close()
         return
       }

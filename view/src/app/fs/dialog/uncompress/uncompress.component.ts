@@ -4,7 +4,6 @@ import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { FileInfo, Dir } from '../../fs';
-import { isString, isNumber } from 'util';
 import { interval, Subscription } from 'rxjs';
 import { ExistChoiceComponent } from '../exist-choice/exist-choice.component';
 import { NetCommand, NetHeartMessage } from '../command';
@@ -95,7 +94,7 @@ export class UncompressComponent implements OnInit, OnDestroy {
           websocket.close()
           return
         }
-        if (isString(evt.data)) {
+        if (typeof evt.data === "string") {
           try {
             this._onMessage(websocket, JSON.parse(evt.data))
           } catch (e) {
@@ -142,7 +141,7 @@ export class UncompressComponent implements OnInit, OnDestroy {
       data: name,
       disableClose: true,
     }).afterClosed().toPromise().then((number) => {
-      if (!websocket || websocket != this._websocket || !isNumber(number)) {
+      if (!websocket || websocket != this._websocket || typeof number !== "number") {
         websocket.close()
         return
       }

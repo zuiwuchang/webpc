@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { isString, isArray, isObject } from 'util';
+function isObject(o: any): boolean {
+  return o !== null && typeof o === "object"
+}
 const Key = `copy-cut-files`
 export interface Files {
   // copy or cut
@@ -23,7 +25,7 @@ export class FileService {
     try {
       if (localStorage) {
         const str = localStorage.getItem(Key)
-        if (isString(str)) {
+        if (typeof str === "string") {
           return JSON.parse(str)
         }
       } else {
@@ -45,10 +47,10 @@ export class FileService {
     } else {
       if (localStorage) {
         let names: Array<string>
-        if (isArray(info.names) && info.names.length > 0) {
+        if (Array.isArray(info.names) && info.names.length > 0) {
           for (let i = 0; i < info.names.length; i++) {
             const element = info.names[i]
-            if (isString(element)) {
+            if (typeof element === "string") {
               if (!names) {
                 names = new Array<string>()
               }
@@ -71,7 +73,7 @@ export class FileService {
     if (localStorage) {
       try {
         const str = localStorage.getItem(Key)
-        if (isString(str)) {
+        if (typeof str === "string") {
           const old = JSON.parse(str)
           if (this._isEqual(files, old)) {
             localStorage.removeItem(Key)
@@ -96,11 +98,11 @@ export class FileService {
       return false
     }
     let lc = 0
-    if (isArray(l.names)) {
+    if (Array.isArray(l.names)) {
       lc = l.names.length
     }
     let rc = 0
-    if (isArray(r.names)) {
+    if (Array.isArray(r.names)) {
       rc = r.names.length
     }
     if (lc != rc) {

@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Dir, FileInfo } from '../fs';
 import { Router } from '@angular/router';
-import { isString, isArray, isObject } from 'util';
 import { fromEvent, Subscription } from 'rxjs';
 import { takeUntil, first } from 'rxjs/operators';
 import { CheckEvent, NativeEvent } from '../file/file.component';
@@ -23,6 +22,9 @@ import { CutComponent } from '../dialog/cut/cut.component';
 import { CopyComponent } from '../dialog/copy/copy.component';
 import { UploadComponent } from '../dialog/upload/upload.component';
 
+function isObject(object: any): boolean {
+  return object !== null && typeof object === "object"
+}
 @Component({
   selector: 'fs-manager',
   templateUrl: './manager.component.html',
@@ -101,7 +103,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
       return
     }
 
-    if (!isString(path)) {
+    if (typeof path !== "string") {
       path = '/'
     }
     if (!path.startsWith('/')) {
@@ -378,7 +380,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     }
     this._source.push(fileinfo)
     this._source.sort(FileInfo.compare)
-    if (isString(fileinfo.name) && fileinfo.name.startsWith('.')) {
+    if (typeof fileinfo.name === "string" && fileinfo.name.startsWith('.')) {
       return
     }
     if (!this._hide) {
@@ -552,7 +554,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
   onClickPaste() {
     const files = this.fileService.files
-    if (!files || !isObject(files.names) || !isArray(files.names)) {
+    if (!files || !isObject(files.names) || !Array.isArray(files.names)) {
       return
     }
     if (files.copy) {

@@ -6,7 +6,6 @@ import { WebLinksAddon } from 'xterm-addon-web-links';
 import { Subject, fromEvent } from 'rxjs'
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ServerAPI } from 'src/app/core/core/api';
-import { isString, isNumber } from 'util';
 import { interval } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { SettingsComponent } from '../dialog/settings/settings.component';
@@ -108,7 +107,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!this._websocket) {
         return
       }
-      if (this.info && isNumber(this.info.started)) {
+      if (this.info && typeof this.info.started === "number") {
         const val = new Date().getTime() - this.info.started * 1000
         this.duration = durationToString(val / 1000)
       }
@@ -148,7 +147,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild("view")
   view: ElementRef
   private _getFontFamily(name: string) {
-    if (isString(name) && name != '') {
+    if (typeof name === "string" && name != '') {
       return name
     }
     return DefaultFontFamily
@@ -303,7 +302,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
             this._xterm.setOption("cursorBlink", true)
           }
           this._xterm.write(new Uint8Array(evt.data))
-        } else if (isString(evt.data)) {
+        } else if (typeof evt.data === "string") {
           try {
             this._onMessage(JSON.parse(evt.data))
           } catch (e) {
@@ -327,7 +326,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   onClickConnect() {
-    if (isNumber(this.info.id) && !this._websocket) {
+    if (typeof this.info.id === "number" && !this._websocket) {
       this._xterm.clear()
       this._connect(this.info.id)
     }
@@ -356,7 +355,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   private _onFontsize(fontSize: number) {
-    if (!isNumber(fontSize)) {
+    if (typeof fontSize !== "number") {
       return
     }
     fontSize = Math.floor(fontSize)
@@ -367,7 +366,7 @@ export class ViewComponent implements OnInit, OnDestroy, AfterViewInit {
     this.onClickFontSize()
   }
   onClickFontSize() {
-    if (!this._xterm || this.fontSize < 5 || !isNumber(this.fontSize) || !this._fitAddon || !this._websocket) {
+    if (!this._xterm || this.fontSize < 5 || typeof this.fontSize !== "number" || !this._fitAddon || !this._websocket) {
       return
     }
     if (this.fontSize == this._xterm.getOption("fontSize")) {

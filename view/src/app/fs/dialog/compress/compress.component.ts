@@ -4,7 +4,6 @@ import { ToasterService } from 'angular2-toaster';
 import { I18nService } from 'src/app/core/i18n/i18n.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { FileInfo, Dir } from '../../fs';
-import { isString } from 'util';
 import { interval, Subscription } from 'rxjs';
 import { ExistComponent } from '../exist/exist.component';
 import { NetCommand, NetHeartMessage } from '../command';
@@ -44,7 +43,7 @@ export class CompressComponent implements OnInit, OnDestroy {
         this.name = this.target.dir.dir.substring(index + 1)
       }
     }
-    if (!isString(this.name) || this.name == '') {
+    if (typeof this.name !== "string" || this.name == '') {
       this.name = 'archive'
     }
     this._subscriptionPing = interval(1000 * 30).subscribe(() => {
@@ -120,7 +119,7 @@ export class CompressComponent implements OnInit, OnDestroy {
           websocket.close()
           return
         }
-        if (isString(evt.data)) {
+        if (typeof evt.data === "string") {
           try {
             this._onMessage(websocket, JSON.parse(evt.data))
           } catch (e) {

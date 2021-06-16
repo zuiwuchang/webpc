@@ -1,21 +1,25 @@
 import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http'
-import { isNumber, isString, isObject, isArray, isNullOrUndefined } from 'util'
-import { environment } from 'src/environments/environment'
 
+function isObject(value: any): boolean {
+    return value !== null && typeof value === 'object'
+}
+function isNullOrUndefined(value: any): boolean {
+    return value === null || value === undefined
+}
 export function resolveError(e): string {
     if (!e) {
         return "nil"
     }
-    if (isString(e)) {
+    if (typeof e === "string") {
         return e
     }
-    if (isObject(e) && isNumber(e.status)) {
+    if (isObject(e) && typeof e.status === "number") {
         return resolveHttpError(e)
     }
     return "unknow"
 }
 export function resolveHttpError(e) {
-    if (isString(e.error)) {
+    if (typeof e.error === "string") {
         return `${e.status} ${e.error}`
     }
     if (e.error) {
@@ -50,7 +54,7 @@ export class RESTful {
     }
     oneURL(id: string | number | boolean | Array<any>): string {
         let val: string
-        if (isArray(id)) {
+        if (Array.isArray(id)) {
             val = (id as Array<any>).map<string>((val) => encodeURIComponent(encodeURIComponent(val))).join('/')
         } else {
             val = encodeURIComponent(encodeURIComponent(id as string))
@@ -81,7 +85,7 @@ export class RESTful {
         }
         let val: string
         if (!isNullOrUndefined(id)) {
-            if (isArray(id)) {
+            if (Array.isArray(id)) {
                 val = (id as Array<any>).map<string>((val) => encodeURIComponent(encodeURIComponent(val))).join('/')
             } else {
                 val = encodeURIComponent(encodeURIComponent(id as string))

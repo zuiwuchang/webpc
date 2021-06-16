@@ -1,7 +1,6 @@
 import { Completer, Completers, Channel, WriteChannel, ReadChannel } from 'src/app/core/core/completer';
 import { sizeString, MB } from 'src/app/core/core/utils';
 import { HttpClient } from '@angular/common/http';
-import { isNumber, isArray, isString } from 'util';
 import { NetCommand } from '../command';
 import { ServerAPI } from 'src/app/core/core/api';
 import { MatDialog } from '@angular/material/dialog';
@@ -53,7 +52,7 @@ export class UploadFile {
 export class Workers {
     private _worker: Worker
     constructor() {
-        this._worker = new Worker('./hash.worker', { type: 'module' })
+        this._worker = new Worker(new URL('./hash.worker', import.meta.url), { type: 'module' })
     }
     done(chunks: Array<Chunk>): Promise<string> {
         const worker = this._worker
@@ -76,7 +75,7 @@ export class Workers {
                 if (data) {
                     if (data.error) {
                         reject(data.error)
-                    } else if (isArray(data.vals) && isString(data.hash)) {
+                    } else if (Array.isArray(data.vals) && typeof data.hash === "string") {
                         for (let i = 0; i < data.vals.length; i++) {
                             chunks[i].hash = data.vals[i]
                         }
@@ -176,7 +175,7 @@ export class Uploader {
         if (this.isClosed) {
             return
         }
-        if (isNumber(style)) {
+        if (typeof style === "number") {
             switch (style) {
                 case NetCommand.Yes:
                     return this._upload()
@@ -336,7 +335,7 @@ class Upload {
         if (this.isClosed) {
             return
         }
-        if (!isArray(results) || results.length != ch.count) {
+        if (!Array.isArray(results) || results.length != ch.count) {
             console.warn('check chunks unknow results', results)
             throw 'check chunks unknow results'
         }
