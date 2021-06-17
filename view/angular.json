@@ -25,6 +25,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "localize": [
+              "zh-Hant"
+            ],
             "i18nMissingTranslation": "warning",
             "outputPath": "dist/view",
             "index": "src/index.html",

@@ -13,9 +13,9 @@ interface Data {
 })
 export class SettingsComponent implements OnInit {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: Data, ) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: Data,) { }
   options = [
-    `sans-serif `, `serif`, `monospace`, `cursive`, `fantasy`,
+    `Lucida Console`, `sans-serif `, `serif`, `monospace`, `cursive`, `fantasy`, `新宋体`
   ]
   ngOnInit(): void {
   }
