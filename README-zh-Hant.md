@@ -1,3 +1,7 @@
+# 項目已移動到 https://github.com/powerpuffpenguin/webpc
+
+採用新的架構重新實現並增加了額外功能，故舊項目不在維護。
+
 # WebPC
 
 [English](README.md) 中文
