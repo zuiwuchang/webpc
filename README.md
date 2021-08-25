@@ -1,5 +1,7 @@
 # Move To https://github.com/powerpuffpenguin/webpc
 
+Re-implemented with a new architecture and added additional functions, so the old project is not being maintained.
+
 # WebPC
 English [中文](README-zh-Hant.md)
 <table>
