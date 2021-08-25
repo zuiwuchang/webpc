@@ -32,7 +32,7 @@
 1. 編輯 **webpc.service** 修改裏面的程式啓動路徑 爲webpc安裝路徑
 2. 將 **webpc.service** 拷貝到 服務定義目錄
 
-## Sindows Service
+## Windows Service
 
 1. 執行 `webpc-service install` 安裝服務
 2. 使用 windows 服務管理器 啓動 webpc-service 服務
