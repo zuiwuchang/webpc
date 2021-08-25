@@ -1,3 +1,5 @@
+# Move To https://github.com/powerpuffpenguin/webpc
+
 # WebPC
 English [中文](README-zh-Hant.md)
 <table>
@@ -26,7 +28,7 @@ English [中文](README-zh-Hant.md)
 1. Edit **webpc.service** Modify the startup path of the program to be the webpc installation path
 2. Copy **webpc.service** to the service definition directory
 
-## Sindows Service
+## Windows Service
 
 1. Run `webpc-service install` to install the service
 2. Use the windows service manager to start the webpc-service service
